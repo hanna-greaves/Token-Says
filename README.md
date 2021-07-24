@@ -1,33 +1,69 @@
 # Token-Says
-When the tokens do something, have them say something... sometimes
+When the tokens do something, have them say something... sometimes.
 
-# Game Module Settings
+## How it Works
+The Token Says feature uses a set of Token Says rules that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
+* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can also use your world's data too).
+* Rules can be specific to a certain action (e.g. token performs an attack roll with a warhammer) or generic (e.g. token performs an ability check).
+* Likelihood can be set so that the token doesn't always say something. For example, with a likelihood of 10 set for a token's initiative check, they will only say something on 10% of their initiative rules.
 
-## Activate Token Says (World)
+
+## Token Says Rules
+
+![image](https://user-images.githubusercontent.com/22696153/126869424-81ba223e-7113-4593-bf46-6337d57f3b6d.png)
+
+Token Says rules can be configured within the "Open Rules Settings" area of the game module settings. Toggle that tabs to enter new or access existing rollable table rules or audio playlist rules.
+* Add: add a new rule by select + Add in the subheader of that tab
+* Edit: update an existing rule by selecting the edit pencil icon for that rule
+* Delete: delete a rule by selecting the trash beside that rule's name
+
+
+## Configuring Rules
+Each rule is configured on a specific token or actor, based on name, for a given action and the rule is only hit when that token or actor performs the action. 
+* **Rule Name:** Give each rule a name. The name is what displays in the rule configuration list.
+* **Token Name:** Name the token for which this rule applies. This is case sensitive and mind the spelling!
+* **Use Actor Name:** Checking this will determine if the rule triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
+* **Action Type:** Select from a list of available options for triggering actions that may invoke a rule. This is system-specific. See action name below for the list of current available action types.
+* **Action Name:** Type in the name of the action associated to the action type.
+  * Initiative Roll: leave blank
+  * Item Name: use the item name that triggers the action (e.g. Action Surge)
+  * Ability Check (dnd5e): use the 3 letter value for the ability (e.g. str)
+  * Saving Throw (dnd5e): use the 3 letter value for the ability (e.g. str)
+  * Skill (dnd5e): use the 3 letter value for the skill (e.g. itm)
+  * Attack Roll (dnd5e): use the item name making the attack (e.g. Longbow)
+  * Damage Roll (dnd5e): use the item name making the damage roll (e.g. Longbow)
+* **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table rules if you have entered something in the 'Token Says' field.
+* **Source Name:** The name of the rollable table or playlist. This can be left blank for rollable table rules if you have entered something in the 'Token Says' field.
+* **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
+* **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given rule. For example, a 33 here for a rule that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
+
+## Game Module Settings
+
+### Activate Token Says (World)
 Useful for situations where you want to quickly toggle Token Says on or off without a full session reload.
 
-## Suppress Tokens Says on Private GM Rolls (World)
+### Suppress Tokens Says on Private GM Rolls (World)
 When roll mode is set to Private GM Roll, the Token Says audio, chat message and chat bubble will be suppressed.
 
-## Suppress Token Says Chat Bubbles (Client)
+### Suppress Token Says Chat Bubbles (Client)
 By default a chat bubble is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules.
 
-## Suppress Token Says Chat Message (Client)
+### Suppress Token Says Chat Message (Client)
 By default a chat message is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules.
 
-## Suppress Token Says Audio (Client)
+### Suppress Token Says Audio (Client)
 Audio sounds caused by Token Says rules will not generate.
 
-## Search World's Playlist's First (World)
+### Search World's Playlist's First (World)
 If you have a playlist in your world the matches the Token Says rule, it will use that instead of searching your compendium. If not selected, world playlists are ignored.
 
-## Search World's Rollable Tables First (World)
+### Search World's Rollable Tables First (World)
 If you have a rollable table in your world the matches the Token Says rule, it will use that instead of searching your compendium. If not selected, world rollable tables are ignored.
 
-## Default Playlist Compendium
+### Default Playlist Compendium
 This is the compendium that will be accessed by default when determining where the rule's playlist is stored. Individual rules may override this default. If a rule's compendium is left blank then the default compendium is used.
 
-## Default Rollable Table Compendium
+### Default Rollable Table Compendium
 This is the compendium that will be accessed by default when determining where the rule's audio file is stored. Individual rules may override this default. If a rule's compendium is left blank then the default compendium is used.
 
 
