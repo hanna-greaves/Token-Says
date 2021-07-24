@@ -1,0 +1,24 @@
+{
+    "authors": [{
+        "name": "dnapolitano"
+    }],
+    "description": "Make tokens speak dialog or audio based on in game actions.",
+    "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+        }
+      ],
+    "minimumCoreVersion": "0.8.8",
+    "name": "token-says",
+    "scripts": [
+        "scripts/token-says.js",
+        "scripts/modules/rules-app.js"
+    ],
+    "styles": [
+        "styles/token-says.css"
+    ],
+    "title": "Token Says",
+    "version": "0.0.1"
+}
