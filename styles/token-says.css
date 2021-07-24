@@ -1,0 +1,110 @@
+
+.token-says .content .tab .rules-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    color: #7a7971;
+}
+
+.token-says .content .tab .rules-list li:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.token-says .content .tab .rules-list li.rule {
+    padding: 5px;
+}
+
+.token-says .content .tab .rules-list .rule-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.token-says .content .tab .rules-list .rule-name {
+    flex: 2;
+    margin: 0;
+    overflow: hidden;
+    font-size: 14px;
+    text-align: left;
+    align-items: center;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.token-says .content .tab .rules-list .rule-controls {
+    flex: 0 0 60px;
+    text-align: center;
+    font-size: 14px;
+}
+
+
+.token-says .content .tab .rules-list .rule-active {
+    text-align: right;
+    padding-right: 12px;
+}
+
+.token-says .content .tab .rules-list .rule {
+    align-items: center;
+    padding: 0 2px;
+    border-bottom: 1px solid #c9c7b8;
+}
+
+.token-says .content .tab .rules-list  .rule:last-child {
+    border-bottom: none;
+}
+
+.token-says .content .tab .rules-list  .rule .rule-name {
+    color: #191813;
+}
+
+.token-says .content .tab .rules-list .rules-header {
+    height: 28px;
+    margin: 6px 0px 2px 0px;
+    padding-left: 5px;
+    font-size: 14px;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px groove #eeede0;
+    font-weight: bold;
+}
+
+form.token-says-rule .form-group {
+    margin: 0;
+    padding: .75rem;
+    align-items: flex-start;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(0,0,0,.1);
+    transition: background .3s ease;
+    position: relative;
+    display: block;
+}
+
+form.token-says-rule .form-group .form-fields {
+    justify-content: flex-start;
+}
+
+form.token-says-rule .hidden {
+    display: none;
+}
+
+/*chat window styling*/
+.token-says.chat-window img {
+    border-width: 0px; 
+    width: 50px; 
+    height: 50px; 
+    vertical-align: text-bottom;
+}
+
+.token-says.chat-window {
+    width:100%; 
+    min-height: 50px; 
+    display: flex;
+    align-items: top;
+}
+
+.token-says.chat-window .what-is-said {
+    display:inline-block;
+    margin-left: 4px;
+}
