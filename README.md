@@ -1,6 +1,10 @@
 # Token-Says
 When the tokens do something, have them say something... sometimes.
 
+
+![image](https://user-images.githubusercontent.com/22696153/126870404-1ed65d98-297f-4f9e-9d59-730b721f4e82.png)
+An Azer token reacts to their heated body feature.
+
 ## How it Works
 The Token Says feature uses a set of Token Says rules that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
 * Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can also use your world's data too).
