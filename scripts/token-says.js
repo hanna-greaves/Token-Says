@@ -22,24 +22,7 @@
  * SOFTWARE.
  */
 
-/**
- * A single rule in our list of tokenSaysRules.
- * @typedef {Object} tokenSaysRule
- * @property {string} id - A unique ID to identify this rule.
- * @property {string} label - The title of the rule.
- * @property {string} documentType - The document type that triggers this rule.
- * @property {string} documentName - The actor or item name which triggers this rule.
- * @property {string} fileName - The file which is rolled or played based on this rule.
- * @property {string} fileType - Identifies the base record - currently rollTable or audio
- * @property {string} fileTitle - the unique name within the file title. For rollTables, this is the text said (rolltable bypassed) and for audio this is the audio file name within the playlist.
- * @property {string} name - Identifies the name of the token or actor
- * @property {string} compendiumName - The compendium associated with the file associated to this rule.
- * @property {number} likelihood - The threshold above which a random 1d100 will result in an escape from this rule.
- * @property {boolean} isActive - toggle for rule being active or not
- * @property {boolean} isActorName - toggle for rule being for the name of the actor or the token on the board
- */
-
- Hooks.once('init', async function() {  
+Hooks.once('init', async function() {  
     game.settings.registerMenu('token-says', "tokenSaysRules", {
         name: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
         label: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.label"),
@@ -51,7 +34,7 @@
     game.settings.register('token-says', 'isActive', {
         name: game.i18n.localize('TOKENSAYS.setting.isActive.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.isActive.description'),
-        scope: 'client',
+        scope: 'world',
         config: true,
         default: true,
         type: Boolean
@@ -60,7 +43,7 @@
     game.settings.register('token-says', 'suppressPrivateGMRoles', {
         name: game.i18n.localize('TOKENSAYS.setting.suppressPrivateGMRoles.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.suppressPrivateGMRoles.description'),
-        scope: 'client',
+        scope: 'world',
         config: true,
         default: true,
         type: Boolean
@@ -71,7 +54,7 @@
     game.settings.register('token-says', 'suppressChatBubble', {
         name: game.i18n.localize('TOKENSAYS.setting.suppressChatBubble.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.suppressChatBubble.description'),
-        scope: 'world',
+        scope: 'client',
         config: true,
         default: '',
         type: String,
@@ -81,7 +64,7 @@
     game.settings.register('token-says', 'suppressChatMessage', {
         name: game.i18n.localize('TOKENSAYS.setting.suppressChatMessage.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.suppressChatMessage.description'),
-        scope: 'world',
+        scope: 'client',
         config: true,
         default: '',
         type: String,
@@ -124,13 +107,14 @@
     }); 
     
     Hooks.on("createChatMessage", (message, options, user) => {
-        tokenSays.says(message, user);
+        if(message.data){tokenSaysWorkflow._says(message.data, user, {hook:"createChatMessage"} );}
         return true;
       })    
-    
-    tokenSays.initialize();
  });
 
+ /**
+  * Register items and add hooks for items that need modules installed
+  */
  Hooks.once('ready', async function() {
     let audioCompendiumOps = {'': ''};
     let audioCompendiums = game.packs.filter((x) => x.metadata.entity == "Playlist").map((item) => {return {label: item.title, value: item.collection}}); 
@@ -178,7 +162,39 @@
         choices: rollCompendiumOps
     });  
 
+    game.socket.on("module.token-says", async (inSays) => {
+        let saysToken = canvas.tokens.get(inSays.token);
+        tokenSays.log(false,'Socket Call... ', {inSays: inSays, foundToken: saysToken});
+        await canvas.hud.bubbles.say(saysToken, inSays.says, false);
+      });
+
+    
+    const hasMQ = game.modules.get("midi-qol");
+    if (hasMQ){
+        tokenSays.log(false,'Module Support ', 'Midi-Qol Support Activated');
+        Hooks.on("midi-qol.AttackRollComplete", (data) => {
+            if(data){tokenSaysWorkflow._says(data, game.user.id, {hook:"midi-qol.AttackRollComplete"});}
+            tokenSays.log(false,'Attack Roll Complete ', data);
+            return true;
+        });
+        Hooks.on("midi-qol.DamageRollComplete", (data) => {
+            if(data){tokenSaysWorkflow._says(data, game.user.id, {hook:"midi-qol.DamageRollComplete"});}
+            tokenSays.log(false,'Damage Roll Complete ', data);
+            return true;
+        });
+    }
+
+    tokenSays.initialize();
  });
+
+/**
+ * Register debug flag with developer mode's custom hook
+ */
+ Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
+    registerPackageDebugFlag(tokenSays.ID);
+});
+
+
 /**
  * A class which holds some constants for tokenSays
  */
@@ -213,18 +229,53 @@ class tokenSays {
     }
 
     /**
+     * API call allow for call from macro
+     * @param {token} token - id of the token
+     * @param  {actor} actor - id of the actor
+     * @param {string} actionName - the name of the action that. Should match the token says rule Action Name
+    */
+    static async says(token, actor, actionName) {
+        let tToken; 
+        if(token){tToken = game.canvas.scene.tokens.get(token)}
+        let actorId = actor;
+        if(!actor){actorId = tToken.actor.id}
+        if(!actor && !token){return;}
+
+        let alias = '';
+        if(tToken){alias = tToken.name}
+        else {alias = game.actors.get(actorId).name}
+        let scene = game.scenes.current.id;
+        let user = game.userId;
+        let message = new ChatMessage;
+        message.data.speaker = {scene: scene, actor: actorId, token: token, alias: alias};
+        tokenSays.log(false,'Macro Generated Rule... ', {message, user, documentType: "macro", documentName: actionName});
+        return await tokenSaysWorkflow._says(message.data, user, {documentType: "macro", documentName: actionName});
+    }
+}
+
+/**
+ * A class which handles the workflow
+ */
+ class tokenSaysWorkflow {
+    /**
      * Method that workflows the intake of chat message, parsing, escaping of feature,
      * finding of matching rule condition, and, on match, generation of token says event
-     * @param {ChatMessage} message - the incoming chat message
+     * @param {ChatMessage.data} message - the incoming chat message data
      * @param  {user} user - the user for which the chat message has generated
+     * @param {object} options - other options
     */
-    static async says(message, user){
-        if(this._escapeTokenSays(message, user)){return;}
+    static async _says(message, user, options){
+        if(this._escapeTokenSays(message, user, options)){return;}
 
-        const tokenName = message.data.speaker.alias;
-        const actorId = message.data.speaker.actor;
+        const tokenName = message.speaker.alias;
+        const actorId = message.speaker.actor;
         const actorName = game.actors.get(actorId).name;
-        const parseData = this._parseChatMessage(message);
+        let parseData;
+        if(options.hook==="createChatMessage") {
+            parseData = this._parseChatMessage(message);
+        } else {
+            parseData = this._parseHook(message, options);
+        }
         const documentType = parseData.documentType;
         const documentName = parseData.documentName;
         let finalSays = '';
@@ -253,23 +304,26 @@ class tokenSays {
     /**
      * Performs escape of token says if certain game settings are matched. Settings may be world or client.
      * Returns true if an escape should be made
-     * @param {ChatMessage} message - the incoming chat message
+     * @param {ChatMessage.data} message - the incoming chat message data
      * @param  {user} user - the user for which the chat message has generated
+     * @param {object} options
     */
-    static _escapeTokenSays(message, user) {
+    static _escapeTokenSays(message, user, options) {
         let escape = false;
-        if (message.data.flags.TOKENSAYS?.cancel){escape = true} //escape if chat generated by tokenSays (avoid loop)
-        else if (game.user?.id !== user){escape = true}//escape if not chat generated by the invocation
+        if (message.flags?.TOKENSAYS?.cancel){escape = true;} //escape if chat generated by tokenSays (avoid loop)
+        else if (game.user?.id !== user){escape = true;}//escape if not chat generated by the invocation
+        else if(!message.speaker){escape = true;}//escape if message data has no speaker
         else {tokenSays.log(false, 'Checking message and game level escape conditions... ', {message});}
 
+        
         if(!escape && !game.settings.get('token-says','isActive')){//escape if token says is not active
             tokenSays.log(false, 'Settings ', 'Token Says is set to Inactive'); 
             escape = true;
         } 
-        else if (game.settings.get('token-says','suppressPrivateGMRoles') && message.data.whisper.length){//escape if private gm roll based on settings
+        else if (game.settings.get('token-says','suppressPrivateGMRoles') && (message.whisper?.length || message.whisperAttackCard)){//escape if private gm roll based on settings
             tokenSays.log(false, 'Settings ', 'Private GM Roll to be escaped'); 
             escape = true;
-        }
+        } 
         return escape;
     }
 
@@ -277,9 +331,10 @@ class tokenSays {
      * Performs escape of token says if certain game settings are matched at the rule level. 
      * Returns true if an escape should be made
      * @param {tokenSaysData} rule - the incoming rule
+     * @param {string} component - a string that provides information on whether this is audio or rolltable or chat message
     */
     static _escapeTokenSaysRule(rule, component){
-        tokenSays.log(false, 'Checking rule level escape conditions... ', {rule});
+        tokenSays.log(false, 'Checking rule level escape conditions for ' + component + '... ', {rule});
         let escape = false;
         if(component = 'audio' && rule.fileType === 'audio' && game.settings.get('token-says', 'suppressAudio')){//escape if suppress audio is set on configuration
             tokenSays.log(false, 'Settings ', 'Token Says is set to Inactive'); 
@@ -314,10 +369,10 @@ class tokenSays {
 
     /**
      * Method that parses the message to attempt to determine what action the token or actor just did
-     * @param {ChatMessage} message - the incoming chat message
+     * @param {ChatMessage.data} message - the incoming chat message data
     */
     static _parseChatMessage(message){
-        const flags = message.data.flags;
+        const flags = message.flags;
         tokenSays.log(false, 'Parsing message... Flags ', {flags});
         let documentType = ''; let documentName = ''; let f='';
         if(f=flags.dnd5e){
@@ -332,17 +387,58 @@ class tokenSays {
             } else if(f.roll?.type ==="damage" && f.roll?.itemId) {
                 documentType = 'damage'; documentName = this._findItemName(message);
             }
-        } else if (flags.core.initiativeRoll) {
+        } else if(f=flags['midi-qol']) {
+            if (f.type === 0){
+                documentType = 'flavor'; documentName =  message.flavor;           
+            } else if (f.type === 1){
+                documentType = 'hit'; documentName = this._findItemName(message);         
+            } else if (f.type === 2){
+                documentType = 'save'; documentName = this._findItemName(message);          
+            } else if (f.type === 3){
+                documentType = 'attack'; documentName = this._findItemName(message);         
+            } else if (f.type === 4){
+                documentType = 'damage'; documentName = this._findItemName(message);        
+            }
+        }
+        else if (flags.core?.initiativeRoll) {
             documentType = 'initiative'; 
         }   
-        else if(message.data.flavor !== ""){documentType = 'flavor'; documentName =  message.data.flavor;}
+        else if(message.flavor !== ""){documentType = 'flavor'; documentName =  message.flavor;}
         return {documentType, documentName}
     }
 
+     /**
+     * Method that parses a data passed in via a hooked operation that may or may not have the same structure as message data
+     * @param {object} message - the incoming chat message data
+     * @param {object} options - the name of the hook passing in this data
+    */
+    static _parseHook (message, options) {
+        tokenSays.log(false, 'Parsing hook... ', {message, options});
+        let documentType = ''; let documentName = ''; 
+        if (options.hook==="midi-qol.AttackRollComplete"){
+            documentType = 'attack'; documentName = this._findItemName(message);
+        } else if (options.hook==="midi-qol.DamageRollComplete"){
+            documentType = 'damage'; documentName = this._findItemName(message);
+        } else {documentType = options.documentType, documentName = options.documentName}
+        return {documentType, documentName}
+    }
+
+    /**
+     * Method that determines how best to find the item name, based on incoming data that has different structures
+     * @param {object} message - the incoming chat message data
+    */
     static _findItemName(message){
-        let itemName = ''; 
-        const act = game.actors.get(message.data.speaker.actor);
-        itemName = act.items.get(message.data.flags.dnd5e.roll.itemId).name;
+        let itemId = ''; const flags = message.flags;
+        const act = game.actors.get(message.speaker.actor);
+        if(flags){
+            if(flags.dnd5e){
+                itemId = flags.dnd5e.roll.itemId;
+                } 
+            else if (flags['midi-qol']) {
+                itemId = flags['midi-qol'].itemId;   
+            } 
+        } else {itemId = message.itemId}
+        const itemName = act.items.get(itemId).name;
         return  itemName
     }
 
@@ -362,7 +458,13 @@ class tokenSays {
         tokenSays.log(false,'Likelihood assessment... ', {says: theySay, roll: rolledResult, likelihood: likelihood});
         return {says: theySay, roll: rolledResult}
     }
-      
+    
+    /**
+     * Method that performs the rolltable find and execute then calls the final outputs to chat 
+     * @param {string} compendium - the compendium name, either from the rule or the default
+     * @param {tokenSaysRule} rule 
+     * @param {object} message - the incoming message data, with differing possible structures
+    */
     static async rollCharacterSaysTable(compendium, rule, message){
         //use file title as the words to say if not blank
         let finalSays = rule.fileTitle;
@@ -383,8 +485,8 @@ class tokenSays {
         }
 
         //variables to facilitate gui outputs
-        let actor = game.actors.get(message.data.speaker.actor);
-        let speaker = message.data.speaker;
+        let actor = game.actors.get(message.speaker.actor);
+        let speaker = message.speaker;
         let token = canvas.tokens.get(speaker.token); 
         
         //output chat message and chat bubble
@@ -395,6 +497,12 @@ class tokenSays {
         return finalSays;
     }
 
+    /**
+     * Method that performs the playlist find and execute then calls the final outputs to chat and audio
+     * @param {string} compendium - the compendium name, either from the rule or the default
+     * @param {tokenSaysRule} rule 
+     * @param {object} message - the incoming message data, with differing possible structures
+    */
     static async playCharacterSaysAudio(compendium, rule, message){
         //get playlist
         let playlist;
@@ -412,7 +520,7 @@ class tokenSays {
         if(!rule.fileTitle){
             const rolledResult = await new Roll(`1d`+ playlist.data.sounds.size).roll().result;
             let i = 1; 
-            for (let key of playlist.data.sounds) {console.log(i); console.log(rolledResult); if (i++ == rolledResult) {audioFile = key;  break;}}
+            for (let key of playlist.data.sounds) {if (i++ == rolledResult) {audioFile = key;  break;}}
         } else {audioFile = playlist.sounds.find(p=>p.name === rule.fileTitle)}
 
         //generate audio
@@ -420,8 +528,8 @@ class tokenSays {
 
         //variables to facilitate gui outputs
 
-        let actor = game.actors.get(message.data.speaker.actor);
-        let speaker = message.data.speaker;
+        let actor = game.actors.get(message.speaker.actor);
+        let speaker = message.speaker;
         let token = canvas.tokens.get(speaker.token);
         let finalSays = "............";
 
@@ -433,6 +541,11 @@ class tokenSays {
         return finalSays;
     }
 
+    /**
+     * Method that executes the chat message 
+     * @param {object} messageData - An object holding 4 key names - created by the upstream function
+     * @param {tokenSaysRule} rule 
+    */
     static _sayChatMessage(messageData, rule) {
         if(this._escapeTokenSaysRule(rule, 'chat message')){return false;}
         let img = '';
@@ -443,6 +556,8 @@ class tokenSays {
         }
         
         const finalMessage = '<div class="token-says chat-window"">'+ img + '<div class="what-is-said">"' + messageData.says + '"</div></div>';
+
+        //const polyG = game.modules.get("polyglot");
         ChatMessage.create({
             speaker: messageData.speaker,
             content : finalMessage,
@@ -451,12 +566,28 @@ class tokenSays {
         return true;
     }
 
+    /**
+     * Method that executes the chat bubble 
+     * @param {object} messageData - An object holding 4 key names - created by the upstream function
+     * @param {tokenSaysRule} rule 
+    */
     static async _sayChatBubble(messageData, rule) {
+        if(!messageData.token){return false;}
         if(this._escapeTokenSaysRule(rule, 'chat bubble')){return false;}
-        await new ChatBubbles().say(messageData.token, messageData.says, false);
+        
+        game.socket.emit("module.token-says", {
+            token: messageData.token.id,
+            says: messageData.says
+        });
+        await canvas.hud.bubbles.say(messageData.token, messageData.says, false);
         return true;
     }
 
+    /**
+     * Method that executes the playlist 
+     * @param {object} audioFile - the song from a playlist
+     * @param {tokenSaysRule} rule 
+    */
     static _sayAudio(audioFile, rule) {
         if(!audioFile?.path){
             tokenSays.log(false, 'No Audio File Path ', audioFile); 
@@ -469,11 +600,22 @@ class tokenSays {
 }
 
 /**
- * Register debug flag with developer mode's custom hook
+ * Class that stores all of the rules and that CRUDS them
+ * A single rule in our list of tokenSaysRules 
+ * @typedef {Object} tokenSaysRule
+ * @property {string} id - A unique ID to identify this rule.
+ * @property {string} label - The title of the rule.
+ * @property {string} documentType - The document type that triggers this rule.
+ * @property {string} documentName - The actor or item name which triggers this rule.
+ * @property {string} fileName - The file which is rolled or played based on this rule.
+ * @property {string} fileType - Identifies the base record - currently rollTable or audio
+ * @property {string} fileTitle - the unique name within the file title. For rollTables, this is the text said (rolltable bypassed) and for audio this is the audio file name within the playlist.
+ * @property {string} name - Identifies the name of the token or actor
+ * @property {string} compendiumName - The compendium associated with the file associated to this rule.
+ * @property {number} likelihood - The threshold above which a random 1d100 will result in an escape from this rule.
+ * @property {boolean} isActive - toggle for rule being active or not
+ * @property {boolean} isActorName - toggle for rule being for the name of the actor or the token on the board
  */
-Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
-    registerPackageDebugFlag(tokenSays.ID);
-});
 
 class tokenSaysData {
     constructor(fileType) {

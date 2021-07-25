@@ -1,24 +1,31 @@
 {
-    "authors": [{
-        "name": "dnapolitano"
-    }],
+    "authors": [
+        {
+            "name": "dnapolitano"
+        }
+    ],
     "description": "Make tokens speak dialog or audio based on in game actions.",
     "languages": [
         {
-          "lang": "en",
-          "name": "English",
-          "path": "languages/en.json"
+            "lang": "en",
+            "name": "English",
+            "path": "languages/en.json"
         }
-      ],
-    "minimumCoreVersion": "0.8.8",
+    ],
+    "minimumCoreVersion": "0.8.6",
+    "compatibleCoreVersion": "0.8.8",
     "name": "token-says",
     "scripts": [
         "scripts/token-says.js",
-        "scripts/modules/rules-app.js"
+        "scripts/rules-app.js"
     ],
+    "socket": true,
     "styles": [
         "styles/token-says.css"
     ],
     "title": "Token Says",
-    "version": "0.0.1"
+    "version": "0.0.3",
+    "url": "https://github.com/napolitanod/Token-Says",
+    "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
+    "download": "https://github.com/napolitanod/Token-Says/releases/download/0.0.3/module.zip"
 }
