@@ -1,5 +1,5 @@
 # Token-Says
-When the tokens do something, have them say something... sometimes.
+Bring some penache into your world. With Token Says, when the tokens DO something they also SAY something... at least sometimes. I mean, they're bold and brave, but they're not cocky.
 
 
 ![image](https://user-images.githubusercontent.com/22696153/126870404-1ed65d98-297f-4f9e-9d59-730b721f4e82.png)
