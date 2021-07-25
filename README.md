@@ -5,6 +5,9 @@ When the tokens do something, have them say something... sometimes.
 ![image](https://user-images.githubusercontent.com/22696153/126870404-1ed65d98-297f-4f9e-9d59-730b721f4e82.png)
 An Azer token reacts to their heated body feature.
 
+# Alpha (WARNING)
+This module is in alpha. Use at your own risk for the time being. There may be significant changes to the API or functions or data structure as feature use becomes known. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E.
+
 ## How it Works
 The Token Says feature uses a set of Token Says rules that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
 * Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can also use your world's data too).
@@ -70,6 +73,8 @@ This is the compendium that will be accessed by default when determining where t
 ### Default Rollable Table Compendium
 This is the compendium that will be accessed by default when determining where the rule's audio file is stored. Individual rules may override this default. If a rule's compendium is left blank then the default compendium is used.
 
-
-# Alpha
-This module is in alpha. Use at your own risk. I am not responsible for entire loss of worlds and data.
+# API / Macro Use
+The tokenSays.says(token, actor, actionName) function is made available for use within you macros and scripts. To use this function you must have Token Says installed as a module and active and must have a rule with action type = "Macro (API)" with an token/actor name and action name that match what is passed into the function.
+* token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
+* actor (optional) - the actor.id. Can be derived from token if not provided.
+* actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
