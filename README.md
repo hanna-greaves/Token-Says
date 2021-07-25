@@ -78,8 +78,14 @@ This is the compendium that will be accessed by default when determining where t
 ### Default Rollable Table Compendium
 This is the compendium that will be accessed by default when determining where the rule's audio file is stored. Individual rules may override this default. If a rule's compendium is left blank then the default compendium is used.
 
-# API / Macro Use
+## API / Macro Use
 The tokenSays.says(token, actor, actionName) function is made available for use within you macros and scripts. To use this function you must have Token Says installed as a module and active and must have a rule with action type = "Macro (API)" with an token/actor name and action name that match what is passed into the function.
 * token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
+
+## Acknowledgements
+* Thank you to Calego for their walkthrough on Foundry VTT module building (https://hackmd.io/@akrigline/ByHFgUZ6u/%2FNBub2oFIT6yeh4NlOGTVFw), this helped me quickly pick up the  basics. 
+* If you use Monk's Enhanced Journal you'll see that the layout on one of my forms shares inspiration (and some CSS) from his ironmonk's module (https://github.com/ironmonk88)
+* Thank you to everybody in the League of Extraordinary Developers Discord for their assistance in answering questions and troubleshooting
+
