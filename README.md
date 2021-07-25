@@ -3,10 +3,15 @@ When the tokens do something, have them say something... sometimes.
 
 
 ![image](https://user-images.githubusercontent.com/22696153/126870404-1ed65d98-297f-4f9e-9d59-730b721f4e82.png)
-An Azer token reacts to their heated body feature.
+> An Azer token reacts to their heated body invocation (token art by Forgotten Adventures)
 
 # Alpha (WARNING)
 This module is in alpha. Use at your own risk for the time being. There may be significant changes to the API or functions or data structure as feature use becomes known. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E.
+
+## Why Use?
+Your players or DM may want to add a little spice to their Foundry VTT session. Perhaps they have a halfling archer that says little quips whenever they score a hit with their shortbow. Or perhaps they have a samurai warrior that expresses a teaching with each katana strike. Or perhaps the DM would like a lion's bite action to be coordinated with one of a number of possible roaring sounds on occasion. All of these things are possible with Token Says.
+
+The rule configurations for Token Says that govern who says what and under what circumstances live outside of any actor or item document, making it easy to add new rules, update exisitng ones, and delete or inactivate those rules you no longer want to have occur. Because what is said via chat message may be controlled by rollable tables, players with access to edit their own rollable tables may add, adjust and refine their character's phrases. Or make it simple and link to an existing compendium's rollable table! Don't think that halfling archer would come up with a quip every time? No sweat! Set a likelihood for how often a token will say a particular rule and Token Says will only say something that percent of the time.
 
 ## How it Works
 The Token Says feature uses a set of Token Says rules that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
