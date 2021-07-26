@@ -22,6 +22,9 @@
  * SOFTWARE.
  */
 
+
+var tokenSaysSettingsTab = 'token-says-roll-table';//tracks the current tab selected on settings config for rerendering 
+
 Hooks.once('init', async function() {  
     game.settings.registerMenu('token-says', "tokenSaysRules", {
         name: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
@@ -109,7 +112,15 @@ Hooks.once('init', async function() {
     Hooks.on("createChatMessage", (message, options, user) => {
         if(message.data){tokenSaysWorkflow._says(message.data, user, {hook:"createChatMessage"} );}
         return true;
-      })    
+      });
+    
+    //hook to ensure that, on token says settings render, the current tab is not lost
+    Hooks.on("renderApplication", (message, element, tabs) => {
+        if(message.id ==="token-says-rules"){
+            let tabToClick = 'a[data-tab='+tokenSaysSettingsTab+']';
+            $(tabToClick)[0].click();
+        }
+    })
  });
 
  /**
@@ -664,9 +675,21 @@ class tokenSaysData {
     }
 
     static getTokenSaysRuleChatMessage(tokenName, actorName, documentType, documentName){
+        const bypassNameTypes = ['initiative'];
         const allRules = this.allTokenSaysRules;
         for (var record in allRules) {
-            if (((allRules[record].isActorName && allRules[record].name === actorName) || (!allRules[record].isActorName && allRules[record].name === tokenName)) && allRules[record].documentType === documentType && (allRules[record].documentName === "" ||  allRules[record].documentName ===documentName)) {
+            if (
+                (
+                    (allRules[record].isActorName && allRules[record].name === actorName) 
+                    || (!allRules[record].isActorName && allRules[record].name === tokenName)
+                ) 
+                && allRules[record].documentType === documentType 
+                && (
+                    allRules[record].documentName === "" 
+                    || allRules[record].documentName ===documentName
+                    || bypassNameTypes.indexOf(documentType) !== -1
+                    )
+                ) {
               return allRules[record];
             }
         }
@@ -723,8 +746,10 @@ class tokenSaysData {
 
     static async deleteTokenSaysRule(tokenSaysRuleId) {
         const allRules = this.allTokenSaysRules;
+        let rule = allRules[tokenSaysRuleId]
         delete allRules[tokenSaysRuleId];
-        return await game.settings.set('token-says', 'rules', allRules);
+        await game.settings.set('token-says', 'rules', allRules);
+        return rule;
     }
 
     // delete all rules
