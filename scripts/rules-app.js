@@ -38,6 +38,9 @@ class TokenSaysSettingsConfig extends SettingsConfig{
       height : "auto",
       closeOnSubmit: false,
       submitOnChange: true, 
+      tabs : [
+        {navSelector: ".tabs", contentSelector: ".content", initial: tokenSaysSettingsTab}
+      ],
     };
 
     const mergedOptions = foundry.utils.mergeObject(defaults, overrides);
@@ -54,7 +57,7 @@ class TokenSaysSettingsConfig extends SettingsConfig{
     switch (action) {
       case 'create-audio': {
         const newRule =  await tokenSaysData.createTokenSaysAudioRule(); 
-        this.render();
+        this.render()
         tokenSays.TokenSaysRuleConfig.render(true, {tokenSaysRuleId: newRule.id});
         break;
       }
@@ -85,6 +88,14 @@ class TokenSaysSettingsConfig extends SettingsConfig{
   activateListeners(html) {
     super.activateListeners(html);
     html.on('click', "[data-action]", this._handleButtonClick.bind(this));
+    html.on('click',"[data-tab]", this._handleTabClick.bind(this))
+  }
+
+  //ensures that current tab selected isn't lost on rerender
+  async _handleTabClick (event) {
+    const clickedElement = $(event.currentTarget);
+    let clickedTab = clickedElement.data().tab;
+    if(clickedTab){tokenSaysSettingsTab=clickedTab;}
   }
 
   getData(options){
@@ -121,7 +132,7 @@ class TokenSaysRuleConfig extends FormApplication{
     };
 
     const mergedOptions = foundry.utils.mergeObject(defaults, overrides);
-    
+   
     return mergedOptions;
   }
 
@@ -142,32 +153,71 @@ class TokenSaysRuleConfig extends FormApplication{
       "skill":  "TOKENSAYS.document-type-options.skill.label"
     }
 
-    /*const documentNameOps = {
-      "ability": {
-        "str": "TOKENSAYS.document-type-options.ability.str",
-        "dex": "TOKENSAYS.document-type-options.ability.dex",
-        "con": "TOKENSAYS.document-type-options.ability.con",
-        "wis": "TOKENSAYS.document-type-options.ability.wis",
-        "int": "TOKENSAYS.document-type-options.ability.int",
-        "cha": "TOKENSAYS.document-type-options.ability.cha"
-        },
-      "save" : {
-        "str": "TOKENSAYS.document-type-options.ability.str",
-        "dex": "TOKENSAYS.document-type-options.ability.dex",
-        "con": "TOKENSAYS.document-type-options.ability.con",
-        "wis": "TOKENSAYS.document-type-options.ability.wis",
-        "int": "TOKENSAYS.document-type-options.ability.int",
-        "cha": "TOKENSAYS.document-type-options.ability.cha"
-      },
-      "skill" : {
-        "ath": "TOKENSAYS.document-type-options.skill.ath",
-        "int": "TOKENSAYS.document-type-options.skill.itm"
-      }
-    }*/
+    const documentNameOps = {
+      "ability": game.dnd5e?.config.abilities,
+      "save" : game.dnd5e?.config.abilities,
+      "skill" : game.dnd5e?.config.skills
+    }
     
     if (sys === "dnd5e"){ return {...dnd5eDocumentTypeOps, ...universalTypeOps}} 
 
     return universalTypeOps;
+  }
+
+  _determineWorldDocumentNameOptions(documentType) {
+    const sys = game.world.data.system;
+
+    const universalTypeOps = {
+    }
+
+    const dnd5eDocumentNameOps = {
+      "ability": game.dnd5e?.config.abilities,
+      "save" : game.dnd5e?.config.abilities,
+      "skill" : game.dnd5e?.config.skills
+    }
+    
+    let allOps = {};
+    if (sys === "dnd5e"){ allOps = {...dnd5eDocumentNameOps, ...universalTypeOps}} 
+
+    return allOps[documentType];
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find('select').change((event) => {
+      if(event.currentTarget.id === "token-says-documenttype-value") {
+        let documentType = event.currentTarget.value;
+        this._refreshDocumentNameOptions(documentType);
+      }
+    });
+  }
+  
+  async _refreshDocumentNameOptions(documentType){
+    const documentName = document.getElementById("token-says-documentname-value").value
+    let documentNameSelectHTML = document.getElementById("token-says-documentname");
+    documentNameSelectHTML.innerHTML = this._createNameOptionsHTML(documentType, documentName);
+  }
+
+  _createNameOptionsHTML(documentType, documentName) {
+    const inputTypes = ['macro', 'flavor', 'attack', 'damage', 'initiative', ''];
+    let finalHTML = '';
+    const optionListOptions  = this._determineWorldDocumentNameOptions(documentType);
+    if (inputTypes.indexOf(documentType) === -1){
+      let optionList = '<option value=""></option>';
+      for (var option in optionListOptions) {
+        let selected = '';
+        if (option === documentName) {
+            selected = ' selected '
+          }
+        optionList += '<option value="'+ option +'" ' + selected + '>' + optionListOptions[option] + '</option>';
+      }
+      finalHTML = '<select id="token-says-documentname-value" name="documentName" value="' + documentName + '">'+ optionList + '</select>'  
+    } else {
+      let disabled = ''
+      if(documentType ==='initiative'){disabled = ' disabled '}
+      finalHTML = '<input id="token-says-documentname-value" type="text" name="documentName" value="' + documentName + '"  data-dtype="String" ' + disabled + '/>'
+    }
+    return finalHTML
   }
 
   getData(options){
@@ -183,7 +233,7 @@ class TokenSaysRuleConfig extends FormApplication{
     const documentTypeOps = this._determineWorldOptions();
     tsd.documentTypeOptions = documentTypeOps;
     tsd.compendiumList = comp;
-    //tsd.documentNameOptions = documentNameOps[tsd.documentType];
+    tsd.documentNameOptions = this._createNameOptionsHTML(tsd.documentType, tsd.documentName);
     const dataToSend =  {
       tokenSaysRule: {[ruleId]: tsd} 
     } 
@@ -196,4 +246,5 @@ class TokenSaysRuleConfig extends FormApplication{
     await tokenSaysData.updateTokenSaysRule(tokenSaysRuleId, expandedData);
     tokenSays.TokenSaysSettingsConfig.refresh();
   }
+
 }

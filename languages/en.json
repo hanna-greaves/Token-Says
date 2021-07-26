@@ -31,7 +31,8 @@
     "setting.rules.description": "A list of all rules entered for this world.",
     "setting.rollableTableRules": "Rollable Table Rules",
     "setting.audioFileRules": "Audio File Rules",
-    "setting.subheader.name": "Rule name",
+    "setting.subheader.rolltablename": "Rollable Table Rule Name",
+    "setting.subheader.audioname": "Playlist Rule Name",
     "setting.subheader.isActive": "Active",
     "add": "Add",
     "addRule": "add",
@@ -46,7 +47,7 @@
     "setting.rule.documentType.label": "Action Type",
     "setting.rule.documentType.description": "The type of triggering action.",
     "setting.rule.documentName.label": "Action Name",
-    "setting.rule.documentName.description": "The trigger action. Leave blank to include all actions by this character for the given action type.",
+    "setting.rule.documentName.description": "The trigger action. Typically this is the name of the item. Leave blank to include all actions by this character for the given action type.",
     "setting.rule.fileName.label": "Source Name",
     "setting.rule.fileName.description": "The source that determines what the token will say. For rollable tables, this is the table name. For audio, this is the playlist, and for text, this is what the token says.",
     "setting.rule.fileTitle.label": "Token Says",
@@ -66,15 +67,6 @@
     "document-type-options.ability.label": "Ability Check",
     "document-type-options.save.label": "Saving Throw",
     "document-type-options.macro.label": "Macro (API)",
-    "document-type-options.skill.label": "Skill",
-    "document-type-options.ability.str": "Strength",
-    "document-type-options.ability.dex": "Dexterity",
-    "document-type-options.ability.con": "Constitution",
-    "document-type-options.ability.wis": "Wisdom",
-    "document-type-options.ability.int": "Intelligence",
-    "document-type-options.ability.cha": "Charisma",
-    "document-type-options.skill.itm": "Intimidation",
-    "document-type-options.skill.ath": "Athletics"
-
+    "document-type-options.skill.label": "Skill"
   }
 }

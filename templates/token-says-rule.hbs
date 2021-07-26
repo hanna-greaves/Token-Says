@@ -37,7 +37,7 @@
                     <span>{{localize 'TOKENSAYS.setting.rule.documentType.label'}}</span>
                 </label>
                 <div class="rule-value form-fields">
-                    <select name="documentType" value="this.documentType">  
+                    <select id="token-says-documenttype-value" name="documentType" value="this.documentType">  
                         <option value=""></option>
                         {{selectOptions this.documentTypeOptions selected=this.documentType localize=true}}
                     </select>
@@ -48,8 +48,8 @@
                 <label>
                     <span>{{localize 'TOKENSAYS.setting.rule.documentName.label'}}</span>
                 </label>
-                <div class="rule-value form-fields">
-                    <input type="text" name="documentName" value="{{this.documentName}}"  data-dtype="String"/>
+                <div id="token-says-documentname" class="rule-value form-fields">
+                    {{{this.documentNameOptions}}}
                 </div>
                 <p class="notes">{{localize 'TOKENSAYS.setting.rule.documentName.description'}}</p>
             </div>
