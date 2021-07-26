@@ -84,6 +84,9 @@ The tokenSays.says(token, actor, actionName) function is made available for use 
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
 
+## Enhancements
+See a list of upcoming enhancements on the project board https://github.com/napolitanod/Token-Says/projects/1
+
 ## Acknowledgements
 * Thank you to Calego for their walkthrough on Foundry VTT module building (https://hackmd.io/@akrigline/ByHFgUZ6u/%2FNBub2oFIT6yeh4NlOGTVFw), this helped me quickly pick up the  basics. 
 * If you use Monk's Enhanced Journal you'll see that the layout on one of my forms shares inspiration (and some CSS) from his ironmonk's module (https://github.com/ironmonk88)
