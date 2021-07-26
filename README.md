@@ -1,7 +1,7 @@
 ![Latest Release Download Count](https://img.shields.io/github/downloads/napolitanod/Token-Says/latest/module.zip)
 [![Foundry Hub Endorsements](https://img.shields.io/endpoint?logoColor=white&url=https%3A%2F%2Fwww.foundryvtt-hub.com%2Fwp-json%2Fhubapi%2Fv1%2Fpackage%2Ftoken-says%2Fshield%2Fendorsements)](https://www.foundryvtt-hub.com/package/token-says/)
 
-Firt released on 7/26/2021!
+First released on 7/26/2021!
 
 # Token-Says
 Bring some penache into your world. With Token Says, when the tokens DO something they also SAY something... at least sometimes. I mean, they're bold and brave, but they're not cocky.
