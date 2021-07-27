@@ -1,7 +1,8 @@
 {
+    "author": "napolitanod",
     "authors": [
         {
-            "name": "dnapolitano"
+            "name": "napolitanod"
         }
     ],
     "description": "Make tokens speak dialog or audio based on in game actions.",
@@ -24,8 +25,8 @@
         "styles/token-says.css"
     ],
     "title": "Token Says",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "url": "https://github.com/napolitanod/Token-Says",
     "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-    "download": "https://github.com/napolitanod/Token-Says/releases/download/0.0.5/module.zip"
+    "download": "https://github.com/napolitanod/Token-Says/releases/download/0.0.6/module.zip"
 }

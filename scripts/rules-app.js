@@ -99,9 +99,11 @@ class TokenSaysSettingsConfig extends SettingsConfig{
   }
 
   getData(options){
+    const tokenSaysRollTable = Object.values(tokenSaysData.allTokenSaysRollTableRules).sort((a, b) => a.label.localeCompare(b.label));
+    const tokenSaysAudio = Object.values(tokenSaysData.allTokenSaysAudioRules).sort((a, b) => a.label.localeCompare(b.label));
     return {
-      tokenSaysRollTable: tokenSaysData.allTokenSaysRollTableRules,
-      tokenSaysAudio: tokenSaysData.allTokenSaysAudioRules
+      tokenSaysRollTable: tokenSaysRollTable,
+      tokenSaysAudio: tokenSaysAudio
     }
   }
 

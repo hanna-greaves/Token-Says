@@ -24,6 +24,8 @@
 
 
 var tokenSaysSettingsTab = 'token-says-roll-table';//tracks the current tab selected on settings config for rerendering 
+var tokenSaysHasPolyglot = false;
+var tokenSaysHasMQ = false;
 
 Hooks.once('init', async function() {  
     game.settings.registerMenu('token-says', "tokenSaysRules", {
@@ -176,12 +178,12 @@ Hooks.once('init', async function() {
     game.socket.on("module.token-says", async (inSays) => {
         let saysToken = canvas.tokens.get(inSays.token);
         tokenSays.log(false,'Socket Call... ', {inSays: inSays, foundToken: saysToken});
-        await canvas.hud.bubbles.say(saysToken, inSays.says, false);
+        await canvas.hud.bubbles.say(saysToken, inSays.says, inSays.emote);
       });
 
-    
-    const hasMQ = game.modules.get("midi-qol");
-    if (hasMQ){
+    tokenSays.initialize();
+
+    if (tokenSaysHasMQ){
         tokenSays.log(false,'Module Support ', 'Midi-Qol Support Activated');
         Hooks.on("midi-qol.AttackRollComplete", (data) => {
             if(data){tokenSaysWorkflow._says(data, game.user.id, {hook:"midi-qol.AttackRollComplete"});}
@@ -194,8 +196,6 @@ Hooks.once('init', async function() {
             return true;
         });
     }
-
-    tokenSays.initialize();
  });
 
 /**
@@ -237,6 +237,8 @@ class tokenSays {
     static initialize() {
         this.TokenSaysRuleConfig = new TokenSaysRuleConfig();
         this.TokenSaysSettingsConfig = new TokenSaysSettingsConfig();
+        if (game.modules.get("polyglot") && game.modules.get("polyglot")?.active){tokenSaysHasPolyglot = true} ;
+        if (game.modules.get("midi-qol") && game.modules.get("midi-qol")?.active){tokenSaysHasMQ = true} ;
     }
 
     /**
@@ -262,6 +264,8 @@ class tokenSays {
         tokenSays.log(false,'Macro Generated Rule... ', {message, user, documentType: "macro", documentName: actionName});
         return await tokenSaysWorkflow._says(message.data, user, {documentType: "macro", documentName: actionName});
     }
+
+    
 }
 
 /**
@@ -568,10 +572,10 @@ class tokenSays {
         
         const finalMessage = '<div class="token-says chat-window"">'+ img + '<div class="what-is-said">"' + messageData.says + '"</div></div>';
 
-        //const polyG = game.modules.get("polyglot");
         ChatMessage.create({
             speaker: messageData.speaker,
             content : finalMessage,
+            //type: CONST.CHAT_MESSAGE_TYPES.IC,
             flags: {TOKENSAYS: {cancel: true}}
         },{chatBubble : false})
         return true;
@@ -586,9 +590,20 @@ class tokenSays {
         if(!messageData.token){return false;}
         if(this._escapeTokenSaysRule(rule, 'chat bubble')){return false;}
         
+        let options;
+        if(tokenSaysHasPolyglot){
+            let language = ui.chat.element.find("select[name=polyglot-language]").val();
+            if (language === null) {
+                options = false
+            }
+            else{
+                options = {language: language}
+            }
+        } else {options = false}
         game.socket.emit("module.token-says", {
             token: messageData.token.id,
-            says: messageData.says
+            says: messageData.says,
+            emote: {emote: options}
         });
         await canvas.hud.bubbles.say(messageData.token, messageData.says, false);
         return true;
