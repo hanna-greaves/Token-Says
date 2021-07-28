@@ -68,6 +68,9 @@ By default a chat bubble is generated each time a Token Says rule is hit. Here y
 ### Suppress Token Says Chat Message (Client)
 By default a chat message is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules.
 
+### Audio Maximum Duration (World)
+Set a maximum duration (in seconds) for any audio tracks played by a Token Says rule. Any audio track that is longer than this duration will be faded out over the course of 1 second after this duration and then stopped. Useful for preventing mistakingly playing long running tracks, due to the fact that the audio plyed by Token Says cannot be cancelled while in session (without a macro).
+
 ### Suppress Token Says Audio (Client)
 Audio sounds caused by Token Says rules will not generate.
 

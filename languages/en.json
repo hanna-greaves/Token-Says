@@ -8,6 +8,8 @@
     "setting.suppressChatBubble.description": "Stops Token Says chat bubbles from invoking on tokens for the given rule configuration types.",
     "setting.suppressChatMessage.label": "Suppress Token Says Chat Messages",
     "setting.suppressChatMessage.description": "Stops Token Says messages from displaying in the chat log for the given rule configuration types.",
+    "setting.audioDuration.label": "Audio Maximum Duration",
+    "setting.audioDuration.description": "Set a maximum duration (in seconds) for any audio tracks played by Token Says. Helps prevent long running audio.",
     "setting.suppressAudio.label": "Suppress Token Says Audio",
     "setting.suppressAudio.description": "Stops Token Says audio from invoking.",
     "setting.suppressOptions.none": "Display For All Rules",

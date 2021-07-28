@@ -29,10 +29,10 @@
                         {{#each tokenSaysRollTable}}
                         <li class="rule flexrow " data-id="{{id}}" data-container="rules" draggable="true">
                             <div class="rule-name">
-                                <h4 style="white-space: normal;">{{label}}</h4>
+                                {{label}}
                             </div>
     
-                            <div class="rule-name rule-active">
+                            <div class="rule-active">
                                 <input type="checkbox" name="{{id}}.isActive" class="rule-active" data-dtype="Boolean" {{checked this.isActive}} />
                             </div>
     
@@ -67,10 +67,10 @@
                         {{#each tokenSaysAudio}}
                         <li class="rule flexrow " data-id="{{id}}" data-container="rules" draggable="true">
                             <div class="rule-name">
-                                <h4 style="white-space: normal;">{{label}}</h4>
+                                {{label}}
                             </div>
     
-                            <div class="rule-name rule-active">
+                            <div class="rule-active">
                                 <input type="checkbox" name="{{id}}.isActive" class="rule-active" data-dtype="Boolean" {{checked this.isActive}} />
                             </div>
     

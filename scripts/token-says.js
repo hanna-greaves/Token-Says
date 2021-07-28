@@ -76,6 +76,19 @@ Hooks.once('init', async function() {
         choices: choices
     });  
 
+    game.settings.register('token-says', 'audioDuration', {
+        name: game.i18n.localize('TOKENSAYS.setting.audioDuration.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.audioDuration.description'),
+        scope: 'world',
+        config: true,
+        default: 20,
+        type: Number,
+        range: {
+            min: 0,
+            max: 300,
+            step: 1
+        }
+    });
 
     game.settings.register('token-says', 'suppressAudio', {
         name: game.i18n.localize('TOKENSAYS.setting.suppressAudio.label'),
@@ -351,7 +364,10 @@ class tokenSays {
     static _escapeTokenSaysRule(rule, component){
         tokenSays.log(false, 'Checking rule level escape conditions for ' + component + '... ', {rule});
         let escape = false;
-        if(component = 'audio' && rule.fileType === 'audio' && game.settings.get('token-says', 'suppressAudio')){//escape if suppress audio is set on configuration
+        if(!rule.isActive){//escape if suppress audio is set on configuration
+            tokenSays.log(false, 'Rule Settings ', 'Token Says Rule is set to Inactive'); 
+            escape = true;
+        } else if(component = 'audio' && rule.fileType === 'audio' && game.settings.get('token-says', 'suppressAudio')){//escape if suppress audio is set on configuration
             tokenSays.log(false, 'Settings ', 'Token Says is set to Inactive'); 
             escape = true;
         } else if(component = 'chat bubble') {
@@ -620,7 +636,10 @@ class tokenSays {
             return false;
         }
         if(this._escapeTokenSaysRule(rule, 'audio')){return false;}
-        AudioHelper.play({src: audioFile.path, loop: false, autoplay: true}, true); 
+        const maxDuration = game.settings.get('token-says', 'audioDuration');
+        const sound = AudioHelper.play({src: audioFile.path, loop: false, autoplay: true}, true);
+        sound.schedule(() => sound.fade(0), maxDuration);//set a duration based on system preferences.
+        sound.schedule(() => sound.stop(), (maxDuration+1)); //stop once fade completes (1000 milliseconds default)
         return true;
     }
 }
