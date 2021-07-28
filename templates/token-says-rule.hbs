@@ -23,13 +23,13 @@
                 </div>
                 <p class="notes"></p>
             </div>
-            <div class="form-group">
+            <div class="form-group flexrow">
+                <div class="rule-value">
+                    <input type="checkbox" name="isActorName" data-dtype="Boolean" {{checked this.isActorName}} />
+                </div>
                 <label>
                     <span>{{localize 'TOKENSAYS.setting.rule.isActorName.label'}}</span>
                 </label>
-                <div class="rule-value form-fields">
-                    <input type="checkbox" name="isActorName" data-dtype="Boolean" {{checked this.isActorName}} />
-                </div>
                 <p class="notes">{{localize 'TOKENSAYS.setting.rule.isActorName.description'}}</p>
             </div>
             <div class="form-group">
@@ -93,13 +93,13 @@
                 </div>
                 <p class="notes">{{localize 'TOKENSAYS.setting.rule.likelihood.description'}}</p>
             </div>
-            <div class="form-group">
+            <div class="form-group flexrow">
+                <div class="rule-value">
+                    <input type="checkbox" name="isActive" data-dtype="Boolean" {{checked this.isActive}} />
+                </div>
                 <label>
                     <span>{{localize 'TOKENSAYS.setting.rule.isActive.label'}}</span>
                 </label>
-                <div class="rule-value form-fields">
-                    <input type="checkbox" name="isActive" data-dtype="Boolean" {{checked this.isActive}} />
-                </div>
                 <p class="notes"></p>
             </div>
         </div> 
