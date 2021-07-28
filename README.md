@@ -10,8 +10,8 @@ Bring some penache into your world. With Token Says, when the tokens DO somethin
 ![image](https://user-images.githubusercontent.com/22696153/126870404-1ed65d98-297f-4f9e-9d59-730b721f4e82.png)
 > An Azer token reacts to their heated body invocation (token art by Forgotten Adventures)
 
-# Alpha (WARNING)
-This module is in alpha. Use at your own risk for the time being. There may be significant changes to the API or functions or data structure as feature use becomes known. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E.
+# Beta (WARNING)
+This module is in beta. There may be additional changes to the API or functions or data structure as feature use becomes refined. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E (though confirmed to work in PF2E).
 
 ## Why Use?
 Your players or DM may want to add a little spice to their Foundry VTT session. Perhaps they have a halfling archer that says little quips whenever they score a hit with their shortbow. Or perhaps they have a samurai warrior that expresses a teaching with each katana strike. Or perhaps the DM would like a lion's bite action to be coordinated with one of a number of possible roaring sounds on occasion. All of these things are possible with Token Says.
