@@ -31,6 +31,8 @@
     "setting.tokenSaysRule.name": "Configure Rule",
     "setting.rules.label": "Rules",
     "setting.rules.description": "A list of all rules entered for this world.",
+    "setting.search.placeholder": "Search rules...",
+    "setting.search.clear": "clear search",
     "setting.rollableTableRules": "Rollable Table Rules",
     "setting.audioFileRules": "Audio File Rules",
     "setting.subheader.rolltablename": "Rollable Table Rule Name",

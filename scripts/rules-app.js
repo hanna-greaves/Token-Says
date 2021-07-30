@@ -1,9 +1,7 @@
 /*
  * MIT License
  * 
- * Copyright (c) 2020-2021 DnD5e Helpers Team
- *
- * Portions re-used with permission from Foundry Network
+ * Copyright (c) 2020-2021 Token Says Team and Contributers
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,13 +36,14 @@ class TokenSaysSettingsConfig extends SettingsConfig{
       height : "auto",
       closeOnSubmit: false,
       submitOnChange: true, 
+      tokenSaysCurrentSearch: null,
       tabs : [
         {navSelector: ".tabs", contentSelector: ".content", initial: tokenSaysSettingsTab}
       ],
     };
 
     const mergedOptions = foundry.utils.mergeObject(defaults, overrides);
-    
+
     return mergedOptions;
   }
 
@@ -57,13 +56,13 @@ class TokenSaysSettingsConfig extends SettingsConfig{
     switch (action) {
       case 'create-audio': {
         const newRule =  await tokenSaysData.createTokenSaysAudioRule(); 
-        this.render()
+        this.refresh();
         tokenSays.TokenSaysRuleConfig.render(true, {tokenSaysRuleId: newRule.id});
         break;
       }
       case 'create-rolltable': {
         const newRule =  await tokenSaysData.createTokenSaysRollTableRule(); 
-        this.render();
+        this.refresh();
         tokenSays.TokenSaysRuleConfig.render(true, {tokenSaysRuleId: newRule.id});
         break;
       }
@@ -73,7 +72,7 @@ class TokenSaysSettingsConfig extends SettingsConfig{
       }
       case 'delete': {
         await tokenSaysData.deleteTokenSaysRule(tokenSaysRuleId);
-        this.render();
+        this.refresh();
         break;
       }
       default:
@@ -89,6 +88,8 @@ class TokenSaysSettingsConfig extends SettingsConfig{
     super.activateListeners(html);
     html.on('click', "[data-action]", this._handleButtonClick.bind(this));
     html.on('click',"[data-tab]", this._handleTabClick.bind(this))
+    html.on('click',"#token-says-search-clear", this._clearFilter.bind(this))
+    html.on('input', '#token-says-search-input', this._preFilter.bind(this))
   }
 
   //ensures that current tab selected isn't lost on rerender
@@ -103,13 +104,56 @@ class TokenSaysSettingsConfig extends SettingsConfig{
     const tokenSaysAudio = Object.values(tokenSaysData.allTokenSaysAudioRules).sort((a, b) => a.label.localeCompare(b.label));
     return {
       tokenSaysRollTable: tokenSaysRollTable,
-      tokenSaysAudio: tokenSaysAudio
+      tokenSaysAudio: tokenSaysAudio,
+      tokenSaysCurrentSearch: tokenSaysCurrentSearch
     }
+  }
+
+  _preFilter(search) {
+    let searchTerm = search.target.value;
+    tokenSaysCurrentSearch = searchTerm;
+    this._filter(searchTerm);
+  }
+
+  _filter(searchTerm) {
+    const clear = document.getElementById("token-says-search-clear");
+    const searchBox = document.getElementById("token-says-search-input");
+    function lower(phrase) {
+      return phrase.toLowerCase();
+    }
+
+    if(searchTerm != ''){
+      searchTerm = lower(searchTerm);
+      clear.classList.remove('hidden');
+      searchBox.classList.add('outline');
+    } else {
+      clear.classList.add('hidden');
+      searchBox.classList.remove('outline');
+    }
+
+    $("form.token-says").find(".rule .rule-name").each(function() {
+      let label = lower(this.innerText);
+      if (label.search(searchTerm) > -1) {
+        $(this).closest('.rule').show();
+      } else {
+        $(this).closest('.rule').hide();
+      }
+    });
+  }
+
+  _clearFilter(clear){
+    clear.preventDefault();
+    let search = document.getElementById("token-says-search-input")
+    search.value = '';
+    search.innerHTML = '';
+    tokenSaysCurrentSearch = '';
+    this._filter('');
   }
 
   async _updateObject(event, formData) {
     const clickedElement = $(event.currentTarget);
     const idToUpdate = clickedElement.parents('[data-id]')?.data()?.id; 
+    if(!idToUpdate){return};
     const expandedData = foundry.utils.expandObject(formData); 
     const statusUpdate = expandedData[idToUpdate].isActive;
     await tokenSaysData.updateTokenSaysRuleStatus(idToUpdate, statusUpdate);

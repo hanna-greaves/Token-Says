@@ -1,7 +1,7 @@
 /*
  * MIT License
  * 
- * Copyright (c) 2020-2021 DnD5e Helpers Team and Contributors
+ * Copyright (c) 2020-2021 Token Says Team and Contributors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 var tokenSaysSettingsTab = 'token-says-roll-table';//tracks the current tab selected on settings config for rerendering 
 var tokenSaysHasPolyglot = false;
 var tokenSaysHasMQ = false;
+var tokenSaysCurrentSearch = '';
 
 Hooks.once('init', async function() {  
     game.settings.registerMenu('token-says', "tokenSaysRules", {
@@ -99,22 +100,6 @@ Hooks.once('init', async function() {
         type: Boolean
     });
 
-    /*
-    game.settings.register('token-says', 'chatBubbleSize', {
-        name: game.i18n.localize('TOKENSAYS.setting.chatBubbleSize.label'),
-        hint: game.i18n.localize('TOKENSAYS.setting.chatBubbleSize.description'),
-        scope: 'world',
-        config: true,
-        range: {             
-          min: 1,
-          max: 10,
-          step: 1
-        },
-        default: 1,
-        type: Number
-    });  
-    */
-
     game.settings.register('token-says', 'rules', {
         name: game.i18n.localize('TOKENSAYS.setting.rules.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.rules.description'),
@@ -134,6 +119,7 @@ Hooks.once('init', async function() {
         if(message.id ==="token-says-rules"){
             let tabToClick = 'a[data-tab='+tokenSaysSettingsTab+']';
             $(tabToClick)[0].click();
+            message._filter(tokenSaysCurrentSearch);
         }
     })
  });
@@ -577,7 +563,7 @@ class tokenSays {
      * @param {object} messageData - An object holding 4 key names - created by the upstream function
      * @param {tokenSaysRule} rule 
     */
-    static _sayChatMessage(messageData, rule) {
+    static async _sayChatMessage(messageData, rule) {
         if(this._escapeTokenSaysRule(rule, 'chat message')){return false;}
         let img = '';
         if(rule.isActorName && messageData.actor?.data.img){
@@ -630,14 +616,14 @@ class tokenSays {
      * @param {object} audioFile - the song from a playlist
      * @param {tokenSaysRule} rule 
     */
-    static _sayAudio(audioFile, rule) {
+    static async _sayAudio(audioFile, rule) {
         if(!audioFile?.path){
             tokenSays.log(false, 'No Audio File Path ', audioFile); 
             return false;
         }
         if(this._escapeTokenSaysRule(rule, 'audio')){return false;}
         const maxDuration = game.settings.get('token-says', 'audioDuration');
-        const sound = AudioHelper.play({src: audioFile.path, loop: false, autoplay: true}, true);
+        const sound = await AudioHelper.play({src: audioFile.path, loop: false, autoplay: true}, true);
         sound.schedule(() => sound.fade(0), maxDuration);//set a duration based on system preferences.
         sound.schedule(() => sound.stop(), (maxDuration+1)); //stop once fade completes (1000 milliseconds default)
         return true;
