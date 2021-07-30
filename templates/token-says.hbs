@@ -1,11 +1,16 @@
-<form class="flexcol token-says" autocomplete="off">
+<form class="token-says" autocomplete="off">
+    <!--search-->
+    <div class="token-says-search">
+        <div id="token-says-search-icon"><i class="fas fa-search"></i></div>
+        <input id="token-says-search-input" type="text" name="search" value="{{tokenSaysCurrentSearch}}" placeholder="{{localize 'TOKENSAYS.setting.search.placeholder'}}" spellcheck="false" autocomplete="off" />
+        <button id="token-says-search-clear" class="hidden" title="{{localize 'TOKENSAYS.setting.search.clear'}}"><i class="fas fa-times"></i></button>
+    </div>
 
     <!-- Navigation Tabs -->
     <nav class="sheet-tabs tabs" data-group="primary-tabs">
         <a class="item active" data-tab="token-says-roll-table"><i class="fas fa-th-list"></i>&nbsp;{{localize 'TOKENSAYS.setting.rollableTableRules'}}</a>
         <a class="item" data-tab="token-says-audio"><i class="fas fa-music"></i>&nbsp;{{localize 'TOKENSAYS.setting.audioFileRules'}}</a>
     </nav>
-
     <!-- Main Content Section -->
     <section class="content">
         <div class="tab" data-tab="token-says-roll-table" data-group="primary-tabs">
