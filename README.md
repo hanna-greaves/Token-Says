@@ -5,7 +5,7 @@
 
 First released on 7/26/2021!
 
-# Token-Says
+# Token Says
 Bring some penache into your world. With Token Says, when the tokens DO something they also SAY something... at least sometimes. I mean, they're bold and brave, but they're not cocky.
 
 
