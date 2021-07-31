@@ -195,6 +195,17 @@ Hooks.once('init', async function() {
             return true;
         });
     }
+    if (tokenSaysHasPolyglot){
+        tokenSays.log(false,'Module Support ', 'Polyglot Support Activated');
+        Hooks.on("renderChatMessage", (chatMessage, html, message) => {
+            if(chatMessage.data.flags?.TOKENSAYS?.img && chatMessage.data.flags?.polyglot){
+               tokenSaysWorkflow._insertHTMLToPolyglotMessage(chatMessage, html, message);
+               tokenSays.log(false,'Polyglot chat rendered ', {chatMessage, html, message});
+               return true
+            }
+            return false;
+        });
+    }
  });
 
 /**
@@ -572,13 +583,17 @@ class tokenSays {
             if(messageData.token?.data.img){img = '<img src="' + messageData.token.data.img + '" alt="' + messageData.speaker.alias + '">'}       
         }
         
-        const finalMessage = '<div class="token-says chat-window"">'+ img + '<div class="what-is-said">"' + messageData.says + '"</div></div>';
-
+        let finalMessage;
+        if(tokenSaysHasPolyglot){
+            finalMessage = messageData.says;
+        } else {
+            finalMessage = '<div class="token-says chat-window">'+ img + '<div class="what-is-said">"' + messageData.says + '"</div></div>';
+        }   
         ChatMessage.create({
             speaker: messageData.speaker,
             content : finalMessage,
-            //type: CONST.CHAT_MESSAGE_TYPES.IC,
-            flags: {TOKENSAYS: {cancel: true}}
+            type: CONST.CHAT_MESSAGE_TYPES.IC,
+            flags: {TOKENSAYS: {cancel: true, img: img}}
         },{chatBubble : false})
         return true;
     }
@@ -627,6 +642,29 @@ class tokenSays {
         sound.schedule(() => sound.fade(0), maxDuration);//set a duration based on system preferences.
         sound.schedule(() => sound.stop(), (maxDuration+1)); //stop once fade completes (1000 milliseconds default)
         return true;
+    }
+
+    static _insertHTMLToPolyglotMessage(chatMessage, html, message) {
+        let img = chatMessage.data.flags.TOKENSAYS.img;
+        if(img){
+            let content = html.find(".message-content");
+            let translatedContent = html.find(".polyglot-original-text");
+            console.log(translatedContent);
+            let common = 0;
+            let contentText = '';
+            if(!translatedContent.length) {
+                common = 1;
+                contentText = '<span>' + chatMessage.data.content + '</span>';
+            }
+            let newContent='<div class="token-says chat-window" style="margin-bottom:6px;">'+ img + '<div class="what-is-said">' + contentText + '</div></div>';
+            if(common) {
+                $(content).empty().append(newContent);
+            } else {
+                $(newContent).prependTo(content);
+                let contentSays = html.find('.what-is-said');
+                translatedContent.prependTo(contentSays);
+            } 
+        }
     }
 }
 
