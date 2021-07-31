@@ -15,13 +15,13 @@ Bring some penache into your world. With Token Says, make tokens speak dialog or
 This module is in beta. There may be additional changes to the API or functions or data structure as feature use becomes refined. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E (though confirmed to work in PF2E).
 
 ## Why Use?
-Your players or DM may want to add a little spice to their Foundry VTT session. Perhaps they have a halfling archer that says little quips whenever they score a hit with their shortbow. Or perhaps they have a samurai warrior that expresses a teaching with each katana strike. Or perhaps the DM would like a lion's bite action to be coordinated with one of a number of possible roaring sounds on occasion. All of these things are possible with Token Says.
+A halfling archer that says little quips whenever they score a hit with their shortbow. A samurai warrior that expresses various teachings with each katana strike. A lion that roars on occasional bites. All of these things are possible with Token Says.
 
-The rule configurations for Token Says that govern who says what and under what circumstances live outside of any actor or item document, making it easy to add new rules, update exisitng ones, and delete or inactivate those rules you no longer want to have occur. Because what is said via chat message may be controlled by rollable tables, players with access to edit their own rollable tables may add, adjust and refine their character's phrases. Or make it simple and link to an existing compendium's rollable table! Don't think that halfling archer would come up with a quip every time? No sweat! Set a likelihood for how often a token will say a particular rule and Token Says will only say something that percent of the time.
+Create rules that govern who says what and under what circumstances. Rules live within Administration Settings and outside of any actor or item document, making it easy to add new rules, update exisitng ones, and delete or inactivate those rules you no longer want. Because what is said via chat message may be controlled by rollable tables, players with access to edit their own rollable tables may add, adjust and refine their character's phrases. Or make it simple and link to an existing compendium's rollable table! Don't think that halfling archer would come up with a quip every time? No sweat! Set a likelihood for how often a token will say a particular rule and Token Says will only say something that percent of the time.
 
 ## How it Works
 The Token Says feature uses a set of Token Says rules that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
-* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can also use your world's data too).
+* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can use your world's data too).
 * Rules can be specific to a certain action (e.g. token performs an attack roll with a warhammer) or generic (e.g. token performs an ability check).
 * Likelihood can be set so that the token doesn't always say something. For example, with a likelihood of 10 set for a token's initiative check, they will only say something on 10% of their initiative rules.
 
@@ -50,6 +50,7 @@ Each rule is configured on a specific token or actor, based on name, for a given
   * Skill (dnd5e): use the 3 letter value for the skill (e.g. itm)
   * Attack Roll (dnd5e): use the item name making the attack (e.g. Longbow)
   * Damage Roll (dnd5e): use the item name making the damage roll (e.g. Longbow)
+  * Macro (API): see the API section below for details on how this is used
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table rules if you have entered something in the 'Token Says' field.
 * **Source Name:** The name of the rollable table or playlist. This can be left blank for rollable table rules if you have entered something in the 'Token Says' field.
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
@@ -64,16 +65,16 @@ Useful for situations where you want to quickly toggle Token Says on or off with
 When roll mode is set to Private GM Roll, the Token Says audio, chat message and chat bubble will be suppressed.
 
 ### Suppress Token Says Chat Bubbles (Client)
-By default a chat bubble is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules.
+By default a chat bubble is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules that your actions trigger.
 
 ### Suppress Token Says Chat Message (Client)
-By default a chat message is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules.
+By default a chat message is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules that your actions trigger.
 
 ### Audio Maximum Duration (World)
 Set a maximum duration (in seconds) for any audio tracks played by a Token Says rule. Any audio track that is longer than this duration will be faded out over the course of 1 second after this duration and then stopped. Useful for preventing mistakingly playing long running tracks, due to the fact that the audio plyed by Token Says cannot be cancelled while in session (without a macro).
 
 ### Suppress Token Says Audio (Client)
-Audio sounds caused by Token Says rules will not generate.
+Audio sounds caused by Token Says rules that your actions trigger will not generate.
 
 ### Search World's Playlist's First (World)
 If you have a playlist in your world the matches the Token Says rule, it will use that instead of searching your compendium. If not selected, world playlists are ignored.
@@ -90,7 +91,7 @@ This is the compendium that will be accessed by default when determining where t
 ## API / Macro Use
 The tokenSays.says(token, actor, actionName) function is made available for use within you macros and scripts. The function generates a Token Says message if a rule is found that matches the parameters that you pass in. The return from this function is the Token Says rule data for the rule identified by this function. 
 
-To use this function you must have Token Says installed as a module and active and must have a rule with action type = "Macro (API)" with an token/actor name and action name that match what is passed into the function.
+To use this function you must have Token Says installed as a module and active and must have a rule with action type = "Macro (API)" with an Token Name that matches the alias of the token or name of the actor that you pass into the function as well as an Action Name that matches the actionName passed into the function.
 * token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
