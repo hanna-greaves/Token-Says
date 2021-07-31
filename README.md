@@ -3,14 +3,13 @@
 [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Ftoken-says&colorB=4aa94a)](https://forge-vtt.com/bazaar#package=token-says)
 [![Foundry Hub Endorsements](https://img.shields.io/endpoint?logoColor=white&url=https%3A%2F%2Fwww.foundryvtt-hub.com%2Fwp-json%2Fhubapi%2Fv1%2Fpackage%2Ftoken-says%2Fshield%2Fendorsements)](https://www.foundryvtt-hub.com/package/token-says/)
 
-First released on 7/26/2021!
 
 # Token Says
-Bring some penache into your world. With Token Says, when the tokens DO something they also SAY something... at least sometimes. I mean, they're bold and brave, but they're not cocky.
+Bring some penache into your world. With Token Says, make tokens speak dialog or play audio based on in game actions. Use rolltables and playlists to randomize what tokens say. 
 
+![Animation](https://user-images.githubusercontent.com/22696153/127725224-f9af308d-fcfb-4f2b-a090-f267348928c6.gif)
 
-![image](https://user-images.githubusercontent.com/22696153/126870404-1ed65d98-297f-4f9e-9d59-730b721f4e82.png)
-> An Azer token reacts to their heated body invocation (token art by Forgotten Adventures)
+> Pesky goblins harrass an Azure as they attack. Uses 'Insults For A Lawful Good Character Using Vicious Mockery' rolltable from FVTT Community Tables module in order to randomize through 100 insults.
 
 # Beta (WARNING)
 This module is in beta. There may be additional changes to the API or functions or data structure as feature use becomes refined. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E (though confirmed to work in PF2E).
