@@ -11,8 +11,8 @@ Bring some penache into your world. With Token Says, make tokens speak dialog or
 
 > Pesky goblins harrass an Azure as they attack. Uses 'Insults For A Lawful Good Character Using Vicious Mockery' rolltable from FVTT Community Tables module in order to randomize through 100 insults.
 
-# Beta (WARNING)
-This module is in beta. There may be additional changes to the API or functions or data structure as feature use becomes refined. Please keep your rules to a minimum to avoid too much lost work. Though I am designing not to be system specific, so far this is only tested in DND5E (though confirmed to work in PF2E).
+## Beta (WARNING)
+This module is in beta.
 
 ## Why Use?
 A halfling archer that says little quips whenever they score a hit with their shortbow. A samurai warrior that expresses various teachings with each katana strike. A lion that roars on occasional bites. All of these things are possible with Token Says.
@@ -45,9 +45,9 @@ Each rule is configured on a specific token or actor, based on name, for a given
 * **Action Name:** Type in the name of the action associated to the action type.
   * Initiative Roll: leave blank
   * Item Name: use the item name that triggers the action (e.g. Action Surge)
-  * Ability Check (dnd5e): use the 3 letter value for the ability (e.g. str)
-  * Saving Throw (dnd5e): use the 3 letter value for the ability (e.g. str)
-  * Skill (dnd5e): use the 3 letter value for the skill (e.g. itm)
+  * Ability Check (dnd5e): select ability
+  * Saving Throw (dnd5e): select ability
+  * Skill (dnd5e): select skill
   * Attack Roll (dnd5e): use the item name making the attack (e.g. Longbow)
   * Damage Roll (dnd5e): use the item name making the damage roll (e.g. Longbow)
   * Macro (API): see the API section below for details on how this is used
