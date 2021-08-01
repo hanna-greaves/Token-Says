@@ -503,6 +503,7 @@ class tokenSays {
             if(game.settings.get('token-says', 'worldRollableTableInd')){table = game.tables.getName(rule.fileName);}//search world first when settings dicated
             if(!table){
                 const pack = await game.packs.find(p=>p.collection === compendium)?.getDocuments();
+                if(!pack){tokenSays.log(false, 'Compendium Not Found ', compendium); return;}
                 table = pack.find(t=> t.name === rule.fileName);
             }
             if(!table){
@@ -539,8 +540,9 @@ class tokenSays {
             }
         if(!playlist){
             const pack = await game.packs.find(p=>p.collection === compendium)?.getDocuments();
-            if(pack){playlist = pack.find(t=> t.name === rule.fileName);}
-            if(!playlist){return}
+            if(!pack){tokenSays.log(false, 'Compendium Not Found ', compendium); return}
+            playlist = pack.find(t=> t.name === rule.fileName);
+            if(!playlist){tokenSays.log(false, 'Playlist Not Found ', compendium); return}
         }
 
         //get audio file from playlist
@@ -649,7 +651,6 @@ class tokenSays {
         if(img){
             let content = html.find(".message-content");
             let translatedContent = html.find(".polyglot-original-text");
-            console.log(translatedContent);
             let common = 0;
             let contentText = '';
             if(!translatedContent.length) {
@@ -773,8 +774,14 @@ class tokenSaysData {
         const allRules = this.allTokenSaysRules;
         const ruleToUpdate = allRules[tokenSaysRuleId];
 
-        const rulesUpdate = {
-            id: tokenSaysRuleId,
+        const rulesUpdate = this.cleanseRule(updateData, ruleToUpdate);
+        allRules[tokenSaysRuleId] = rulesUpdate;
+        return await game.settings.set('token-says', 'rules', allRules);
+    }
+
+    static cleanseRule(updateData, ruleToUpdate){
+        return {
+            id: ruleToUpdate.id,
             label: this.nullTokenSaysRuleString(updateData.label, ruleToUpdate.label),
             documentType: this.nullTokenSaysRuleString(updateData.documentType, ruleToUpdate.documentType),
             documentName: this.nullTokenSaysRuleString(updateData.documentName, ruleToUpdate.documentName),
@@ -787,8 +794,6 @@ class tokenSaysData {
             isActive: this.nullTokenSaysRuleBool(updateData.isActive, ruleToUpdate.isActive),
             isActorName: this.nullTokenSaysRuleBool(updateData.isActorName, ruleToUpdate.isActorName)
         }
-        allRules[tokenSaysRuleId] = rulesUpdate;
-        return await game.settings.set('token-says', 'rules', allRules);
     }
 
     static async updateTokenSaysRuleStatus(tokenSaysRuleId, statusState) {
@@ -814,6 +819,33 @@ class tokenSaysData {
     static async deleteAllTokenSaysRule() {
         const allRules = {};
         return await game.settings.set('token-says', 'rules', allRules);
+    }
+
+    static async importTokenSaysRules(json){
+        const allRules = this.allTokenSaysRules;
+        let added = [];
+        let alreadyExists = [];
+        let inError = [];
+        if(json){
+            for (var addId in json) {
+                let record = json[addId];
+                if(!record || addId===undefined || record.fileType===undefined || (record.fileType!=="rollTable" && record.fileType!=='audio')){
+                    inError.push(record)
+                } else if (allRules[addId]) {
+                    alreadyExists.push(record);
+                } else {
+                    let newRule = new tokenSaysData(record.fileType);
+                    newRule.id = addId;
+                    newRule = this.cleanseRule(record, newRule);
+                    if(newRule){
+                        allRules[newRule.id]=newRule;
+                        added.push(newRule);
+                    } else inError.push(newRule);
+                }
+            }
+        } else{inError.push(json)}
+        await this.updateTokenSaysRules(allRules);
+        return {"added": added, "skipped": alreadyExists, "error": inError}
     }
 
     static nullTokenSaysRuleString(inString, returnIfNull){

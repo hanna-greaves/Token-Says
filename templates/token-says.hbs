@@ -1,9 +1,17 @@
 <form class="token-says" autocomplete="off">
-    <!--search-->
-    <div class="token-says-search">
-        <div id="token-says-search-icon"><i class="fas fa-search"></i></div>
-        <input id="token-says-search-input" type="text" name="search" value="{{tokenSaysCurrentSearch}}" placeholder="{{localize 'TOKENSAYS.setting.search.placeholder'}}" spellcheck="false" autocomplete="off" />
-        <button id="token-says-search-clear" class="hidden" title="{{localize 'TOKENSAYS.setting.search.clear'}}"><i class="fas fa-times"></i></button>
+    <div id="token-says-primary-controls">
+        <!--search-->
+        <div class="token-says-search">
+            <div id="token-says-search-icon"><i class="fas fa-search"></i></div>
+            <input id="token-says-search-input" type="text" name="search" value="{{tokenSaysCurrentSearch}}" placeholder="{{localize 'TOKENSAYS.setting.search.placeholder'}}" spellcheck="false" autocomplete="off" />
+            <button id="token-says-search-clear" class="hidden" title="{{localize 'TOKENSAYS.setting.search.clear'}}"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="token-says-json-export">
+            <button id="token-says-export-config" title="{{localize "TOKENSAYS.setting.export.title"}}"><i class="fas fa-file-export fa-fw"></i></button>  
+        </div>
+        <div class="token-says-json-import">
+            <button id="token-says-import-config" title="{{localize "TOKENSAYS.setting.import.title"}}"><i class="fas fa-file-import fa-fw"></i></button>  
+        </div>
     </div>
 
     <!-- Navigation Tabs -->
