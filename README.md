@@ -17,7 +17,7 @@ This module is in beta. There may be additional changes to the API or functions 
 ## Why Use?
 A halfling archer that says little quips whenever they score a hit with their shortbow. A samurai warrior that expresses various teachings with each katana strike. A lion that roars on occasional bites. All of these things are possible with Token Says.
 
-Create rules that govern who says what and under what circumstances. Rules live within Administration Settings and outside of any actor or item document, making it easy to add new rules, update exisitng ones, and delete or inactivate those rules you no longer want. Because what is said via chat message may be controlled by rollable tables, players with access to edit their own rollable tables may add, adjust and refine their character's phrases. Or make it simple and link to an existing compendium's rollable table! Don't think that halfling archer would come up with a quip every time? No sweat! Set a likelihood for how often a token will say a particular rule and Token Says will only say something that percent of the time.
+Token Says rules are fully customizable by the GM and are designed to be flexible to your needs. Alleviate some of the burden of being a GM and give your players access to edit their own character's phrases by linking a rule to a rollable table that they have permission to edit. Or, make it simple and link to an existing compendium's rollable table! Don't think that halfling archer would come up with a quip every time? No sweat! Set a likelihood for how often a token will say a particular rule and Token Says will only trigger that percent of the time.
 
 ## How it Works
 The Token Says feature uses a set of Token Says rules that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
@@ -96,9 +96,15 @@ To use this function you must have Token Says installed as a module and active a
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
 
+## Save Your Configured Rules
+Your rules can be easily exported from the Token Says rules configuration window using the export button to the right of the search bar.
+
+## Import Rules and Share Between Worlds
+Your rules, or rules from others, can be imported into your world. Imports add new rules and do not delete existing rules. Any rule in the import file that shares an id with a rule in your world will be skipped. Note that some rules may need further configuration after import if compendiums or modules differ between your worlds.
+
 ## Compatibility
 * Midi-Qol: Token Says supports Midi-Qol functionality (tested in DND5e only)
-* Polyglot: Token Says integrates with Polyglot in order to translate the token's speech using the current option in the chat message area. Currently only chat bubbles are configured but chat messages are in the works.
+* Polyglot: Token Says integrates with Polyglot in order to translate the token's speech using the current option in the chat message area. Both chat bubbles and chat message are transformed by polyglot.
 
 ## Note To Developers
 * The flag of `flags: {TOKENSAYS: {cancel: true}}` within the chatMessage.Create() options can be used to escape out of Token Says. Add this flag to prevent Token Says from generating a chat message off of a specific message that you may create.
