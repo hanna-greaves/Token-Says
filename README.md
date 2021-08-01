@@ -57,36 +57,13 @@ Each rule is configured on a specific token or actor, based on name, for a given
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given rule. For example, a 33 here for a rule that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
 
 ## Game Module Settings
+See wiki https://github.com/napolitanod/Token-Says/wiki/Game-Module-Settings
 
-### Activate Token Says (World)
-Useful for situations where you want to quickly toggle Token Says on or off without a full session reload.
+## Save Your Configured Rules
+Your rules can be easily exported from the Token Says rules configuration window using the export button to the right of the search bar.
 
-### Suppress Tokens Says on Private GM Rolls (World)
-When roll mode is set to Private GM Roll, the Token Says audio, chat message and chat bubble will be suppressed.
-
-### Suppress Token Says Chat Bubbles (Client)
-By default a chat bubble is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules that your actions trigger.
-
-### Suppress Token Says Chat Message (Client)
-By default a chat message is generated each time a Token Says rule is hit. Here you can prevent it on audio based rules, rollable table based rules, or all rules that your actions trigger.
-
-### Audio Maximum Duration (World)
-Set a maximum duration (in seconds) for any audio tracks played by a Token Says rule. Any audio track that is longer than this duration will be faded out over the course of 1 second after this duration and then stopped. Useful for preventing mistakingly playing long running tracks, due to the fact that the audio plyed by Token Says cannot be cancelled while in session (without a macro).
-
-### Suppress Token Says Audio (Client)
-Audio sounds caused by Token Says rules that your actions trigger will not generate.
-
-### Search World's Playlist's First (World)
-If you have a playlist in your world the matches the Token Says rule, it will use that instead of searching your compendium. If not selected, world playlists are ignored.
-
-### Search World's Rollable Tables First (World)
-If you have a rollable table in your world the matches the Token Says rule, it will use that instead of searching your compendium. If not selected, world rollable tables are ignored.
-
-### Default Playlist Compendium
-This is the compendium that will be accessed by default when determining where the rule's playlist is stored. Individual rules may override this default. If a rule's compendium is left blank then the default compendium is used.
-
-### Default Rollable Table Compendium
-This is the compendium that will be accessed by default when determining where the rule's audio file is stored. Individual rules may override this default. If a rule's compendium is left blank then the default compendium is used.
+## Import Rules and Share Between Worlds
+Your rules, or rules from others, can be imported into your world. Imports add new rules and do not delete existing rules. Any rule in the import file that shares an id with a rule in your world will be skipped. Note that some rules may need further configuration after import if compendiums or modules differ between your worlds.
 
 ## API / Macro Use
 The tokenSays.says(token, actor, actionName) function is made available for use within you macros and scripts. The function generates a Token Says message if a rule is found that matches the parameters that you pass in. The return from this function is the Token Says rule data for the rule identified by this function. 
@@ -95,12 +72,6 @@ To use this function you must have Token Says installed as a module and active a
 * token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
-
-## Save Your Configured Rules
-Your rules can be easily exported from the Token Says rules configuration window using the export button to the right of the search bar.
-
-## Import Rules and Share Between Worlds
-Your rules, or rules from others, can be imported into your world. Imports add new rules and do not delete existing rules. Any rule in the import file that shares an id with a rule in your world will be skipped. Note that some rules may need further configuration after import if compendiums or modules differ between your worlds.
 
 ## Compatibility
 * Midi-Qol: Token Says supports Midi-Qol functionality (tested in DND5e only)
