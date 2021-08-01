@@ -90,6 +90,8 @@ class TokenSaysSettingsConfig extends SettingsConfig{
     html.on('click',"[data-tab]", this._handleTabClick.bind(this))
     html.on('click',"#token-says-search-clear", this._clearFilter.bind(this))
     html.on('input', '#token-says-search-input', this._preFilter.bind(this))
+    html.on('click', "#token-says-export-config", this._exportSettingsToJSON.bind(this))
+    html.on('click', "#token-says-import-config", this._importSettingsFromJSON.bind(this))
   }
 
   //ensures that current tab selected isn't lost on rerender
@@ -157,6 +159,58 @@ class TokenSaysSettingsConfig extends SettingsConfig{
     const expandedData = foundry.utils.expandObject(formData); 
     const statusUpdate = expandedData[idToUpdate].isActive;
     await tokenSaysData.updateTokenSaysRuleStatus(idToUpdate, statusUpdate);
+  }
+
+  async _exportSettingsToJSON() {
+    const data = tokenSaysData.allTokenSaysRules;
+    const filename = `fvtt-token-says-rules.json`;
+    saveDataToFile(JSON.stringify(data, null, 2), "text/json", filename);  
+  }
+
+  async _importFromJSON(json) {
+    const data = JSON.parse(json);
+    tokenSays.log(false, 'JSON Import Parse Complete ', data);
+    let response = await tokenSaysData.importTokenSaysRules(data); 
+    tokenSays.log(false, 'Rules Import Complete ', response);
+    this.refresh();
+    if(response) {
+      let info = game.i18n.localize("TOKENSAYS.setting.import.complete") 
+       + ': ' + response.added.length + ' ' + game.i18n.localize("TOKENSAYS.setting.import.success") 
+       + ', ' + response.error.length + ' ' + game.i18n.localize("TOKENSAYS.setting.import.error") 
+       + ', ' + response.skipped.length + ' ' + game.i18n.localize("TOKENSAYS.setting.import.skipped");
+      ui.notifications?.info(info)
+    }
+    return response
+  }
+
+  async _importSettingsFromJSON() {
+    const options = {
+      name: "Token Says",
+      entity: "token-says"
+    }
+    const content = await renderTemplate("templates/apps/import-data.html", options);
+    new Dialog({
+      title: game.i18n.localize("TOKENSAYS.setting.import.title"),
+      content: content,
+      buttons: {
+        import: {
+          icon: '<i class="fas fa-file-import"></i>',
+          label: game.i18n.localize("TOKENSAYS.import"),
+          callback: html => {
+            const form = html.find("form")[0];
+            if ( !form.data.files.length ) return ui.notifications?.error(game.i18n.localize("TOKENSAYS.setting.import.noFile"));
+            readTextFromFile(form.data.files[0]).then(json => this._importFromJSON(json));
+          }
+        },
+        no: {
+          icon: '<i class="fas fa-times"></i>',
+          label: game.i18n.localize("TOKENSAYS.cancel")
+        }
+      },
+      default: "import"
+    }, {
+      width: 400
+    }).render(true);
   }
 }
 

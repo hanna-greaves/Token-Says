@@ -144,16 +144,28 @@ form.token-says-rule .hidden, #token-says-search-clear.hidden {
     margin-left: 8px;
 }
 
+#token-says-primary-controls {
+    width: 100%;
+    margin: 10px 0px 24px 0px;
+    height: 36px;
+}
+
 .token-says-search {
-    flex: 1 0 30px;
-    display: flex;
+    display: inline-block;
     justify-content: center;
     align-items: center;
     position: relative;
-    height: 36px;
-    margin: 10px 0px 24px 0px;
+    height: 34px;
     border: 1px solid rgba(0, 0, 0, .3);
     border-radius: 2px;
+    width: 85%;
+  }
+
+  .token-says-json-export, .token-says-json-import {
+    display: inline-block;
+    width:7%;
+    position: relative;
+    height: 36px;
   }
   
   #token-says-search-input  {
