@@ -73,7 +73,13 @@ To use this function you must have Token Says installed as a module and active a
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
 
-## Compatibility
+## System Compatibility
+This module has been tested in DND5e. Though my intent is to have it be system agnostic in terms of the basic features, there may be some incompatible systems that I am not aware of. The list of known compatible systems are:
+* DND5e (developer confirmed)
+* PF2e (user confirmed)
+
+
+## Module Compatibility
 * Midi-Qol: Token Says supports Midi-Qol functionality (tested in DND5e only)
 * Polyglot: Token Says integrates with Polyglot in order to translate the token's speech using the current option in the chat message area. Both chat bubbles and chat message are transformed by polyglot.
 
