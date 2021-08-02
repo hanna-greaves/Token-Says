@@ -162,6 +162,7 @@ class TokenSaysSettingsConfig extends SettingsConfig{
   }
 
   async _exportSettingsToJSON() {
+    await tokenSaysData.deleteTokenSaysRule("rules");///Temporary cleanup of alpha initialized data on early mods.
     const data = tokenSaysData.allTokenSaysRules;
     const filename = `fvtt-token-says-rules.json`;
     saveDataToFile(JSON.stringify(data, null, 2), "text/json", filename);  
@@ -347,4 +348,28 @@ class TokenSaysRuleConfig extends FormApplication{
     tokenSays.TokenSaysSettingsConfig.refresh();
   }
 
+}
+
+class TokenSaysTokenForm extends TokenConfig{
+  static get defaultOptions(){
+      const defaults = super.defaultOptions;
+      return defaults;
+    }
+
+  static _init(app, html, data){ 
+      let opt = game.settings.get('token-says', 'tokenHeader');   
+      if(opt !== 'N' && game.user.isGM){
+        let icn = '<i class="fas fa-comment"></i>';
+        if(opt === 'B'){icn+='Says'}  
+        let openButton = $(`<a class="open-tokensays" title="Token Says Config">` + icn + `</a>`);
+        openButton.click(event => {
+          let alias = app.token?.name;
+          if(alias){tokenSaysCurrentSearch = alias}
+          tokenSays.TokenSaysSettingsConfig.render(true);
+        });
+        html.closest('.app').find('.open-tokensay').remove();
+        let titleElement = html.closest('.app').find('.window-title');
+        openButton.insertAfter(titleElement);
+      }
+    }
 }
