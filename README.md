@@ -59,7 +59,12 @@ Each rule is configured on a specific token or actor, based on name, for a given
 ## Game Module Settings
 See wiki https://github.com/napolitanod/Token-Says/wiki/Game-Module-Settings
 
-## Save Your Configured Rules
+## Token Form Access
+Token Says rules can be accessed from the header of either the token form or the prototype token form. This gives the GM immediate access from the token form to add, edit, or make other rule changes.
+![image](https://user-images.githubusercontent.com/22696153/127880868-c95c4abe-c3e2-4b7e-9e19-de6be2fa9000.png)
+
+
+## Export Your Configured Rules
 Your rules can be easily exported from the Token Says rules configuration window using the export button to the right of the search bar.
 
 ## Import Rules and Share Between Worlds
