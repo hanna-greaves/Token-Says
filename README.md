@@ -28,7 +28,7 @@ The Token Says feature uses a set of Token Says rules that you create for your w
 
 ## Token Says Rules
 
-![image](https://user-images.githubusercontent.com/22696153/127783611-fefc7dec-0075-4406-ac33-906f15bc57ac.png)
+![image](https://user-images.githubusercontent.com/22696153/127877883-729ba22c-ae79-4d91-853f-12f6801a6c3c.png)
 
 Token Says rules can be configured within the "Open Rules Settings" area of the game module settings. Rules are tabbed by rollable table or audio. Here you can:
 * Add: add a new rule by select + Add in the subheader of that tab
