@@ -3,91 +3,100 @@ form.token-says .content {
     height: 460px;
 }
 
-.token-says .content .tab .rules-list {
+.token-says .rules-list {
     list-style: none;
     margin: 0;
     padding: 0;
     overflow-y: auto;
     scrollbar-width: thin;
-    color: #7a7971;
 }
 
-.token-says .content .tab .rules-list li:nth-child(even) {
+.token-says .rules-list li:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-.token-says .content .tab .rules-list li.rule {
+.token-says .rules-header {
+    flex: 1;
+    height: 30px;
+    margin-bottom: 2px;
+    padding: 6px 5px;
+    color: #7a7971;
+    font-size: 16px;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px groove #eeede0;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+}
+
+.token-says .rules-list li.rule {
     flex: 1;
     padding: 5px;
     text-overflow: ellipsis;
     flex-wrap: nowrap;
     white-space: nowrap;
     overflow: hidden;
-    vertical-align: middle;
-}
-
-.token-says .content .tab .rules-list .rule-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.token-says .content .tab .rules-list .rule-name {
-    flex: 1;
-    margin: 0;
-    overflow: hidden;
+    align-items: center;
+    border-bottom: 1px solid #c9c7b8;
     font-size: 14px;
-    text-align: left;
-    vertical-align:middle;
-    white-space: nowrap;
-    overflow-x: hidden; 
-    text-overflow: ellipsis;
-    flex-wrap: nowrap;
+    font-family: "Signika", sans-serif;
 }
 
-.token-says .content .tab .rules-list .rule-controls {
+.token-says .rules-header > div, .token-says li.rule > div {
+    align-items: center;
+}
+
+.token-says .rules-list:last-child {
+    border-bottom: none;
+}
+
+.token-says .rule-controls {
     flex: 0 0 60px;
     text-align: center;
-    font-size: 14px;
+    color: #7a7971;
 }
 
-
-.token-says .content .tab .rules-list .rule-active {
-    text-align: right;
-    padding-right: 12px;
+.token-says .rule-active {
     flex: 0 0 60px;
+    text-align: center;
+    color: #7a7971;
 }
 
-.token-says .content .tab .rules-list .rule-active  input[type="checkbox"] {
+.token-says .rule-active input[type="checkbox"] {
     flex: 0 0 15px;
     width: 15px;
     height: 15px;
     margin: 3px 5px;
 }
 
-.token-says .content .tab .rules-list .rule {
+.token-says .rule-name {
+    flex: 1 1 auto;
     align-items: center;
-    padding: 0 2px;
-    border-bottom: 1px solid #c9c7b8;
+    overflow: hidden;
 }
 
-.token-says .content .tab .rules-list  .rule:last-child {
-    border-bottom: none;
+.token-says .label, .token-says .name  {
+    padding: 3px 8px 0px 0px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow-x: hidden; 
+    text-overflow: ellipsis;
+    flex-wrap: nowrap;
 }
 
-.token-says .content .tab .rules-list  .rule .rule-name {
-    color: #191813;
+.token-says .label {
+    width: 80%;
 }
 
-.token-says .content .tab .rules-list .rules-header {
-    height: 28px;
-    margin: 6px 0px 2px 0px;
-    padding-left: 5px;
-    font-size: 14px;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.05);
-    border: 2px groove #eeede0;
-    font-weight: bold;
+.token-says .name {
+    width: 20%;
+}
+
+.token-says .tabs .item {
+    font-size: 16px;
+    margin-bottom: 12px;
 }
 
 form.token-says-rule {

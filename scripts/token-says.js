@@ -45,6 +45,18 @@ Hooks.once('init', async function() {
         default: true,
         type: Boolean
     });
+
+    let displayOptions = {'B': 'TOKENSAYS.setting.tokenHeader.display.iconLabel', 'I': 'TOKENSAYS.setting.tokenHeader.display.iconOnly', 'N': 'TOKENSAYS.setting.tokenHeader.display.none'};
+
+    game.settings.register('token-says', 'tokenHeader', {
+        name: game.i18n.localize('TOKENSAYS.setting.tokenHeader.display.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.tokenHeader.display.description'),
+        scope: 'world',
+        config: true,
+        default: 'B',
+        type: String,
+        choices: displayOptions
+    });
     
     game.settings.register('token-says', 'suppressPrivateGMRoles', {
         name: game.i18n.localize('TOKENSAYS.setting.suppressPrivateGMRoles.label'),
@@ -100,12 +112,21 @@ Hooks.once('init', async function() {
         type: Boolean
     });
 
+    game.settings.register('token-says', 'suppressImage', {
+        name: game.i18n.localize('TOKENSAYS.setting.suppressImage.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.suppressImage.description'),
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register('token-says', 'rules', {
         name: game.i18n.localize('TOKENSAYS.setting.rules.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.rules.description'),
         scope: 'world',
         config: false,
-        default: {rules: {}},
+        default: {},
         type: Object
     }); 
     
@@ -121,7 +142,12 @@ Hooks.once('init', async function() {
             $(tabToClick)[0].click();
             message._filter(tokenSaysCurrentSearch);
         }
-    })
+    });
+
+    Hooks.on("renderTokenConfig", (app, html, data) => {
+        TokenSaysTokenForm._init(app, html, data);
+    });
+
  });
 
  /**
@@ -579,7 +605,9 @@ class tokenSays {
     static async _sayChatMessage(messageData, rule) {
         if(this._escapeTokenSaysRule(rule, 'chat message')){return false;}
         let img = '';
-        if(rule.isActorName && messageData.actor?.data.img){
+        if(game.settings.get('token-says', 'suppressImage')){
+            tokenSays.log(false, 'Chat image suppressed ', {});
+        } else if(rule.isActorName && messageData.actor?.data.img){
             img = '<img src="' + messageData.actor.data.img + '" alt="' + messageData.speaker.alias + '">'
         } else { 
             if(messageData.token?.data.img){img = '<img src="' + messageData.token.data.img + '" alt="' + messageData.speaker.alias + '">'}       
