@@ -482,8 +482,7 @@ class tokenSays {
      * @param {object} message - the incoming chat message data
     */
     static _findItemName(message){
-        let itemId = ''; const flags = message.flags;
-        const act = game.actors.get(message.speaker.actor);
+        let itemId = ''; let itemName=''; const flags = message.flags;
         if(flags){
             if(flags.dnd5e){
                 itemId = flags.dnd5e.roll.itemId;
@@ -492,7 +491,16 @@ class tokenSays {
                 itemId = flags['midi-qol'].itemId;   
             } 
         } else {itemId = message.itemId}
-        const itemName = act.items.get(itemId).name;
+        if(itemId){
+            let scene = message.speaker.scene; let token = message.speaker.token;
+            if(scene && token) {
+                itemName = game.scenes.get(scene)?.tokens.get(token)?.actor.items.get(itemId)?.name; 
+            }
+            if(itemName === undefined || itemName === ''){
+                let act =message.speaker.actor;
+                itemName = game.actors.get(act)?.items.get(itemId).name;
+            }
+        } 
         return  itemName
     }
 
