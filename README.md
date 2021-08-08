@@ -11,6 +11,9 @@ Bring some penache into your world. With Token Says, make tokens speak dialog or
 
 > Pesky goblins harrass an Azure as they attack. Uses 'Insults For A Lawful Good Character Using Vicious Mockery' rolltable from FVTT Community Tables module in order to randomize through 100 insults.
 
+## Video Overview
+https://youtu.be/ipy0588SRzc
+
 ## Beta (WARNING)
 This module is in beta.
 
