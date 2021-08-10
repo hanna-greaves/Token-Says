@@ -79,7 +79,7 @@ The tokenSays.says(token, actor, actionName) function is made available for use 
 To use this function you must have Token Says installed as a module and active and must have a rule with action type = "Macro (API)" with an Token Name that matches the alias of the token or name of the actor that you pass into the function as well as an Action Name that matches the actionName passed into the function.
 * token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actor (optional) - the actor.id. Can be derived from token if not provided.
-* actionName - this must match to your Token Says rule "Action Name" for the given actor or token. Typically this is the name of the item.
+* actionName - this must match to your Token Says rule "Action Name" for the given actor or token.
 
 ## System Compatibility
 This module has been tested in DND5e. Though my intent is to have it be system agnostic in terms of the basic features, there may be some incompatible systems that I am not aware of. The list of known compatible systems are:
