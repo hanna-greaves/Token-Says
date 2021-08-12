@@ -74,12 +74,28 @@ Your rules can be easily exported from the Token Says rules configuration window
 Your rules, or rules from others, can be imported into your world. Imports add new rules and do not delete existing rules. Any rule in the import file that shares an id with a rule in your world will be skipped. Note that some rules may need further configuration after import if compendiums or modules differ between your worlds.
 
 ## API / Macro Use
+
+### .says() - call a specific token says rule from macro/script
 The tokenSays.says(token, actor, actionName) function is made available for use within you macros and scripts. The function generates a Token Says message if a rule is found that matches the parameters that you pass in. The return from this function is the Token Says rule data for the rule identified by this function. 
 
 To use this function you must have Token Says installed as a module and active and must have a rule with action type = "Macro (API)" with an Token Name that matches the alias of the token or name of the actor that you pass into the function as well as an Action Name that matches the actionName passed into the function.
 * token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actor (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says rule "Action Name" for the given actor or token.
+
+### .saysDirect() - use token says functionality without a rule in place
+The tokenSays.saysDirect(token, actor, scene, options) function is available to module developers and Foundry users. The function generates a Token Says message based on the parameters. No existing rules are referenced. This allows module developers and macro writers to dynamically have a token speak, giving them full control over the trigger.
+
+To use this function you must have Token Says installed 
+* token (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
+* actor (optional) - the actor.id. Can be derived from token if not provided.
+* scene (optional) - the scene.id. If not provided, the scene id for the current scene will be used
+* options - dictates the rolltable or playlist that will be sourced as well as any compendium or likelihood data. This is an object, so each key below is wrapped in the same object. e.g. const options = { type: "rollTable",source: "Possession"}
+  * type (required) - either rollTable or audio. Identifies if this is a playlist or rollable table.
+  * source (optional) - the name of the rolltable or playlist. if not set for rolltable, then quote is required.
+  * compendium (optional) - the compendium holding the playlist or rolltable. If not set, then the default Token Says compendium will be use or the world, depending on the Token Says settings of the world.
+  * quote (optional) - the direct text said or the audio track in the playlist.
+  * likelihood (optional) - as integer. The % of the time this will actually result in a Token Says message. if not provided, the default is 100.
 
 ## System Compatibility
 This module has been tested in DND5e. Though my intent is to have it be system agnostic in terms of the basic features, there may be some incompatible systems that I am not aware of. The list of known compatible systems are:
