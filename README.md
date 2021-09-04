@@ -14,9 +14,6 @@ Bring some penache into your world. With Token Says, make tokens speak dialog or
 ## Video Overview
 https://youtu.be/_CRPy2LVicY
 
-## Beta (WARNING)
-This module is in beta.
-
 ## Why Use?
 A halfling archer that says little quips whenever they score a hit with their shortbow. A samurai warrior that expresses various teachings with each katana strike. A lion that roars on occasional bites. All of these things are possible with Token Says.
 
@@ -31,7 +28,7 @@ The Token Says feature uses a set of Token Says sayings that you create for your
 
 ## Token Says Sayings
 
-![image](https://user-images.githubusercontent.com/22696153/127877883-729ba22c-ae79-4d91-853f-12f6801a6c3c.png)
+![image](https://user-images.githubusercontent.com/22696153/132096482-8fb1b093-d27a-49b3-ae5c-3312413dd5cd.png)
 
 Token Says sayings can be configured within the "Open Sayings" area of the Token Says game module settings. Sayings are tabbed by rollable table or audio. Here you can:
 * Add: add a new saying by select + Add in the subheader of that tab
