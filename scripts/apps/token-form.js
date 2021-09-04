@@ -23,7 +23,7 @@ export class TokenSaysTokenForm extends TokenConfig{
             form.render(true);
           });
 
-          html.closest('.app').find('.open-tokensay').remove();
+          html.closest('.app').find('.open-tokensays').remove();
           let titleElement = html.closest('.app').find('.window-title');
           openButton.insertAfter(titleElement);
         }

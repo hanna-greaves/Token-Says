@@ -29,7 +29,7 @@ export class api {
      * @param {string} actionName - the name of the action that. Should match the token says saying Action Name
     */
      static async _says(tokenId, actorId, actionName) {
-        let token, alias = '', scene = game.scenes.current.id, user = game.userId, message = new ChatMessage; 
+        let token, alias = '', scene = canvas.scene, user = game.userId, message = new ChatMessage; 
         if(tokenId){token = scene.tokens.get(tokenId)}
         if(!actorId){actorId = token.actor.id}
         if(!actorId && !tokenId){return;}
@@ -40,7 +40,7 @@ export class api {
             alias = game.actors.get(actorId).name
         }
 
-        message.data.speaker = {scene: scene, actor: actorId, token: tokenId, alias: alias};
+        message.data.speaker = {scene: scene.id, actor: actorId, token: tokenId, alias: alias};
 
         tokenSays.log(false,'Macro Generated Rule... ', {message, user, documentType: "macro", documentName: actionName});
 
