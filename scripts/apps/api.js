@@ -18,8 +18,10 @@ export class api {
           saysDirect : api._saysDirect,
         }
 
-        game.modules.get(tokenSays.ID).api.says = api._says;
-        game.modules.get(tokenSays.ID).api.saysDirect = api._saysDirect;
+        game.modules.get(tokenSays.ID).api = {
+            says: api._says,
+            saysDirect: api._saysDirect
+        }
     }
 
     /**

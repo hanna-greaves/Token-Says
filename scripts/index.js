@@ -126,8 +126,11 @@ Hooks.once('init', async function() {
         TokenSaysTokenForm._init(app, html, data);
     });
 
-    api.register();
 
+ });
+
+ Hooks.once('setup', async function() {
+    api.register();
  });
 
  /**

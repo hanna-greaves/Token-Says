@@ -203,8 +203,7 @@ export class say {
         } else {
             options = false
         }
-        console.log(token);
-        console.log(canvas.tokens.get(token.id));
+        
         await canvas.hud.bubbles.say(token, message);
 
         game.socket.emit("module.token-says", {
