@@ -1,6 +1,6 @@
 import {says} from './says.js';
 import {tokenSays} from '../token-says.js';
-import {tokenSaysHasPolyglot} from '../index.js';
+import {P52EDOCUMENTNAMEOPS} from './constants.js';
 
 export const WORKFLOWSTATES = {
     GLOBALESCAPE: 0,
@@ -162,6 +162,20 @@ export const WORKFLOWSTATES = {
             } else if (f.type === 4){
                 this.documentType = 'damage'; this.itemId = f.itemId;     
             }
+        } else if(f = this.flags['pf2e']) {
+            if (f.context?.type === 'skill-check') {
+                this.documentType = 'skill'; 
+                this.documentName = f.modifierName.replace("Skill Check: ", ""); //e.g. Skill Check: Athletics
+            } else if (f.context?.type === 'attack-roll') {
+                this.documentType = 'attack'; 
+                if(f.origin?.uuid){this.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)}
+            } else if (f.damageRoll) {
+                this.documentType = 'damage'; 
+                if(f.origin?.uuid){this.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)}
+            } else if (f.origin?.uuid) {
+                this.documentType = 'flavor'; 
+                this.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)
+            } 
         }
         else if (this.flags.core?.initiativeRoll) {
             this.documentType = 'initiative'; 

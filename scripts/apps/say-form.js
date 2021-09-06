@@ -1,4 +1,4 @@
-import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, UNIVERSALDOCUMENTNAMEOPS, getDnd5eDocumentNameOps, getCompendiumOps} from './constants.js';
+import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, UNIVERSALDOCUMENTNAMEOPS, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 
@@ -26,6 +26,7 @@ export class TokenSaysSayForm extends FormApplication {
 
   _determineWorldOptions() {
     if (game.world.data.system === "dnd5e"){ return {...DND5EDOCUMENTTYPEOPS, ...UNIVERSALDOCUMENTTYPEOPS}} 
+    if (game.world.data.system === "pf2e"){ return {...PF2EDOCUMENTTYPEOPS, ...UNIVERSALDOCUMENTTYPEOPS}} 
     return UNIVERSALDOCUMENTTYPEOPS;
   }
 
@@ -52,10 +53,9 @@ export class TokenSaysSayForm extends FormApplication {
   }
 
   _createNameOptionsHTML(documentType, documentName) {
-    const inputTypes = ['macro', 'flavor', 'attack', 'damage', 'initiative', ''];
     let finalHTML = '';
     const optionListOptions  = this._determineWorldDocumentNameOptions(documentType);
-    if (inputTypes.indexOf(documentType) === -1){
+    if(optionListOptions) {
       let optionList = '<option value=""></option>';
       for (var option in optionListOptions) {
         let selected = '';
