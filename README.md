@@ -47,9 +47,9 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Item Name: use the item name that triggers the action (e.g. Action Surge)
   * Ability Check (dnd5e): select ability
   * Saving Throw (dnd5e): select ability
-  * Skill (dnd5e): select skill
-  * Attack Roll (dnd5e): use the item name making the attack (e.g. Longbow)
-  * Damage Roll (dnd5e): use the item name making the damage roll (e.g. Longbow)
+  * Skill (dnd5e, pf2e): select or enter skill
+  * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
+  * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow)
   * Macro (API): see the API section below for details on how this is used
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Source Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
