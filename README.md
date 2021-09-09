@@ -9,7 +9,7 @@ Bring some penache into your world. With Token Says, make tokens speak dialog or
 
 ![Animation](https://user-images.githubusercontent.com/22696153/127725224-f9af308d-fcfb-4f2b-a090-f267348928c6.gif)
 
-> Pesky goblins harrass an Azure as they attack. Uses 'Insults For A Lawful Good Character Using Vicious Mockery' rolltable from FVTT Community Tables module in order to randomize through 100 insults.
+> Pesky goblins harrass an Azer as they attack. Uses 'Insults For A Lawful Good Character Using Vicious Mockery' rolltable from FVTT Community Tables module in order to randomize through 100 insults.
 
 ## Video Overview
 https://youtu.be/_CRPy2LVicY
