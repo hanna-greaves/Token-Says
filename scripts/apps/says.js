@@ -83,11 +83,12 @@ import {say} from './say.js';
        return await this.newSay("audio")
     }
 
-    static async updateSay(id, data) {
+    static async updateSay(id, data, insertKeys = false) {
         const sys = this.says;
         const sy = sys[id];
-        mergeObject(sy, data, {insertKeys: false, enforceTypes: true});
+        mergeObject(sy, data, {insertKeys: insertKeys, enforceTypes: true});
         sys[id] = sy;
+        console.log(sy, sys)
         return await this.updateSays(sys);
     }
 

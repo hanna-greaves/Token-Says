@@ -93,6 +93,7 @@ export const WORKFLOWSTATES = {
                 this.log('Getting Say... ', {});
                 if(!Object.keys(this.say).length){
                     this.say = says.findSay(this.alias, this.actor.name, this.documentType, this.documentName)
+                    this.log('Say found', {})
                 }
                 return this.next(WORKFLOWSTATES.SAY);
             case WORKFLOWSTATES.SAY: 

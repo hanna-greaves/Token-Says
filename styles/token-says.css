@@ -133,6 +133,12 @@ form.token-says-rule .hidden, #token-says-search-clear.hidden {
     display: none;
 }
 
+.token-says-rule .flexrow > div {
+    flex-grow: 4;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 /*chat window styling*/
 .token-says.chat-window img {
     border-width: 0px; 
