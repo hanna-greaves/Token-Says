@@ -38,7 +38,7 @@ Token Says sayings can be configured within the "Open Sayings" area of the Token
 
 ## Configure a Saying
 Each saying is configured on a specific token or actor, based on name, for a given action and the saying is only hit when that token or actor performs the action. 
-* **Saying Name:** Name each saying . The name is what displays in the Configure Token Sayings list.
+* **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
 * **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling!
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
 * **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. This is system-specific. See action name below for the list of current available action types.
@@ -51,9 +51,10 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
   * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow)
   * Macro (API): see the API section below for details on how this is used
-* **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
-* **Source Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
+* **Playlist Name/Rollable Table Nmae:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
+* **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
+* **Volume:** Set the volume for this saying.
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
 
 ## Game Module Settings
