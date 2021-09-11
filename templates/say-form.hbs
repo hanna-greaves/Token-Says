@@ -83,7 +83,6 @@
                     </label>
                     <div class="rule-value form-fields">
                         <select name="compendiumName" value="say.compendiumName">  
-                            <option value=""></option>
                             {{selectOptions compendiumList selected=say.compendiumName localize=true}}
                         </select>
                     </div>
@@ -114,14 +113,15 @@
                 </div>
                 <p class="notes">{{localize 'TOKENSAYS.setting.say.likelihood.description'}}</p>
             </div>
-            <div class="form-group flexrow">
-                <div class="rule-value">
-                    <input type="checkbox" name="isActive" {{checked say.isActive}} />
+            <div class="form-group">
+                <div class="flexrow">
+                    <div class="rule-value form-fields">
+                        <input type="checkbox" name="isActive" {{checked say.isActive}} />
+                        <label>
+                            {{localize 'TOKENSAYS.setting.say.isActive.label'}}
+                        </label>
+                    </div>
                 </div>
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.isActive.label'}}</span>
-                </label>
-                <p class="notes"></p>
             </div>
         </div> 
     </section>
