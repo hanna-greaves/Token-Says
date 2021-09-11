@@ -114,23 +114,19 @@ form.token-says-rule .form-group {
     display: block;
 }
 
-form.token-says-rule .form-group .form-fields {
-    justify-content: flex-start;
-}
-
-form.token-says-rule .form-group.flexrow {
-    vertical-align:middle;
-    display: inline-block;
-    width:100%;
-}
-
-form.token-says-rule .form-group.flexrow > div, form.token-says-rule .form-group.flexrow > label {
-    vertical-align:middle;
-    display: inline;
+form.token-says-rule .flexrow input[type="text"] {
+    padding-left: 6px;
 }
 
 form.token-says-rule .hidden, #token-says-search-clear.hidden {
     display: none;
+}
+
+.token-says-rule .flexrow > div {
+    flex-grow: 4;
+    justify-content: flex-start;
+    align-items: center;
+    vertical-align: middle;
 }
 
 /*chat window styling*/

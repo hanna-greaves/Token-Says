@@ -79,13 +79,14 @@ export class TokenSaysSayForm extends FormApplication {
       say: sy,
       documentTypeOptions: this._determineWorldOptions(),
       compendiumList: getCompendiumOps(sy.fileType),
-      documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName)
+      documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName),
+      isAudio: sy.fileType === 'audio' ? true : false
     } 
   }
   
   async _updateObject(event, formData) {
     const expandedData = foundry.utils.expandObject(formData); 
-    await says.updateSay(expandedData.id, expandedData);
+    await says.updateSay(expandedData.id, expandedData, true);
     tokenSays.TokenSaysSettingsConfig.refresh();
   }
 }

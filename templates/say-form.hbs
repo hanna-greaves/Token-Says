@@ -5,101 +5,123 @@
                 <input type="text" value="{{say.id}}" name="id"/>
             </div>
             <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.label.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <input type="text" name="label" value="{{say.label}}"/>
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.label.label'}}</span>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <input type="text" name="label" value="{{say.label}}"/>
+                    </div>
+                    <p class="notes"></p>
                 </div>
-                <p class="notes"></p>
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.name.label'}}</span>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <input type="text" name="name" value="{{say.name}}" />
+                    </div>
+                    <p class="notes"></p>
+                </div>
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.isActorName.label'}}</span>
+                    </label>
+                    <div class="rule-value">
+                        <input type="checkbox" name="isActorName" {{checked say.isActorName}} />
+                    </div>
+                    <p class="notes">{{localize 'TOKENSAYS.setting.say.isActorName.description'}}</p>
+                </div>
             </div>
             <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.name.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <input type="text" name="name" value="{{say.name}}" />
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.documentType.label'}}</span>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <select id="token-says-documenttype-value" name="documentType" value="say.documentType">  
+                            <option value=""></option>
+                            {{selectOptions documentTypeOptions selected=say.documentType localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes"></p>
                 </div>
-                <p class="notes"></p>
-            </div>
-            <div class="form-group flexrow">
-                <div class="rule-value">
-                    <input type="checkbox" name="isActorName" {{checked say.isActorName}} />
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.documentName.label'}}</span>
+                    </label>
+                    <div id="token-says-documentname" class="rule-value form-fields">
+                        {{{documentNameOptions}}}
+                    </div>
+                    <p class="notes">{{localize 'TOKENSAYS.setting.say.documentName.description'}}</p>
                 </div>
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.isActorName.label'}}</span>
-                </label>
-                <p class="notes">{{localize 'TOKENSAYS.setting.say.isActorName.description'}}</p>
-            </div>
-            <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.documentType.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <select id="token-says-documenttype-value" name="documentType" value="say.documentType">  
-                        <option value=""></option>
-                        {{selectOptions documentTypeOptions selected=say.documentType localize=true}}
-                    </select>
-                </div>
-                <p class="notes">{{localize 'TOKENSAYS.setting.say.documentType.description'}}</p>
             </div>
             <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.documentName.label'}}</span>
-                </label>
-                <div id="token-says-documentname" class="rule-value form-fields">
-                    {{{documentNameOptions}}}
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.fileTitle.label'}}</span>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <input type="text" name="fileTitle" value="{{say.fileTitle}}"/>
+                    </div>
+                    <p class="notes {{#if isAudio}} hidden{{/if}}">{{localize 'TOKENSAYS.setting.say.fileTitle.description.rolltable'}}</p>
+                    <p class="notes {{#unless isAudio}} hidden{{/unless}}">{{localize 'TOKENSAYS.setting.say.fileTitle.description.audio'}}</p>
                 </div>
-                <p class="notes">{{localize 'TOKENSAYS.setting.say.documentName.description'}}</p>
+                <div class="flexrow">
+                    <label>
+                       {{#if isAudio}}<span>{{localize 'TOKENSAYS.setting.say.fileName.label.audio'}}</span>{{/if}}
+                       {{#unless isAudio}}<span>{{localize 'TOKENSAYS.setting.say.fileName.label.rolltable'}}</span>{{/unless}}
+                    </label>
+                    <div class="rule-value form-fields">
+                        <input type="text" name="fileName" value="{{say.fileName}}"/>
+                    </div>
+                    <p class="notes"></p>
+                </div>
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <select name="compendiumName" value="say.compendiumName">  
+                            {{selectOptions compendiumList selected=say.compendiumName localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes {{#if isAudio}} hidden{{/if}}">{{localize 'TOKENSAYS.setting.say.compendiumName.description.rolltable'}}</p>
+                    <p class="notes {{#unless isAudio}} hidden{{/unless}}">{{localize 'TOKENSAYS.setting.say.compendiumName.description.audio'}}</p>
+                </div>
+            </div>
+            <div class="form-group {{#unless isAudio}} hidden{{/unless}}">
+                <div class="flexrow">
+                    <label>
+                        <i class="volume-icon fas fa-volume-down"></i>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <input type="range" title="{{localize "TOKENSAYS.setting.say.volume.label"}}" name="volume" value="{{#unless say.volume}}0.5{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}" min="0.05" max="1.00" step="0.05"/>
+                        <span class="range-value">{{#unless say.volume}}0.50{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}</span>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <select name="compendiumName" value="say.compendiumName">  
-                        <option value=""></option>
-                        {{selectOptions compendiumList selected=say.compendiumName localize=true}}
-                    </select>
-                </div>
-                <p class="notes">{{localize 'TOKENSAYS.setting.say.compendiumName.description'}}</p>
-            </div>
-            <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.fileName.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <input type="text" name="fileName" value="{{say.fileName}}"/>
-                </div>
-                <p class="notes">{{localize 'TOKENSAYS.setting.say.fileName.description'}}</p>
-            </div>
-            <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.fileTitle.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <input type="text" name="fileTitle" value="{{say.fileTitle}}"/>
-                </div>
-                <p class="notes">{{localize 'TOKENSAYS.setting.say.fileTitle.description'}}</p>
-            </div>
-            <div class="form-group">
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.likelihood.label'}}</span>
-                </label>
-                <div class="rule-value form-fields">
-                    <input type="range" name="likelihood" value="{{say.likelihood}}" min="1" max="100" step="1"/>
-                    <span class="range-value">{{say.likelihood}}</span>
+                <div class="flexrow">
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.likelihood.label'}}</span>
+                    </label>
+                    <div class="rule-value form-fields">
+                        <input type="range" name="likelihood" value="{{say.likelihood}}" min="1" max="100" step="1"/>
+                        <span class="range-value">{{say.likelihood}}</span>
+                    </div>
                 </div>
                 <p class="notes">{{localize 'TOKENSAYS.setting.say.likelihood.description'}}</p>
             </div>
-            <div class="form-group flexrow">
-                <div class="rule-value">
-                    <input type="checkbox" name="isActive" {{checked say.isActive}} />
+            <div class="form-group">
+                <div class="flexrow">
+                    <div class="rule-value form-fields">
+                        <input type="checkbox" name="isActive" {{checked say.isActive}} />
+                        <label>
+                            {{localize 'TOKENSAYS.setting.say.isActive.label'}}
+                        </label>
+                    </div>
                 </div>
-                <label>
-                    <span>{{localize 'TOKENSAYS.setting.say.isActive.label'}}</span>
-                </label>
-                <p class="notes"></p>
             </div>
         </div> 
     </section>

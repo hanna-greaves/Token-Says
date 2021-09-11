@@ -32,7 +32,8 @@ export class say {
         this.compendiumName = '',
         this.likelihood = 100,
         this.isActive = true,
-        this.isActorName = true
+        this.isActorName = true,
+        this.volume = 0.50
     }
 
     get compendium() {
@@ -177,7 +178,7 @@ export class say {
         }
         
         const maxDuration = game.settings.get('token-says', 'audioDuration');
-        const sound = await AudioHelper.play({src: audioFile.path, loop: false, autoplay: true}, true);
+        const sound = await AudioHelper.play({src: audioFile.path, volume: this.volume, loop: false, autoplay: true}, true);
         sound.schedule(() => sound.fade(0), maxDuration);//set a duration based on system preferences.
         sound.schedule(() => sound.stop(), (maxDuration+1)); //stop once fade completes (1000 milliseconds default)
         return true;
