@@ -1,6 +1,5 @@
 import {says} from './says.js';
 import {tokenSays} from '../token-says.js';
-import {P52EDOCUMENTNAMEOPS} from './constants.js';
 
 export const WORKFLOWSTATES = {
     GLOBALESCAPE: 0,
@@ -9,6 +8,8 @@ export const WORKFLOWSTATES = {
     GETITEM: 3,
     GETSAY: 4,
     SAY: 10,
+    GETRESPONSES: 20,
+    RESPONDS: 21,
     CANCEL: 98,
     COMPLETE: 99
 }
@@ -24,15 +25,18 @@ export const WORKFLOWSTATES = {
         this.escape = false,
         this.escapeReason = '',
         this.hook = (options.hook === undefined) ? '' : options.hook,
+        this.id = foundry.utils.randomID(16),
+        this.isResponse = (options.isResponse === undefined) ? false : options.isResponse,
         this.itemId = '',
         this.message = message,
+        this.responses = [],
         this.say = (options.say === undefined) ? {} : options.say,
         this.sayResult = {},
         this.user = user
     } 
 
     log(message, data){
-        tokenSays.log(false,`${message}... `, {workflow: this, data:data});
+        tokenSays.log(false,`${message} ${this.id}...... `, {workflow: this, data:data});
     }
 
     get actor() {
@@ -64,7 +68,6 @@ export const WORKFLOWSTATES = {
     async next(nextState){
         if(this.escape){nextState = WORKFLOWSTATES.CANCEL}
         await this._next(nextState);
-        if(WORKFLOWSTATES[nextState]>=98){return this}
     }
 
     async _next(state){
@@ -76,7 +79,7 @@ export const WORKFLOWSTATES = {
                 this._escapeGlobal();
                 return this.next(WORKFLOWSTATES.PARSE);
             case WORKFLOWSTATES.PARSE:
-                this.log('Parsing message... ', {});
+                this.log('Parsing message ', {});
                 if(this.documentName !== 'direct'){
                     if (this.hook==="createChatMessage") {
                         this._parseChatMessage()
@@ -86,27 +89,41 @@ export const WORKFLOWSTATES = {
                 }
                 return this.next(WORKFLOWSTATES.GETITEM);
             case WORKFLOWSTATES.GETITEM:
-                this.log('Getting Item... ', {});
+                this.log('Getting Item ', {});
                 this._findItemName();
                 return this.next(WORKFLOWSTATES.GETSAY);
             case WORKFLOWSTATES.GETSAY:
-                this.log('Getting Say... ', {});
+                this.log('Getting Say ', {});
                 if(!Object.keys(this.say).length){
                     this.say = says.findSay(this.alias, this.actor.name, this.documentType, this.documentName)
-                    this.log('Say found', {})
                 }
                 return this.next(WORKFLOWSTATES.SAY);
             case WORKFLOWSTATES.SAY: 
-                if (Object.keys(this.say).length) {
+                if (Object.keys(this.say).length) { 
+                    this.log('Say found', {})
                     this.sayResult = await this.say.say(this.token, this.actor, this.speaker)
                 } else {
                     this.log('Say not found', {});
-                    this.next(WORKFLOWSTATES.CANCEL);
+                }
+                if (!this.isResponse || (this.isResponse && this.sayResult?.likelihood?.doesSay) ){
+                    return this.next(WORKFLOWSTATES.GETRESPONSES);
+                } else {
+                    return this.next(WORKFLOWSTATES.COMPLETE);
+                }
+            case WORKFLOWSTATES.GETRESPONSES:
+                this.log('Getting Responses ', {});
+                this.responses = says.findResponses(this.alias, this.actor.name, this.documentType, this.documentName, this.sayResult?.likelihood?.doesSay ? this.say : {});
+                return this.next(WORKFLOWSTATES.RESPONDS);
+            case WORKFLOWSTATES.RESPONDS: 
+                if (this.responses.length) {
+                    this._respondsWorkflow()
+                } else {
+                    this.log('Responses not found', {});
                 }
                 return this.next(WORKFLOWSTATES.COMPLETE);
             case WORKFLOWSTATES.CANCEL: 
                 this.log('TokenSays workflow canceled', {})
-                return false
+                return this
             case WORKFLOWSTATES.COMPLETE: 
                 this.log('TokenSays workflow complete', {})
                 return this
@@ -205,6 +222,31 @@ export const WORKFLOWSTATES = {
             }
             if(!this.documentName){
                 this.documentName = this.actor?.items.get(this.itemId).name;
+            }
+        }
+    }
+
+    async _respondsWorkflow(){
+        for (let i = 0; i < this.responses.length; i++){
+            const rsp = this.responses[i];
+            let tokens = [];
+
+            if(!rsp.isActorName) {
+                tokens = this.scene.tokens.filter(t => t.name===rsp.name)
+            } else {
+                tokens = this.scene.tokens.filter(t => t.actor?.data?.name===rsp.name)
+            }
+
+            for(let i=0; i<tokens.length; i++){
+                const token = tokens[i];
+                const alias = token.name, actorId = token.data.actorId, tokenId = token.id, message = new ChatMessage;
+                if(tokenId === this.token.id) {
+                    this.log('TokenSays response killed - loop', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id})
+                } else {
+                    message.data.speaker = {scene: this.scene.id, actor: actorId, token: tokenId, alias: alias};
+                    const wf = new workflow(message.data, this.user, {say: rsp, isResponse: true} );
+                    wf.next();
+                }
             }
         }
     }

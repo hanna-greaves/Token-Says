@@ -1,8 +1,18 @@
-import {say} from './say.js';
+import { tokenSays } from '../token-says.js';
+import {say, reacts} from './say.js';
 
  export class says {
     static get says() {
         return game.settings.get('token-says', 'rules');
+    }
+
+    static get saysList() {
+        const obj = {};
+        const sys = this.says;
+        for (var sy in sys){
+            obj[sy] = sys[sy].label
+        }
+        return obj;
     }
 
     static get rollTableSays() {
@@ -26,14 +36,25 @@ import {say} from './say.js';
         }
         return obj;
     }
+
+    static get responses() {
+        const obj = {}
+        const sys = this.says;
+        for (var sy in sys) {
+            if (sys[sy].documentType === 'reacts') {
+                obj[sy]=sys[sy];
+            }
+        }
+        return obj;
+    }
     /**
    * converts a JSON object to a zone class
    * @param {object} flag 
    * @returns 
    */
     static _toClass(flag){
-        if(!flag.fileType){return {}}
-        let sy = new say(flag.fileType);
+        if(!flag?.fileType){return {}}
+        let sy = flag.documentType==='reacts' ? new reacts(flag.fileType) : new say(flag.fileType);
         return mergeObject(sy, flag, {insertKeys: false, enforceTypes: true})
     }
 
@@ -62,6 +83,33 @@ import {say} from './say.js';
         }
         return {}
     }
+
+    static findResponses(tokenName, actorName, documentType, documentName, sayTrigger){
+        const bypassNameTypes = ['initiative'];
+        const sys = this.responses;
+        const rsp = [];
+        for (var sy in sys) {
+             if (sys[sy].to.documentType === 'say') {
+                if(sys[sy].to.documentName === sayTrigger?.id) {rsp.push(this._toClass(sys[sy]))}
+            }
+            else if (
+                (
+                    (!sys[sy].to.name)
+                    || (sys[sy].to.isActorName && sys[sy].to.name === actorName) 
+                    || (!sys[sy].to.isActorName && sys[sy].to.name === tokenName)
+                ) 
+                && sys[sy].to.documentType === documentType 
+                && (
+                    sys[sy].to.documentName === "" 
+                    || sys[sy].to.documentName ===documentName
+                    || bypassNameTypes.indexOf(documentType) !== -1
+                    )
+            ) {
+                rsp.push(this._toClass(sys[sy]))
+            }
+        }
+        return rsp      
+    }
     
     static async updateSays(sys) {
         return await game.settings.set('token-says', 'rules', sys);
@@ -85,10 +133,9 @@ import {say} from './say.js';
 
     static async updateSay(id, data, insertKeys = false) {
         const sys = this.says;
-        const sy = sys[id];
+        const sy = mergeObject(data.documentType==='reacts' ? new reacts(data.fileType) : new say(data.fileType), sys[id], {insertKeys: false, enforceTypes: true});
         mergeObject(sy, data, {insertKeys: insertKeys, enforceTypes: true});
         sys[id] = sy;
-        console.log(sy, sys)
         return await this.updateSays(sys);
     }
 
@@ -124,7 +171,7 @@ import {say} from './say.js';
                 } else if (sys[s]) {
                     alreadyExists.push(record);
                 } else {
-                    let sy = new say(record.fileType);
+                    let sy = record.documentType==='reacts' ? new reacts(record.fileType) : new say(record.fileType);
                     mergeObject(sy, record, {insertKeys: false, enforceTypes: true});
                     if(sy){
                         sys[sy.id]=sy;

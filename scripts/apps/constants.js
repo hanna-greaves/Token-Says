@@ -1,29 +1,45 @@
+import {says} from './says.js';
+
 export const FILETYPEENTITYTYPE = {
     rollTable: "RollTable",
     audio: "Playlist"
   }
   
 export const UNIVERSALDOCUMENTTYPEOPS = {
-"initiative":  "TOKENSAYS.document-type-options.initiative.label",
-"flavor":  "TOKENSAYS.document-type-options.flavor.label",
-"macro":  "TOKENSAYS.document-type-options.macro.label"
+    "initiative":  "TOKENSAYS.document-type-options.initiative.label",
+    "flavor":  "TOKENSAYS.document-type-options.flavor.label",
+    "macro":  "TOKENSAYS.document-type-options.macro.label",
+    "reacts":  "TOKENSAYS.document-type-options.reacts.label",
+    "say": "TOKENSAYS.document-type-options.say.label"
 }
 
-export const UNIVERSALDOCUMENTNAMEOPS = {};
+export function getUniversalDocumentNameOps(documentType) {
+    switch (documentType) {
+        case "say":
+            return says.saysList
+        default:
+            return false
+    }
+};
 
 export const DND5EDOCUMENTTYPEOPS  = {
-"ability":  "TOKENSAYS.document-type-options.ability.label",
-"attack":  "TOKENSAYS.document-type-options.attack.label",
-"damage":  "TOKENSAYS.document-type-options.damage.label",
-"save": "TOKENSAYS.document-type-options.save.label",
-"skill":  "TOKENSAYS.document-type-options.skill.label"
+    "ability":  "TOKENSAYS.document-type-options.ability.label",
+    "attack":  "TOKENSAYS.document-type-options.attack.label",
+    "damage":  "TOKENSAYS.document-type-options.damage.label",
+    "save": "TOKENSAYS.document-type-options.save.label",
+    "skill":  "TOKENSAYS.document-type-options.skill.label"
 }
 
-export function getDnd5eDocumentNameOps(){
-    return {
-        "ability": game.dnd5e?.config.abilities,
-        "save" : game.dnd5e?.config.abilities,
-        "skill" : game.dnd5e?.config.skills
+export function getDnd5eDocumentNameOps(documentType){
+    switch (documentType) {
+        case "ability": 
+            return game.dnd5e?.config.abilities
+        case "save":
+            return game.dnd5e?.config.abilities
+        case "skill":
+            return game.dnd5e?.config.skills
+        default:
+            return getUniversalDocumentNameOps(documentType)
         }
 }
 
