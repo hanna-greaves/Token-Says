@@ -1,12 +1,15 @@
 import {tokenSays} from '../token-says.js';
 import {tokenSaysHasPolyglot} from '../index.js';
 
+const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
 /**
  * Class that stores all of the rules and that CRUDS them
  * A single rule in our list of tokenSaysRules 
  * @typedef {Object} say
  * @property {string} id - A unique ID to identify this rule.
  * @property {string} label - The title of the rule.
+ * @property {integer} delay - Delays the saying for the given amount of milliseconds
  * @property {string} documentType - The document type that triggers this rule.
  * @property {string} documentName - The actor or item name which triggers this rule.
  * @property {string} fileName - The file which is rolled or played based on this rule.
@@ -17,22 +20,24 @@ import {tokenSaysHasPolyglot} from '../index.js';
  * @property {number} likelihood - The threshold above which a random 1d100 will result in an escape from this rule.
  * @property {boolean} isActive - toggle for rule being active or not
  * @property {boolean} isActorName - toggle for rule being for the name of the actor or the token on the board
+ * @property {integer} volume - sets the volume of audio, between 0.01 and 1
  */
 
 export class say {
     constructor(fileType) {
-        this.id = foundry.utils.randomID(16),
-        this.label = '',
-        this.documentType = '',
-        this.documentName = '',
-        this.name = '',
-        this.fileType = fileType,
-        this.fileName = '',
-        this.fileTitle = '',
         this.compendiumName = '',
-        this.likelihood = 100,
+        this.delay = 0,
+        this.documentName = '',
+        this.documentType = '',
+        this.id = foundry.utils.randomID(16),
         this.isActive = true,
         this.isActorName = true,
+        this.fileName = '',
+        this.fileTitle = '',
+        this.fileType = fileType,
+        this.label = '',
+        this.likelihood = 100,
+        this.name = '',
         this.volume = 0.50
     }
 
@@ -61,6 +66,10 @@ export class say {
             return result
         }
 
+        if(this.delay) {
+            await wait(this.delay);
+        }
+        
         if(!result.escape.audio){
             this.sayAudio(); 
         }
@@ -262,5 +271,17 @@ export class say {
 
         let rolledResult = await table.roll(); 
         return rolledResult.results[0].data.text;
+    }
+}
+
+export class reacts extends say {
+    constructor(fileType) {
+        super(fileType);
+        this.to ={
+            documentType:'',
+            documentName:'',
+            name: '',
+            isActorName: true
+        }
     }
 }

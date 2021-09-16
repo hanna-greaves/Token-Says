@@ -1,4 +1,4 @@
-import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, UNIVERSALDOCUMENTNAMEOPS, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS} from './constants.js';
+import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 
@@ -24,51 +24,70 @@ export class TokenSaysSayForm extends FormApplication {
     });
   }
 
-  _determineWorldOptions() {
-    if (game.world.data.system === "dnd5e"){ return {...DND5EDOCUMENTTYPEOPS, ...UNIVERSALDOCUMENTTYPEOPS}} 
-    if (game.world.data.system === "pf2e"){ return {...PF2EDOCUMENTTYPEOPS, ...UNIVERSALDOCUMENTTYPEOPS}} 
-    return UNIVERSALDOCUMENTTYPEOPS;
+  _determineWorldOptions(reacts) {
+    let allOps = UNIVERSALDOCUMENTTYPEOPS;
+    if (game.world.data.system === "dnd5e"){ allOps = {...DND5EDOCUMENTTYPEOPS, ...allOps}} 
+    if (game.world.data.system === "pf2e"){ allOps = {...PF2EDOCUMENTTYPEOPS, ...allOps}} 
+    if (reacts){delete allOps['reacts']} else {delete allOps['say']}
+    return allOps;
   }
 
   _determineWorldDocumentNameOptions(documentType) {
-    let allOps = UNIVERSALDOCUMENTNAMEOPS;
-    if (game.world.data.system === "dnd5e"){ allOps = {...getDnd5eDocumentNameOps(), ...UNIVERSALDOCUMENTNAMEOPS}} 
-    return allOps[documentType];
+    if (game.world.data.system === "dnd5e"){ 
+      return getDnd5eDocumentNameOps(documentType)
+    } 
+    return getUniversalDocumentNameOps(documentType)
   }
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find('select').change((event) => {
+
+    html.on('change', "#token-says-documenttype-value",(event) => {
       if(event.currentTarget.id === "token-says-documenttype-value") {
-        let documentType = event.currentTarget.value;
-        this._refreshDocumentNameOptions(documentType);
+        const documentType = event.currentTarget.value;
+        this._refreshDocumentNameOptions(documentType, '');
+        let reactsDiv = document.getElementById(`token-says-reacts`);
+        if(documentType === 'reacts'){
+          reactsDiv.classList.remove('hidden');
+        } else {
+          reactsDiv.classList.add('hidden');
+        }
       }
     });
+    html.on('change', "#token-says-documenttype-reacts-value",(event) => {
+      this._refreshDocumentNameOptions(event.currentTarget.value, 'to.');
+      this._duplicateNameWarning();
+    });
+    html.on('change', '#token-says-documentname-reacts-value', this._duplicateNameWarning.bind(this));  
+    html.on('input', '#token-says-name-value', this._duplicateNameWarning.bind(this));  
   }
   
-  async _refreshDocumentNameOptions(documentType){
-    const documentName = document.getElementById("token-says-documentname-value").value
-    let documentNameSelectHTML = document.getElementById("token-says-documentname");
-    documentNameSelectHTML.innerHTML = this._createNameOptionsHTML(documentType, documentName);
+  async _refreshDocumentNameOptions(documentType, reacts){
+    let reactsHTML = reacts ? '-reacts' : '';
+    const documentName = document.getElementById(`token-says-documentname${reactsHTML}-value`).value
+    let documentNameSelectHTML = document.getElementById(`token-says-documentname${reactsHTML}`);
+    documentNameSelectHTML.innerHTML = this._createNameOptionsHTML(documentType, documentName, reacts);
   }
 
-  _createNameOptionsHTML(documentType, documentName) {
-    let finalHTML = '';
+  _createNameOptionsHTML(documentType, documentName, reacts) {
+    let finalHTML = ''; let reactsHTML = reacts ? '-reacts' : '';
+    documentName = documentName ? documentName : '';
     const optionListOptions  = this._determineWorldDocumentNameOptions(documentType);
     if(optionListOptions) {
+      const sortedList = Object.entries(optionListOptions).sort(([,a],[,b]) => a.localeCompare(b))
       let optionList = '<option value=""></option>';
-      for (var option in optionListOptions) {
+      for(let i = 0; i < sortedList.length; i++) {
         let selected = '';
-        if (option === documentName) {
+        if (sortedList[i][0] === documentName) {
             selected = ' selected '
           }
-        optionList += '<option value="'+ option +'" ' + selected + '>' + optionListOptions[option] + '</option>';
+        optionList += '<option value="'+ sortedList[i][0] +'" ' + selected + '>' + sortedList[i][1] + '</option>';
       }
-      finalHTML = '<select id="token-says-documentname-value" name="documentName" value="' + documentName + '">'+ optionList + '</select>'  
+      finalHTML = `<select id="token-says-documentname${reactsHTML}-value" name="${reacts}documentName" value="` + documentName + '">'+ optionList + '</select>'  
     } else {
       let disabled = ''
-      if(documentType ==='initiative'){disabled = ' disabled '}
-      finalHTML = '<input id="token-says-documentname-value" type="text" name="documentName" value="' + documentName + '" ' + disabled + '/>'
+      if(documentType ==='initiative' || documentType ==='reacts'){disabled = ' disabled '}
+      finalHTML = `<input id="token-says-documentname${reactsHTML}-value" type="text" name="${reacts}documentName" value="` + documentName + '" ' + disabled + '/>'
     }
     return finalHTML
   }
@@ -77,10 +96,13 @@ export class TokenSaysSayForm extends FormApplication {
     const sy = says.getSay(this.sayId);
     return {
       say: sy,
-      documentTypeOptions: this._determineWorldOptions(),
+      documentTypeOptions: this._determineWorldOptions(false),
+      documentTypeReactsOptions: this._determineWorldOptions(true),
       compendiumList: getCompendiumOps(sy.fileType),
-      documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName),
-      isAudio: sy.fileType === 'audio' ? true : false
+      documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName, ''),
+      documentNameReactsOptions: this._createNameOptionsHTML(sy.to?.documentType, sy.to?.documentName, 'to.'),
+      isAudio: sy.fileType === 'audio' ? true : false,
+      isReact: sy.documentType === 'reacts' ? true : false
     } 
   }
   
@@ -88,5 +110,23 @@ export class TokenSaysSayForm extends FormApplication {
     const expandedData = foundry.utils.expandObject(formData); 
     await says.updateSay(expandedData.id, expandedData, true);
     tokenSays.TokenSaysSettingsConfig.refresh();
+  }
+
+  _duplicateNameWarning(){
+    const warning = document.getElementById(`token-says-rule-dup-name-warning`);
+    if(document.getElementById(`token-says-documenttype-reacts-value`).value === 'say'){
+      document.getElementById(`token-says-to-name`).classList.add('hidden')
+      document.getElementById(`token-says-to-is-actor-name`).classList.add('hidden')
+      const reactsId = document.getElementById(`token-says-documentname-reacts-value`).value;
+      if(document.getElementById(`token-says-name-value`).value === says.getSay(reactsId).name){ 
+        warning.classList.remove('hidden')
+      } else {
+        warning.classList.add('hidden')
+      }
+    } else {
+      warning.classList.add('hidden');
+      document.getElementById(`token-says-to-name`).classList.remove('hidden')
+      document.getElementById(`token-says-to-is-actor-name`).classList.remove('hidden')
+    }
   }
 }

@@ -119,6 +119,8 @@ Hooks.once('init', async function() {
         if(app.id ==="token-says-rules"){
             app._filter();
             app._tab();
+        } else if (app.id ==="token-says-rules-rule"){
+            app._duplicateNameWarning()
         }
     });
 

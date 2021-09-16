@@ -14,7 +14,9 @@
       "flavor.label": "Item Name",
       "initiative.label": "Initiative Roll",
       "macro.label": "Macro (API)",
+      "reacts.label": "Responds to",
       "save.label": "Saving Throw",
+      "say.label": "Saying",
       "skill.label": "Skill"
     },
     "setting":{
@@ -31,9 +33,11 @@
       "rules.label": "Sayings",
       "rules.description": "A list of all sayings entered for this world.",
       "say":{
+        "actions.label": "Provoking Action",
         "compendiumName.label": "Compendium",
         "compendiumName.description.audio": "The compendium that holds the playlist. Leave blank to use your default (compendium or world).",
         "compendiumName.description.rolltable": "The compendium that holds the rollable table. Leave blank to use your default (compendium or world).",
+        "delay.label": "Delay (ms)",
         "documentName.label": "Action Name",
         "documentName.description": "Typically the name of the item. Leave blank to include all actions for the given action type.",
         "documentType.label": "Action Type",
@@ -51,7 +55,13 @@
         "likelihood.label": "Likelihood",
         "likelihood.description": "The percent likelihood that the token will say this when triggered.",
         "name.label": "Token Name",
-        "volume.label": "Volume"
+        "reacts.description": "Identify the action and the other token, if applicable, that this token will respond to.",
+        "reacts.label": "Responds To",
+        "source.label": "Source",
+        "token.label": "Token Speaking",
+        "trigger.label": "Trigger",
+        "volume.label": "Volume",
+        "warning.dupNames.label":"The responding token and the token being responded to share the same name. Though no token will respond to itself, this may result in a snowballing of responses, depending on how many tokens with this name are on the scene."
       },
       "search.placeholder": "Search sayings...",
       "search.clear": "clear search",
