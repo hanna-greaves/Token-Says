@@ -51,11 +51,18 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
   * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow)
   * Macro (API): see the API section below for details on how this is used
+  * Responds to: Introduces a new form section where you specify an action that this saying is responding to
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
 * **Playlist Name/Rollable Table Nmae:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
+* **Delay:** add a time, in milliseconds, to wait between the generating action and the saying. Note that delays due to accessing compendium content and rolling on compendiums may add to this delay.
 * **Volume:** Set the volume for this saying.
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
+* **Responds To:** this section is made visible if the 'Responds to' Action Name is selected
+  * **Action Type:** the type of action that this saying responds to. Has the same set of options as the 'Action Type' within this saying's 'Provoking action' section, accept 'Responds to' is not an option while 'Saying' is. 
+  * **Action Name:** similar to 'Action Name' in the 'Provoking Action' section, but for the action this saying is responding to.
+  * **Token Name:** the name of the token that this saying is responding to.
+  * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
 
 ## Game Module Settings
 See wiki https://github.com/napolitanod/Token-Says/wiki/Game-Module-Settings
