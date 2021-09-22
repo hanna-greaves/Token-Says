@@ -39,11 +39,10 @@ Token Says sayings can be configured within the "Open Sayings" area of the Token
 ## Configure a Saying
 Each saying is configured on a specific token or actor, based on name, for a given action and the saying is only hit when that token or actor performs the action. 
 * **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
-* **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling!
-   * accepts multiple token names. These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
+* **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
 * **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. This is system-specific. See action name below for the list of current available action types.
-* **Action Name:** Type in the name of the action associated to the action type. Accepts multiple action names. These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ).
+* **Action Name:** Type in the name of the action associated to the action type. **Accepts multiple action names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ).
   * Initiative Roll: leave blank
   * Item Name: use the item name that triggers the action (e.g. Action Surge)
   * Ability Check (dnd5e): select ability
@@ -54,7 +53,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Macro (API): see the API section below for details on how this is used
   * Responds to: Introduces a new form section where you specify an action that this saying is responding to   
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
-* **Playlist Name/Rollable Table Nmae:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
+* **Playlist Name/Rollable Table Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Delay:** add a time, in milliseconds, to wait between the generating action and the saying. Note that delays due to accessing compendium content and rolling on compendiums may add to this delay.
 * **Volume:** Set the volume for this saying.
@@ -62,9 +61,11 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Responds To:** this section is made visible if the 'Responds to' Action Name is selected
   * **Action Type:** the type of action that this saying responds to. Has the same set of options as the 'Action Type' within this saying's 'Provoking action' section, accept 'Responds to' is not an option while 'Saying' is. 
   * **Action Name:** similar to 'Action Name' in the 'Provoking Action' section, but for the action this saying is responding to.
-  * **Token Name:** the name of the token that this saying is responding to.
-   * accepts multiple token names. These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
+  * **Token Name:** the name of the token that this saying is responding to. **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
+  * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
+  * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
+  * **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
 
 ## Game Module Settings
 See wiki https://github.com/napolitanod/Token-Says/wiki/Game-Module-Settings
