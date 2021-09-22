@@ -4,6 +4,14 @@ export const FILETYPEENTITYTYPE = {
     rollTable: "RollTable",
     audio: "Playlist"
   }
+
+export const SEPARATOROPTIONS = {
+    "|": "| (pipe)",
+    "||": "|| (pipes)",
+    ";": "; (semicolon)",
+    "/": "/ (backslash)",
+    ",": ", (comma)"
+}
   
 export const UNIVERSALDOCUMENTTYPEOPS = {
     "initiative":  "TOKENSAYS.document-type-options.initiative.label",

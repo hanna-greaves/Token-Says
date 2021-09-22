@@ -26,10 +26,11 @@ export const WORKFLOWSTATES = {
         this.escapeReason = '',
         this.hook = (options.hook === undefined) ? '' : options.hook,
         this.id = foundry.utils.randomID(16),
-        this.isResponse = (options.isResponse === undefined) ? false : options.isResponse,
+        this.isResponse = (options.responseOptions === undefined) ? false : true
         this.itemId = '',
         this.message = message,
         this.responses = [],
+        this.responseOptions = options.responseOptions,
         this.say = (options.say === undefined) ? {} : options.say,
         this.sayResult = {},
         this.user = user
@@ -101,7 +102,7 @@ export const WORKFLOWSTATES = {
             case WORKFLOWSTATES.SAY: 
                 if (Object.keys(this.say).length) { 
                     this.log('Say found', {})
-                    this.sayResult = await this.say.say(this.token, this.actor, this.speaker)
+                    this.sayResult = await this.say.say({token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName, response: this.responseOptions})
                 } else {
                     this.log('Say not found', {});
                 }
@@ -112,7 +113,7 @@ export const WORKFLOWSTATES = {
                 }
             case WORKFLOWSTATES.GETRESPONSES:
                 this.log('Getting Responses ', {});
-                this.responses = says.findResponses(this.alias, this.actor.name, this.documentType, this.documentName, this.sayResult?.likelihood?.doesSay ? this.say : {});
+                this.responses = says.findResponses(this.alias, this.actor?.name, this.documentType, this.documentName, this.sayResult?.likelihood?.doesSay ? this.say : {});
                 return this.next(WORKFLOWSTATES.RESPONDS);
             case WORKFLOWSTATES.RESPONDS: 
                 if (this.responses.length) {
@@ -229,12 +230,14 @@ export const WORKFLOWSTATES = {
     async _respondsWorkflow(){
         for (let i = 0; i < this.responses.length; i++){
             const rsp = this.responses[i];
+            const sep = game.settings.get('token-says', 'separator');
             let tokens = [];
 
+            const names = rsp.name.split(sep).map(n => n.trim());
             if(!rsp.isActorName) {
-                tokens = this.scene.tokens.filter(t => t.name===rsp.name)
+                tokens = this.scene.tokens.filter(t => names.indexOf(t.name)!==-1)
             } else {
-                tokens = this.scene.tokens.filter(t => t.actor?.data?.name===rsp.name)
+                tokens = this.scene.tokens.filter(t => t.actor?.id && names.indexOf(game.actors.get(t.actor?.id)?.name)!==-1)
             }
 
             for(let i=0; i<tokens.length; i++){
@@ -244,7 +247,7 @@ export const WORKFLOWSTATES = {
                     this.log('TokenSays response killed - loop', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id})
                 } else {
                     message.data.speaker = {scene: this.scene.id, actor: actorId, token: tokenId, alias: alias};
-                    const wf = new workflow(message.data, this.user, {say: rsp, isResponse: true} );
+                    const wf = new workflow(message.data, this.user, {say: rsp, responseOptions: {token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}} );
                     wf.next();
                 }
             }

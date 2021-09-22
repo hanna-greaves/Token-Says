@@ -117,12 +117,24 @@ form.token-says-rule .flexrow input[type="text"] {
     padding-left: 6px;
 }
 
+form.token-says-rule .flexrow.suppress > div {
+    flex: 0 0 33%;
+    white-space: nowrap;
+    margin-bottom: 5px;
+}
+
 form.token-says-rule .hidden, #token-says-search-clear.hidden {
     display: none;
 }
 
 form.token-says-rule .warning {
     color: #FF0000;
+}
+
+form.token-says-rule .toolt {
+    color: #757575;
+    vertical-align: super;
+    font-size: 8px;
 }
 
 .token-says-rule .flexrow > div {
@@ -133,7 +145,7 @@ form.token-says-rule .warning {
 }
 
 .token-says-rule .flexrow > div > select {
-    max-width: 512.333px;
+    max-width: 516.333px;
 }
 
 .token-says-rule .reacts {

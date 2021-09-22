@@ -2,7 +2,7 @@ import {tokenSays} from "./token-says.js";
 import {workflow} from "./apps/workflow.js";
 import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
-import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, getCompendiumOps} from './apps/constants.js';
+import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
 import {api} from "./apps/api.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
@@ -26,6 +26,16 @@ Hooks.once('init', async function() {
         default: true,
         type: Boolean
     });
+
+    game.settings.register(module, 'separator', {
+        name: game.i18n.localize('TOKENSAYS.setting.separator.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.separator.description'),
+        scope: 'world',
+        config: true,
+        default: '|',
+        type: String,
+        choices: SEPARATOROPTIONS
+    });  
 
     game.settings.register(module, 'tokenHeader', {
         name: game.i18n.localize('TOKENSAYS.setting.tokenHeader.display.label'),

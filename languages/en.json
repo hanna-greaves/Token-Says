@@ -6,7 +6,9 @@
     "deleteRule": "delete",
     "editRule": "edit",
     "import": "Import",
+    "parameters": "Accepts paramter values:[@alias]=token name;[@actor]=actor name;[@item]=item name. Add r_ to start for responding to details e.g. [@r_alias].",
     "saveChanges": "Save Changes",
+    "separator": "Accepts multiple entries delimited by your settings separator",
     "document-type-options": {
       "ability.label": "Ability Check",
       "attack.label": "Attack Roll",
@@ -32,6 +34,8 @@
       "rollableTableRules": "Rollable Table Sayings",
       "rules.label": "Sayings",
       "rules.description": "A list of all sayings entered for this world.",
+      "separator.label": "Separator",
+      "separator.description": "When used in text inputs, allows for multiple entries within the same form field. Use this as the separator between each entry (e.g. goblin|hobgoblin|bugbear). Currently supported in Token Name input box on the saying form.",
       "say":{
         "actions.label": "Provoking Action",
         "compendiumName.label": "Compendium",
@@ -59,6 +63,9 @@
         "reacts.label": "Responds To",
         "source.label": "Source",
         "token.label": "Token Speaking",
+        "suppressChatbubble.label": "Suppress Chat Bubble",
+        "suppressChatMessage.label": "Suppress Chat Message",
+        "suppressQuotes.label": "Suppress Quotes",
         "trigger.label": "Trigger",
         "volume.label": "Volume",
         "warning.dupNames.label":"The responding token and the token being responded to share the same name. Though no token will respond to itself, this may result in a snowballing of responses, depending on how many tokens with this name are on the scene."

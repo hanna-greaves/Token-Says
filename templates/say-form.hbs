@@ -23,6 +23,7 @@
                 <div class="flexrow">
                     <label>
                         <span>{{localize 'TOKENSAYS.setting.say.name.label'}}</span>
+                        <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-asterisk"></i></span>
                     </label>
                     <div class="rule-value form-fields">
                         <input id="token-says-name-value" type="text" name="name" value="{{say.name}}" required/>
@@ -59,6 +60,7 @@
                 <div class="flexrow">
                     <label>
                         <span>{{localize 'TOKENSAYS.setting.say.documentName.label'}}</span>
+                        <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-asterisk"></i></span>
                     </label>
                     <div id="token-says-documentname" class="rule-value form-fields">
                         {{{documentNameOptions}}}
@@ -96,6 +98,7 @@
                 <div id="token-says-to-name" class="flexrow">
                     <label>
                         <span>{{localize 'TOKENSAYS.setting.say.name.label'}}</span>
+                        <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-asterisk"></i></span>
                     </label>
                     <div class="rule-value form-fields">
                         <input id="token-says-to-name-value" type="text" name="to.name" value="{{say.to.name}}" />
@@ -120,6 +123,7 @@
                 <div class="flexrow">
                     <label>
                         <span>{{localize 'TOKENSAYS.setting.say.fileTitle.label'}}</span>
+                        <span class="toolt" title="{{localize 'TOKENSAYS.parameters'}}"><i class="fas fa-asterisk"></i></span>
                     </label>
                     <div class="rule-value form-fields">
                         <input type="text" name="fileTitle" value="{{say.fileTitle}}"/>
@@ -188,6 +192,29 @@
                         <input type="checkbox" name="isActive" {{checked say.isActive}} />
                         <label>
                             {{localize 'TOKENSAYS.setting.say.isActive.label'}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="form-group">
+                <div class="flexrow suppress">
+                    <div class="rule-value form-fields">
+                        <input type="checkbox" name="suppressChatbubble" {{checked say.suppressChatbubble}} />
+                        <label>
+                            {{localize 'TOKENSAYS.setting.say.suppressChatbubble.label'}}
+                        </label>
+                    </div>
+                    <div class="rule-value form-fields">
+                        <input type="checkbox" name="suppressChatMessage" {{checked say.suppressChatMessage}} />
+                        <label>
+                            {{localize 'TOKENSAYS.setting.say.suppressChatMessage.label'}}
+                        </label>
+                    </div>
+                    <div class="rule-value form-fields">
+                        <input type="checkbox" name="suppressQuotes" {{checked say.suppressQuotes}} />
+                        <label>
+                            {{localize 'TOKENSAYS.setting.say.suppressQuotes.label'}}
                         </label>
                     </div>
                 </div>

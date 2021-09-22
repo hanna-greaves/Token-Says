@@ -65,17 +65,19 @@ import {say, reacts} from './say.js';
     static findSay(tokenName, actorName, documentType, documentName){
         const bypassNameTypes = ['initiative'];
         const sys = this.says;
+        const sep = game.settings.get('token-says', 'separator');
         for (var sy in sys) {
+            const names = sys[sy].name.split(sep).map(n => n.trim());
             if (
                 (
-                    (sys[sy].isActorName && sys[sy].name === actorName) 
-                    || (!sys[sy].isActorName && sys[sy].name === tokenName)
+                    (sys[sy].isActorName && actorName && names.indexOf(actorName) !== -1) 
+                    || (!sys[sy].isActorName && tokenName && names.indexOf(tokenName) !== -1)
                 ) 
                 && sys[sy].documentType === documentType 
                 && (
-                    sys[sy].documentName === "" 
-                    || sys[sy].documentName ===documentName
+                    !sys[sy].documentName 
                     || bypassNameTypes.indexOf(documentType) !== -1
+                    || sys[sy].documentName.split(sep).map(n => n.trim()).indexOf(documentName) !== -1
                     )
                 ) {
               return this._toClass(sys[sy]);
@@ -87,25 +89,29 @@ import {say, reacts} from './say.js';
     static findResponses(tokenName, actorName, documentType, documentName, sayTrigger){
         const bypassNameTypes = ['initiative'];
         const sys = this.responses;
+        const sep = game.settings.get('token-says', 'separator');
         const rsp = [];
         for (var sy in sys) {
              if (sys[sy].to.documentType === 'say') {
                 if(sys[sy].to.documentName === sayTrigger?.id) {rsp.push(this._toClass(sys[sy]))}
             }
-            else if (
-                (
-                    (!sys[sy].to.name)
-                    || (sys[sy].to.isActorName && sys[sy].to.name === actorName) 
-                    || (!sys[sy].to.isActorName && sys[sy].to.name === tokenName)
-                ) 
-                && sys[sy].to.documentType === documentType 
-                && (
-                    sys[sy].to.documentName === "" 
-                    || sys[sy].to.documentName ===documentName
-                    || bypassNameTypes.indexOf(documentType) !== -1
-                    )
-            ) {
-                rsp.push(this._toClass(sys[sy]))
+            else {
+                const names = sys[sy].to.name.split(sep).map(n => n.trim());
+                if (
+                    (
+                        (!sys[sy].to.name)
+                        || (sys[sy].to.isActorName && actorName && names.indexOf(actorName) !== -1) 
+                        || (!sys[sy].to.isActorName && tokenName && names.indexOf(tokenName) !== -1)
+                    ) 
+                    && sys[sy].to.documentType === documentType 
+                    && (
+                        !sys[sy].to.documentName 
+                        || bypassNameTypes.indexOf(documentType) !== -1
+                        || sys[sy].to.documentName.split(sep).map(n => n.trim()).indexOf(documentName) !== -1
+                        )
+                ) {
+                    rsp.push(this._toClass(sys[sy]))
+                }
             }
         }
         return rsp      

@@ -38,6 +38,9 @@ export class say {
         this.label = '',
         this.likelihood = 100,
         this.name = '',
+        this.suppressChatbubble = false,
+        this.suppressChatMessage = false,
+        this.suppressQuotes = false,
         this.volume = 0.50
     }
 
@@ -51,7 +54,7 @@ export class say {
         }
     }
 
-    async say(token, actor, speaker){
+    async say(options){
         const result = {escape: {}, likelihood: {}, message:''}
 
         result.escape = this._escape();
@@ -76,23 +79,24 @@ export class say {
 
         if(this.fileType === 'rollTable' && (!result.escape.chatMessage || !result.escape.chatBubble)) {
             if (this.fileTitle) {      
-                result.message = this.fileTitle
+                result.message = this._parameterizeMessage(this.fileTitle, options)
             } else {
-                result.message = await this._getRollMessage()
+                let rolledMessage = await this._getRollMessage();
+                result.message = this._parameterizeMessage(rolledMessage, options)
             }
         } else {       
             result.message = "............"
         }
 
         if(!result.escape.chatMessage && result.message){
-            this._sayChatMessage(token, actor, speaker, result.message)
+            this._sayChatMessage(options.token, options.actor, options.speaker, result.message)
         }
 
         if(!result.escape.chatBubble && result.message){
-           this._sayChatBubble(token, result.message)
+           this._sayChatBubble(options.token, result.message)
         }
 
-        tokenSays.log(false, 'Say Complete Execution', {say: this, escape: result.escape, likelihood: result.likelihood});
+        tokenSays.log(false, 'Say Complete Execution', {say: this, options: options, escape: result.escape, likelihood: result.likelihood});
         return result
     }
 
@@ -118,6 +122,7 @@ export class say {
         if(suppressBubble === 'X' 
             || (this.fileType === 'audio' && suppressBubble === 'A')  
             || (this.fileType === 'rollTable' && suppressBubble === 'R')
+            || (this.suppressChatbubble)
             ) {
             escape.chatBubble = true
         }
@@ -125,6 +130,7 @@ export class say {
         if(suppressMessage === 'X' 
             || (this.fileType === 'audio' && suppressMessage === 'A')  
             || (this.fileType === 'rollTable' && suppressMessage === 'R')
+            || (this.suppressChatMessage)
             ) {
             escape.chatMessage = true
         }
@@ -229,7 +235,7 @@ export class say {
      * Method that executes the chat message 
     */
     async _sayChatMessage(token, actor, speaker, message) {
-        let img = '';
+        let img = '', quotes = this.suppressQuotes ? '' : '"';
         if(game.settings.get('token-says', 'suppressImage')){
             tokenSays.log(false, 'Chat image suppressed ', {});
         } else if(this.isActorName && actor?.data.img){
@@ -242,7 +248,7 @@ export class say {
         if(tokenSaysHasPolyglot){
             finalMessage = message;
         } else {
-            finalMessage = '<div class="token-says chat-window">'+ img + '<div class="what-is-said">"' + message + '"</div></div>';
+            finalMessage = '<div class="token-says chat-window">'+ img + '<div class="what-is-said">' + quotes + message + quotes + '</div></div>';
         }   
         ChatMessage.create({
             speaker: speaker,
@@ -270,7 +276,19 @@ export class say {
         }
 
         let rolledResult = await table.roll(); 
-        return rolledResult.results[0].data.text;
+        return rolledResult.results[0].data.text
+    }
+
+    _parameterizeMessage(message, options){
+        const act = game.actors.get(options.actor?.id)?.name;
+        const r_act = game.actors.get(options.response?.actor?.id)?.name;
+        return message
+            .replace('[@alias]', options.speaker.alias ? options.speaker.alias : '')
+            .replace('[@actor]', act ? act : '')
+            .replace('[@item]', options.item ? options.item.toLowerCase() : '')
+            .replace('[@r_alias]', options.response?.speaker?.alias ? options.response?.speaker?.alias : '')
+            .replace('[@r_actor]', r_act ? r_act : '')
+            .replace('[@r_item]', options.response?.item ? options.response.item.toLowerCase() : '')
     }
 }
 
