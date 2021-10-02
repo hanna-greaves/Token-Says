@@ -63,9 +63,11 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * **Action Name:** similar to 'Action Name' in the 'Provoking Action' section, but for the action this saying is responding to.
   * **Token Name:** the name of the token that this saying is responding to. **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
-  * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
-  * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
-  * **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
+  * **Only If In Sight:** requires the token to be able to see the token that they are responding to. Based on center-point calculation. Walls block.
+  * **Distance:** token must be within this distance from the token that they are resonding to. Consider this comparable to the distance within which they can hear the other token.
+* **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
+* **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
+* **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
 
 ## Game Module Settings
 See wiki https://github.com/napolitanod/Token-Says/wiki/Game-Module-Settings
