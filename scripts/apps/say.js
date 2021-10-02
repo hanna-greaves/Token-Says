@@ -82,7 +82,7 @@ export class say {
                 result.message = this._parameterizeMessage(this.fileTitle, options)
             } else {
                 let rolledMessage = await this._getRollMessage();
-                result.message = this._parameterizeMessage(rolledMessage, options)
+                result.message = rolledMessage ? this._parameterizeMessage(rolledMessage, options) : ""
             }
         } else {       
             result.message = "............"
@@ -295,11 +295,13 @@ export class say {
 export class reacts extends say {
     constructor(fileType) {
         super(fileType);
-        this.to ={
+        this.to = {
+            distance: 0,
             documentType:'',
             documentName:'',
             name: '',
-            isActorName: true
+            isActorName: true,
+            requireVision: false
         }
     }
 }

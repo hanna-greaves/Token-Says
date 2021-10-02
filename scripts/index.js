@@ -108,6 +108,15 @@ Hooks.once('init', async function() {
         type: Boolean
     });
 
+    game.settings.register(module, 'conditions', {
+        name: game.i18n.localize('TOKENSAYS.setting.condition.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.condition.description'),
+        scope: 'world',
+        config: true,
+        default: '',
+        type: String,
+    });  
+
     game.settings.register(module, 'rules', {
         name: game.i18n.localize('TOKENSAYS.setting.rules.label'),
         hint: game.i18n.localize('TOKENSAYS.setting.rules.description'),

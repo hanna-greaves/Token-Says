@@ -106,13 +106,20 @@
                     </div>
                     <p class="notes"></p>
                 </div>
-                <div id="token-says-to-is-actor-name" class="flexrow">
+                <div class="flexrow check-three">
+                    <input id="token-says-to-is-actor-name" type="checkbox" name="to.isActorName" {{checked say.to.isActorName}} />
                     <label>
                         <span>{{localize 'TOKENSAYS.setting.say.isActorName.label'}}</span>
                     </label>
-                    <div class="rule-value">
-                        <input type="checkbox" name="to.isActorName" {{checked say.to.isActorName}} />
-                    </div>
+                    <input type="checkbox" name="to.requireVision" {{checked say.to.requireVision}} />
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.requireVision.label'}}</span>
+                    </label>
+                    <label>
+                        <span>{{localize 'TOKENSAYS.setting.say.maxDistance.label'}}</span>
+                    </label>
+                    <input type="range" name="to.distance" min="0" max="200" step="1" value="{{say.to.distance}}"/>
+                    <span class="range-value">{{say.to.distance}}</span>
                     <p class="notes"></p>
                 </div>
             </div>
