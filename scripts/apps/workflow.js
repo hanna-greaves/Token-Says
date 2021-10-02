@@ -135,6 +135,7 @@ export const WORKFLOWSTATES = {
      * Performs escape of token says if certain game settings are matched. Settings may be world or client.
     */
     _escapeGlobal(){
+        const conditions = game.settings.get('token-says', 'conditions');
         if (this.flags?.TOKENSAYS?.cancel){
             this.escape = true,
             this.escapeReason = 'Token Says flag'
@@ -150,7 +151,10 @@ export const WORKFLOWSTATES = {
         } else if (game.settings.get('token-says','suppressPrivateGMRoles') && (this.message.whisper?.length || this.message.whisperAttackCard)){
             this.escape = true,
             this.escapeReason = 'Private GM Roll to be escaped due to world settings'
-        } 
+        }  else if(this.token.actor?.effects && this.token.actor.effects.find(e => conditions.split('|').map(n => n.trim()).indexOf(e.data.label) !== -1 && !e.data.disabled)){
+            this.escape = true,
+            this.escapeReason = 'TokenSays response killed - condition'
+        }
         return;
     }
 
@@ -228,29 +232,62 @@ export const WORKFLOWSTATES = {
     }
 
     async _respondsWorkflow(){
+        if(!canvas?.tokens?.placeables){return}
         for (let i = 0; i < this.responses.length; i++){
             const rsp = this.responses[i];
             const sep = game.settings.get('token-says', 'separator');
+            const conditions = game.settings.get('token-says', 'conditions');
             let tokens = [];
 
             const names = rsp.name.split(sep).map(n => n.trim());
             if(!rsp.isActorName) {
-                tokens = this.scene.tokens.filter(t => names.indexOf(t.name)!==-1)
+                tokens = canvas.tokens.placeables.filter(t => names.indexOf(t.name)!==-1)
             } else {
-                tokens = this.scene.tokens.filter(t => t.actor?.id && names.indexOf(game.actors.get(t.actor?.id)?.name)!==-1)
+                tokens = canvas.tokens.placeables.filter(t => t.actor?.id && names.indexOf(game.actors.get(t.actor?.id)?.name)!==-1)
             }
 
             for(let i=0; i<tokens.length; i++){
                 const token = tokens[i];
                 const alias = token.name, actorId = token.data.actorId, tokenId = token.id, message = new ChatMessage;
                 if(tokenId === this.token.id) {
-                    this.log('TokenSays response killed - loop', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id})
-                } else {
-                    message.data.speaker = {scene: this.scene.id, actor: actorId, token: tokenId, alias: alias};
-                    const wf = new workflow(message.data, this.user, {say: rsp, responseOptions: {token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}} );
-                    wf.next();
+                    this.log('TokenSays response killed - loop', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id});
+                    continue
                 }
+                if(token.actor?.effects && token.actor.effects.find(e => conditions.split('|').map(n => n.trim()).indexOf(e.data.label) !== -1 && !e.data.disabled)){
+                    this.log('TokenSays response killed - condition', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id});
+                    continue
+                }
+                if(rsp.to.distance || rsp.to.requireVision && canvas.grid && canvas.dimensions){
+                    const orig = new PIXI.Point(...canvas.grid.getCenter(this.token.data.x, this.token.data.y));
+                    const dest = new PIXI.Point(...canvas.grid.getCenter(token.data.x, token.data.y));
+                    const ray = new Ray(orig, dest);
+                    if(rsp.to.distance){
+                        if(!this._inDistance(ray, rsp.to.distance)){
+                            this.log('TokenSays response killed - distance', {id: rsp.id, respondingToken: token, speakingToken: this.token});
+                            continue
+                        }
+                    }
+                    if(rsp.to.requireVision){
+                        if(!this._inView(ray, token)){
+                            this.log('TokenSays response killed - view', {id: rsp.id, respondingToken: token, speakingToken: this.token});
+                            continue
+                        }
+                    }
+                }
+                message.data.speaker = {scene: this.scene.id, actor: actorId, token: tokenId, alias: alias};
+                const wf = new workflow(message.data, this.user, {say: rsp, responseOptions: {token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}} );
+                wf.next();
             }
         }
+    }
+
+    _inDistance(ray, distance){
+        const d = canvas.grid.measureDistances([{ray:ray}], {gridSpaces: true})[0];
+        if(d <= distance){return true} 
+        return false
+    }
+
+    _inView(ray, token){
+        return (canvas.walls?.checkCollision(ray) || !token.hasSight) ? false : true
     }
 }

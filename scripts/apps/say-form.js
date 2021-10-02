@@ -116,7 +116,7 @@ export class TokenSaysSayForm extends FormApplication {
     const warning = document.getElementById(`token-says-rule-dup-name-warning`);
     if(document.getElementById(`token-says-documenttype-reacts-value`).value === 'say'){
       document.getElementById(`token-says-to-name`).classList.add('hidden')
-      document.getElementById(`token-says-to-is-actor-name`).classList.add('hidden')
+      document.getElementById(`token-says-to-is-actor-name`).disabled=true
       const reactsId = document.getElementById(`token-says-documentname-reacts-value`).value;
       if(document.getElementById(`token-says-name-value`).value === says.getSay(reactsId).name){ 
         warning.classList.remove('hidden')
@@ -126,7 +126,7 @@ export class TokenSaysSayForm extends FormApplication {
     } else {
       warning.classList.add('hidden');
       document.getElementById(`token-says-to-name`).classList.remove('hidden')
-      document.getElementById(`token-says-to-is-actor-name`).classList.remove('hidden')
+      document.getElementById(`token-says-to-is-actor-name`).disabled=false
     }
   }
 }

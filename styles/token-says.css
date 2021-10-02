@@ -64,7 +64,7 @@ form.token-says .content {
     color: #7a7971;
 }
 
-.token-says .rule-active input[type="checkbox"] {
+.token-says .rule-active input[type="checkbox"], form.token-says-rule .flexrow input[type="checkbox"] {
     flex: 0 0 15px;
     width: 15px;
     height: 15px;
@@ -146,6 +146,15 @@ form.token-says-rule .toolt {
 
 .token-says-rule .flexrow > div > select {
     max-width: 516.333px;
+}
+
+.token-says-rule .flexrow.check-three {
+    flex: 0 0 100%;
+    white-space: nowrap;
+}
+
+.token-says-rule .flexrow.check-three input[type="range"]  {
+    flex: 0 0 30%;
 }
 
 .token-says-rule .reacts {
