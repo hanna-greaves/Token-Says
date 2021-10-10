@@ -13,6 +13,8 @@
       "ability.label": "Ability Check",
       "attack.label": "Attack Roll",
       "damage.label": "Damage Roll",
+      "effectAdd.label": "Condition/Effect Added",
+      "effectDelete.label": "Condition/Effect Removed",
       "flavor.label": "Item Name",
       "initiative.label": "Initiative Roll",
       "macro.label": "Macro (API)",

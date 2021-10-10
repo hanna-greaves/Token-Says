@@ -14,3 +14,11 @@ export function nullTokenSaysRuleBool(inBool, returnIfNotBool){
         return inBool
     }
 }
+
+export function activeEffectToWorkflowData(document, isDelete = false){
+    return {
+        documentName: document.data.label,
+        documentType: isDelete ? "effectDelete" : "effectAdd",
+        speaker: {scene: document.parent.token.parent.id, actor: document.parent.id, token: document.parent.token.id, alias: document.parent.token.name}
+    }
+}
