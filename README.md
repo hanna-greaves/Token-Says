@@ -44,8 +44,10 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. This is system-specific. See action name below for the list of current available action types.
 * **Action Name:** Type in the name of the action associated to the action type. **Accepts multiple action names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ).
   * Initiative Roll: leave blank
-  * Item Name: use the item name that triggers the action (e.g. Action Surge)
+  * Item Name: use the item name that triggers the saying when it is rolled (e.g. Action Surge)
   * Ability Check (dnd5e): select ability
+  * Condition/Effect Added: use the name of the condition or effect that triggers the saying when it is added or toggled on for the token.
+  * Condition/Effect Removed: use the name of the condition or effect that triggers the saying when it is removed or toggled off for the token.
   * Saving Throw (dnd5e): select ability
   * Skill (dnd5e, pf2e): select or enter skill
   * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
