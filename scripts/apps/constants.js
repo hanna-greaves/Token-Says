@@ -14,6 +14,8 @@ export const SEPARATOROPTIONS = {
 }
   
 export const UNIVERSALDOCUMENTTYPEOPS = {
+    "effectAdd": "TOKENSAYS.document-type-options.effectAdd.label",
+    "effectDelete": "TOKENSAYS.document-type-options.effectDelete.label",
     "initiative":  "TOKENSAYS.document-type-options.initiative.label",
     "flavor":  "TOKENSAYS.document-type-options.flavor.label",
     "macro":  "TOKENSAYS.document-type-options.macro.label",

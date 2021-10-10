@@ -4,6 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
 import {api} from "./apps/api.js";
+import {activeEffectToWorkflowData} from "./apps/helpers.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
@@ -132,7 +133,31 @@ Hooks.once('init', async function() {
             wf.next();
         }
     });
+
+    Hooks.on("createActiveEffect", (document, options, userId) => {
+        if(document.parent?.token?.parent?.id){
+            const data = activeEffectToWorkflowData(document)
+            const wf = new workflow(data, userId, data);
+            wf.next();
+        }
+    });
+
+    Hooks.on("deleteActiveEffect", (document, options, userId) => {
+        if(document.parent?.token?.parent?.id){
+            const data = activeEffectToWorkflowData(document, true)
+            const wf = new workflow(data, userId, data);
+            wf.next();
+        }
+    });
     
+    Hooks.on("updateActiveEffect", (document, change, options, userId) => {
+        if(document.parent?.token?.parent?.id && ("disabled" in change || ("label" in change && !document.data.disabled))){
+            const data = activeEffectToWorkflowData(document, change.disabled)
+            const wf = new workflow(data, userId, data);
+            wf.next();
+        }
+    });
+        
     //hook to ensure that, on token says settings render, the current tab is not lost
     Hooks.on("renderApplication", (app, html, options) => {
         if(app.id ==="token-says-rules"){
@@ -211,13 +236,13 @@ Hooks.once('init', async function() {
         tokenSays.log(false,'Module Support ', 'Midi-Qol Support Activated');
 
         Hooks.on("midi-qol.AttackRollComplete", (data) => {            
-            const wf = new workflow(data, game.user.id, {hook:"midi-qol.AttackRollComplete"});
+            const wf = new workflow(data, game.user.id, {documentType: 'attack', itemId: data.itemId});
             wf.next();
             tokenSays.log(false,'Attack Roll Complete ', data);
         });
 
         Hooks.on("midi-qol.DamageRollComplete", (data) => {
-            const wf = new workflow(data, game.user.id, {hook:"midi-qol.DamageRollComplete"});
+            const wf = new workflow(data, game.user.id, {documentType: 'damage', itemId: data.itemId});
             wf.next();
             tokenSays.log(false,'Damage Roll Complete ', data);
         });

@@ -27,7 +27,7 @@ export const WORKFLOWSTATES = {
         this.hook = (options.hook === undefined) ? '' : options.hook,
         this.id = foundry.utils.randomID(16),
         this.isResponse = (options.responseOptions === undefined) ? false : true
-        this.itemId = '',
+        this.itemId = options.itemId ? options.itemId : '',
         this.message = message,
         this.responses = [],
         this.responseOptions = options.responseOptions,
@@ -81,12 +81,8 @@ export const WORKFLOWSTATES = {
                 return this.next(WORKFLOWSTATES.PARSE);
             case WORKFLOWSTATES.PARSE:
                 this.log('Parsing message ', {});
-                if(this.documentName !== 'direct'){
-                    if (this.hook==="createChatMessage") {
-                        this._parseChatMessage()
-                    } else {
-                        this._parseHook()
-                    }
+                if (this.hook==="createChatMessage") {
+                    this._parseChatMessage()
                 }
                 return this.next(WORKFLOWSTATES.GETITEM);
             case WORKFLOWSTATES.GETITEM:
@@ -135,7 +131,6 @@ export const WORKFLOWSTATES = {
      * Performs escape of token says if certain game settings are matched. Settings may be world or client.
     */
     _escapeGlobal(){
-        const conditions = game.settings.get('token-says', 'conditions');
         if (this.flags?.TOKENSAYS?.cancel){
             this.escape = true,
             this.escapeReason = 'Token Says flag'
@@ -151,9 +146,16 @@ export const WORKFLOWSTATES = {
         } else if (game.settings.get('token-says','suppressPrivateGMRoles') && (this.message.whisper?.length || this.message.whisperAttackCard)){
             this.escape = true,
             this.escapeReason = 'Private GM Roll to be escaped due to world settings'
-        }  else if(this.token.actor?.effects && this.token.actor.effects.find(e => conditions.split('|').map(n => n.trim()).indexOf(e.data.label) !== -1 && !e.data.disabled)){
-            this.escape = true,
-            this.escapeReason = 'TokenSays response killed - condition'
+        } else if(!this.escape){
+            const conditions = game.settings.get('token-says', 'conditions').split('|').map(n => n.trim());
+            if(this.documentType !== 'reacts') {
+                let i = conditions.indexOf(this.documentName); 
+                if(i !== -1){conditions.splice(i,1)}
+            }
+            if(this.token.actor?.effects && this.token.actor.effects.find(e => !e.data.disabled && conditions.indexOf(e.data.label) !== -1)){
+                this.escape = true,
+                this.escapeReason = 'TokenSays response killed - condition'
+            }
         }
         return;
     }
@@ -204,17 +206,6 @@ export const WORKFLOWSTATES = {
             this.documentType = 'initiative'; 
         }   
         else if(this.message.flavor !== ""){this.documentType = 'flavor'; this.documentName =  this.message.flavor;}
-    }
-
-    /**
-     * Method that parses a data passed in via a hooked operation that may or may not have the same structure as message data
-    */
-    _parseHook () {
-        if (this.hook==="midi-qol.AttackRollComplete"){
-            this.documentType = 'attack'; this.itemId = this.message.itemId;
-        } else if (this.hook==="midi-qol.DamageRollComplete"){
-            this.documentType = 'damage'; this.itemId = this.message.itemId;
-        }
     }
 
     /**
