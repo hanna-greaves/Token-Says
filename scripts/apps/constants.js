@@ -53,6 +53,27 @@ export function getDnd5eDocumentNameOps(documentType){
         }
 }
 
+export const PF1DOCUMENTTYPEOPS  = {
+    "ability":  "TOKENSAYS.document-type-options.ability.label",
+    "attack":  "TOKENSAYS.document-type-options.attack.label",
+    //"damage":  "TOKENSAYS.document-type-options.damage.label",
+    "save": "TOKENSAYS.document-type-options.save.label",
+    "skill":  "TOKENSAYS.document-type-options.skill.label"
+}
+
+export function getPF1DocumentNameOps(documentType){
+    switch (documentType) {
+        case "ability": 
+            return game.pf1.config.abilities
+        case "save":
+            return game.pf1.config.savingThrows
+        case "skill":
+            return game.pf1.config.skills
+        default:
+            return getUniversalDocumentNameOps(documentType)
+        }
+}
+
 export const PF2EDOCUMENTTYPEOPS  = {
     "attack":  "TOKENSAYS.document-type-options.attack.label",
     "damage":  "TOKENSAYS.document-type-options.damage.label",

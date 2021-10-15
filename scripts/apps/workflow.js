@@ -66,6 +66,30 @@ export const WORKFLOWSTATES = {
         return this.scene?.tokens?.get(this.speaker.token);
     }
 
+    hasCancelConditionResponse(token, exCon){
+        if(!token.actor?.effects){return false}
+        const sys = game.world.data.system;
+        const conditions = game.settings.get('token-says', 'conditions').split('|').map(n => n.trim()).filter(n => n !== "")
+        if(conditions.length){
+            if(this.documentType !== 'reacts') {
+                let i = conditions.indexOf(this.documentName); 
+                if(i !== -1 && exCon){conditions.splice(i,1)}
+            }
+            if(conditions.length){
+                if(token.actor.effects.find(
+                    e => !e.data.disabled && (
+                        conditions.indexOf(e.data.label) !== -1 
+                        || (sys === 'pf1' && e.data.flags?.core?.statusId && conditions.indexOf(game.pf1.config.conditions[e.data.flags.core.statusId]) !== -1 )
+                        )
+                    )
+                ) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     async next(nextState){
         if(this.escape){nextState = WORKFLOWSTATES.CANCEL}
         await this._next(nextState);
@@ -146,16 +170,9 @@ export const WORKFLOWSTATES = {
         } else if (game.settings.get('token-says','suppressPrivateGMRoles') && (this.message.whisper?.length || this.message.whisperAttackCard)){
             this.escape = true,
             this.escapeReason = 'Private GM Roll to be escaped due to world settings'
-        } else if(!this.escape){
-            const conditions = game.settings.get('token-says', 'conditions').split('|').map(n => n.trim());
-            if(this.documentType !== 'reacts') {
-                let i = conditions.indexOf(this.documentName); 
-                if(i !== -1){conditions.splice(i,1)}
-            }
-            if(this.token.actor?.effects && this.token.actor.effects.find(e => !e.data.disabled && conditions.indexOf(e.data.label) !== -1)){
-                this.escape = true,
-                this.escapeReason = 'TokenSays response killed - condition'
-            }
+        } else if(this.hasCancelConditionResponse(this.token, true)){
+            this.escape = true,
+            this.escapeReason = 'TokenSays response killed - condition'
         }
         return;
     }
@@ -201,11 +218,35 @@ export const WORKFLOWSTATES = {
                 this.documentType = 'flavor'; 
                 this.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)
             } 
+        } else if(f = this.flags['pf1']) {
+            if (f.subject?.skill) {
+                this.documentType = 'skill'; 
+                this.documentName = f.subject.skill
+            } else if (f.subject?.ability) {
+                this.documentType = 'ability'; 
+                this.documentName = f.subject.ability
+            } else if (f.subject?.save) {
+                this.documentType = 'save'; 
+                this.documentName = f.subject.save
+            } else if (f.metadata?.rolls?.attacks) {
+                this.documentType = 'attack'; 
+                this.itemId = f.metadata.item;
+            } else if (f.metadata?.item) {
+                this.documentType = 'flavor'; 
+                this.itemId = f.metadata.item
+            } 
         }
         else if (this.flags.core?.initiativeRoll) {
             this.documentType = 'initiative'; 
         }   
-        else if(this.message.flavor !== ""){this.documentType = 'flavor'; this.documentName =  this.message.flavor;}
+        else if(this.message.flavor){
+            this.documentType = 'flavor'; 
+            this.documentName =  this.message.flavor 
+        }   
+        else if(this.message.document?.itemSource?.name ){
+            this.documentType = 'flavor'; 
+            this.documentName =  this.message.document.itemSource.name
+        }
     }
 
     /**
@@ -227,7 +268,6 @@ export const WORKFLOWSTATES = {
         for (let i = 0; i < this.responses.length; i++){
             const rsp = this.responses[i];
             const sep = game.settings.get('token-says', 'separator');
-            const conditions = game.settings.get('token-says', 'conditions');
             let tokens = [];
 
             const names = rsp.name.split(sep).map(n => n.trim());
@@ -244,7 +284,7 @@ export const WORKFLOWSTATES = {
                     this.log('TokenSays response killed - loop', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id});
                     continue
                 }
-                if(token.actor?.effects && token.actor.effects.find(e => conditions.split('|').map(n => n.trim()).indexOf(e.data.label) !== -1 && !e.data.disabled)){
+                if(this.hasCancelConditionResponse(token, false)){
                     this.log('TokenSays response killed - condition', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id});
                     continue
                 }
