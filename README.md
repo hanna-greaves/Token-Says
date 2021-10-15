@@ -112,7 +112,8 @@ To use this function you must have Token Says installed
 ## System Compatibility
 This module has been tested in DND5e. Though my intent is to have it be system agnostic in terms of the basic features, there may be some incompatible systems that I am not aware of. The list of known compatible systems are:
 * DND5e (developer confirmed)
-* PF2e (user confirmed)
+* PF1 (developer confirmed)
+* PF2e (developer confirmed)
 
 #### Not compatible with
 * L5R (this module does not include flavor in message data)
