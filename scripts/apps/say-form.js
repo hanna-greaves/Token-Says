@@ -1,4 +1,4 @@
-import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS} from './constants.js';
+import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 
@@ -27,7 +27,8 @@ export class TokenSaysSayForm extends FormApplication {
   _determineWorldOptions(reacts) {
     let allOps = UNIVERSALDOCUMENTTYPEOPS;
     if (game.world.data.system === "dnd5e"){ allOps = {...DND5EDOCUMENTTYPEOPS, ...allOps}} 
-    if (game.world.data.system === "pf2e"){ allOps = {...PF2EDOCUMENTTYPEOPS, ...allOps}} 
+    else if (game.world.data.system === "pf2e"){ allOps = {...PF2EDOCUMENTTYPEOPS, ...allOps}} 
+    else if (game.world.data.system === "pf1"){ allOps = {...PF1DOCUMENTTYPEOPS, ...allOps}} 
     if (reacts){delete allOps['reacts']} else {delete allOps['say']}
     return allOps;
   }
@@ -35,6 +36,8 @@ export class TokenSaysSayForm extends FormApplication {
   _determineWorldDocumentNameOptions(documentType) {
     if (game.world.data.system === "dnd5e"){ 
       return getDnd5eDocumentNameOps(documentType)
+    } else if (game.world.data.system === "pf1"){ 
+      return getPF1DocumentNameOps(documentType)
     } 
     return getUniversalDocumentNameOps(documentType)
   }
