@@ -184,14 +184,16 @@ export const WORKFLOWSTATES = {
         let f='';
         if(f=this.flags.dnd5e){
             if(f.roll?.skillId){
-                this.documentType = 'skill'; this.documentName = f.roll.skillId;           
+               this.documentType = 'skill'; this.documentName = f.roll.skillId;           
             } else if(f.roll?.abilityId){
-                this.documentType = f.roll.type; this.documentName = f.roll.abilityId;           
+               this.documentType = f.roll.type; this.documentName = f.roll.abilityId;           
             } else if(f.roll?.type ==="attack" && f.roll?.itemId) {
                 this.documentType = 'attack'; this.itemId = f.roll.itemId;
             } else if(f.roll?.type ==="damage" && f.roll?.itemId) {
                 this.documentType = 'damage'; this.itemId = f.roll.itemId;
-            }
+            } else if(f.roll?.itemId){
+                this.documentType = 'flavor';  this.itemId = f.roll.itemId;         
+            } 
         } else if(f=this.flags['midi-qol']) {
             if (f.type === 0){
                 this.documentType = 'flavor'; this.documentName = this.message.flavor;           

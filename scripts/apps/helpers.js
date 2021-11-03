@@ -22,3 +22,17 @@ export function activeEffectToWorkflowData(document, isDelete = false){
         speaker: {scene: document.parent.token.parent.id, actor: document.parent.id, token: document.parent.token.id, alias: document.parent.token.name}
     }
 }
+
+export async function checkToWorkflowData(actor, roll, type, check){
+    if(check.messageData){//kicked out because these will be handled in chat message parsing 
+        return
+    }
+    const token = roll.tokenId ? await fromUuid(roll.tokenId ) : canvas.scene.tokens.getName(roll.actor?.name)
+    const sceneId = token ? token.parent.id : game.scenes.current.id
+    const alias = token ? token.name : actor.name
+    return {
+        documentName: check,
+        documentType: type,
+        speaker: {scene: sceneId, actor: actor.id, token: token?.id, alias: alias}
+    }
+}
