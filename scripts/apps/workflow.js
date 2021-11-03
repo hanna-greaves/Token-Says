@@ -187,8 +187,7 @@ export const WORKFLOWSTATES = {
                this.documentType = 'skill'; this.documentName = f.roll.skillId;           
             } else if(f.roll?.abilityId){
                this.documentType = f.roll.type; this.documentName = f.roll.abilityId;           
-            } else 
-            if(f.roll?.type ==="attack" && f.roll?.itemId) {
+            } else if(f.roll?.type ==="attack" && f.roll?.itemId) {
                 this.documentType = 'attack'; this.itemId = f.roll.itemId;
             } else if(f.roll?.type ==="damage" && f.roll?.itemId) {
                 this.documentType = 'damage'; this.itemId = f.roll.itemId;
@@ -200,8 +199,8 @@ export const WORKFLOWSTATES = {
                 this.documentType = 'flavor'; this.documentName = this.message.flavor;           
             } else if (f.type === 1){
                 this.documentType = 'hit'; this.itemId = f.itemId;         
-           // } else if (f.type === 2){
-                //this.documentType = 'save'; this.itemId = f.itemId;          
+            } else if (f.type === 2){
+                this.documentType = 'save'; this.itemId = f.itemId;          
             } else if (f.type === 3){
                 this.documentType = 'attack'; this.itemId = f.itemId;          
             } else if (f.type === 4){
