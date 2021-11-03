@@ -4,7 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, checkToWorkflowData} from "./apps/helpers.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
@@ -232,6 +232,25 @@ Hooks.once('init', async function() {
 
     setModsAvailable();
 
+    if(game.world.data.system === "dnd5e"){
+        Hooks.on("Actor5e.rollSkill", async (actor, roll, ability, options)  => {
+            const data = await checkToWorkflowData(actor, roll, 'skill', ability)
+            const wf = new workflow(data, game.userId, data);
+            wf.next();
+        });
+
+        Hooks.on("Actor5e.rollAbilitySave", async (actor, roll, ability, options) => {
+            const data = await checkToWorkflowData(actor, roll, 'save', ability)
+            const wf = new workflow(data, game.userId, data);
+            wf.next();
+        });
+
+        Hooks.on("Actor5e.rollAbilityTest", async (actor, roll, ability, options) => {
+            const data = await checkToWorkflowData(actor, roll, 'ability', ability)
+            const wf = new workflow(data, game.userId, data);
+            wf.next();
+        });
+    }
     if (tokenSaysHasMQ){
         tokenSays.log(false,'Module Support ', 'Midi-Qol Support Activated');
 
