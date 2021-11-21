@@ -145,11 +145,11 @@ export class say {
     async mightSay() {
         let doesSay = true; let rolledResult = 100;
         if(this.likelihood < 100){
-            const maybe = new Roll(`1d100`);
-            rolledResult = await maybe.roll();
-            if (rolledResult.result > this.likelihood){doesSay = false}
+            const roll = await new Roll(`1d100`).roll();
+            rolledResult = roll.result;
+            if (rolledResult > this.likelihood){doesSay = false}
         }
-        return {doesSay: doesSay, roll: rolledResult.result}
+        return {doesSay: doesSay, roll: rolledResult}
     }
 
     /**
@@ -175,7 +175,8 @@ export class say {
         //get audio file from playlist
         let audioFile;
         if(!this.fileTitle){
-            const rolledResult = await new Roll(`1d`+ playlist.data.sounds.size).roll().result;
+            const roll = await new Roll(`1d`+ playlist.data.sounds.size).roll();
+            const rolledResult = roll.result;
             let i = 1; 
             for (let key of playlist.data.sounds) {
                 if (i++ == rolledResult) {
