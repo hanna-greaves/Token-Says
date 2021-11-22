@@ -135,7 +135,7 @@ Hooks.once('init', async function() {
     });
 
     Hooks.on("createActiveEffect", (document, options, userId) => {
-        if(document.parent?.token?.parent?.id){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
             const data = activeEffectToWorkflowData(document)
             const wf = new workflow(data, userId, data);
             wf.next();
@@ -143,7 +143,7 @@ Hooks.once('init', async function() {
     });
 
     Hooks.on("deleteActiveEffect", (document, options, userId) => {
-        if(document.parent?.token?.parent?.id){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
             const data = activeEffectToWorkflowData(document, true)
             const wf = new workflow(data, userId, data);
             wf.next();
@@ -151,7 +151,7 @@ Hooks.once('init', async function() {
     });
     
     Hooks.on("updateActiveEffect", (document, change, options, userId) => {
-        if(document.parent?.token?.parent?.id && ("disabled" in change || ("label" in change && !document.data.disabled))){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ("disabled" in change || ("label" in change && !document.data.disabled))){
             const data = activeEffectToWorkflowData(document, change.disabled)
             const wf = new workflow(data, userId, data);
             wf.next();

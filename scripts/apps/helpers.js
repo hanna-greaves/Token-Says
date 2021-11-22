@@ -19,7 +19,12 @@ export function activeEffectToWorkflowData(document, isDelete = false){
     return {
         documentName: document.data.label,
         documentType: isDelete ? "effectDelete" : "effectAdd",
-        speaker: {scene: document.parent.token.parent.id, actor: document.parent.id, token: document.parent.token.id, alias: document.parent.token.name}
+        speaker: {
+            scene: document.parent.token ? document.parent.token.parent.id : canvas.scene.id, 
+            actor: document.parent.id, 
+            token: document.parent.token ? document.parent.token.id : canvas.scene.tokens.find(t => t.actor.id === document.parent.id)?.id, 
+            alias: document.parent.token ? document.parent.token.name : document.parent.name
+        }
     }
 }
 
