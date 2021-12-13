@@ -94,6 +94,11 @@ To use this function you must have Token Says installed as a module and active a
 * tokenId (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actorId (optional) - the actor.id. Can be derived from token if not provided.
 * actionName - this must match to your Token Says saying "Action Name" for the given actor or token.
+  * If the Action Name on a saying with Action Type = Macro (API) is left blank then that saying will trigger for that actor/token regardless of the actionName set here in the macro. 
+
+![klhkg](https://user-images.githubusercontent.com/22696153/145907653-97f3c8de-8ac2-40bc-aea6-30967499de9a.png)
+> An example saying set up to trigger an audio saying via macro. Note that the macro code is 2 lines. In the first line it grabs a token id by using the current token controlled by the user triggering the macro.
+
 
 ### .saysDirect() - use Token Says functionality without a saying in place
 The tokenSays.saysDirect(tokenId, actorId, sceneId, options) function is available to module developers and Foundry users. The function generates a Token Says message based on the parameters. No existing sayings are referenced. This allows module developers and macro writers to dynamically have a token speak, giving them full control over the trigger. The return from this function is the Token Says workflow class that generated the saying.
