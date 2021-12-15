@@ -62,14 +62,15 @@ import {say, reacts} from './say.js';
         return this._toClass(this.says[id]);
     }
 
-    static findSay(tokenName, actorName, documentType, documentName){
+    static findSay(tokenName, actorName, documentType, documentName, isActive = true){
         const bypassNameTypes = ['initiative'];
         const sys = this.says;
         const sep = game.settings.get('token-says', 'separator');
         for (var sy in sys) {
             const names = sys[sy].name.split(sep).map(n => n.trim());
             if (
-                (
+                (!isActive || sys[sy].isActive)
+                && (
                     (sys[sy].isActorName && actorName && names.indexOf(actorName) !== -1) 
                     || (!sys[sy].isActorName && tokenName && names.indexOf(tokenName) !== -1)
                 ) 
