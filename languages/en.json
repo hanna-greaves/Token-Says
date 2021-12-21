@@ -3,12 +3,15 @@
     "add": "Add",
     "addRule": "add",
     "cancel": "Cancel",
+    "clear": "Delete Saying",
+    "confirm": "Are you sure you want to delete this saying?",
     "deleteRule": "delete",
     "editRule": "edit",
     "import": "Import",
     "parameters": "Accepts paramter values:[@alias]=token name;[@actor]=actor name;[@item]=item name. Add r_ to start for responding to details e.g. [@r_alias].",
     "saveChanges": "Save Changes",
     "separator": "Accepts multiple entries delimited by your settings separator",
+    "yes": "Ok",
     "document-type-options": {
       "ability.label": "Ability Check",
       "attack.label": "Attack Roll",
@@ -126,6 +129,12 @@
       },
       "rule.none": "None",
       "rule.unselected": ""
+    },
+    "warning":{
+      "actor-not-found": "The follow actor names were not found in this world: ",
+      "token-not-found": "The following token names were not found in any scene in this world: ",
+      "rollable-table-not-found": "A rollable table with this name does not exist in this world or the associated compendium:",
+      "playlist-not-found": "A playlist with this name does not exist in this world or the associated compendium:"
     }
   }
 }

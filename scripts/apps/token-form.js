@@ -18,7 +18,7 @@ export class TokenSaysTokenForm extends TokenConfig{
           openButton.click(event => {
             const form = tokenSays.TokenSaysSettingsConfig;
             if(app.token?.name){
-                form.setLastSearch(app.token.name)
+              form.setLastSearch(app.token.name.trim().concat((app.actor?.name && app.actor.name.trim() !== app.token.name.trim()) ? (game.settings.get(tokenSays.ID, 'separator') + app.actor.name.trim()) : ''))
             }
             form.render(true);
           });

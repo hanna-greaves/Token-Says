@@ -127,6 +127,12 @@ form.token-says-rule .hidden, #token-says-search-clear.hidden {
     display: none;
 }
 
+form.token-says-rule .alert {
+    padding: 5px 8px;
+    background-color: rgba(245, 209, 7, 0.411);
+    border-radius: 5px;
+}
+
 form.token-says-rule .warning {
     color: #FF0000;
 }

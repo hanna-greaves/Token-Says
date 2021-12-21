@@ -1,7 +1,7 @@
 import {UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
-
+import {parseSeparator} from './helpers.js';
 /**
  * form extension supporting the form used to add or update an individual rules
 */
@@ -63,6 +63,10 @@ export class TokenSaysSayForm extends FormApplication {
     });
     html.on('change', '#token-says-documentname-reacts-value', this._duplicateNameWarning.bind(this));  
     html.on('input', '#token-says-name-value', this._duplicateNameWarning.bind(this));  
+    html.on('input', '#token-says-name-value', this._existsCheck.bind(this, 'name')); 
+    html.on('change', '#token-says-name-is-actor', this._existsCheck.bind(this, 'name'));  
+    html.on('input', '#token-says-to-name-value', this._existsCheck.bind(this, 'to-name')); 
+    html.on('change', '#token-says-to-name-is-actor', this._existsCheck.bind(this, 'to-name')); 
   }
   
   async _refreshDocumentNameOptions(documentType, reacts){
@@ -119,7 +123,7 @@ export class TokenSaysSayForm extends FormApplication {
     const warning = document.getElementById(`token-says-rule-dup-name-warning`);
     if(document.getElementById(`token-says-documenttype-reacts-value`).value === 'say'){
       document.getElementById(`token-says-to-name`).classList.add('hidden')
-      document.getElementById(`token-says-to-is-actor-name`).disabled=true
+      document.getElementById(`token-says-to-name-is-actor`).disabled=true
       const reactsId = document.getElementById(`token-says-documentname-reacts-value`).value;
       if(document.getElementById(`token-says-name-value`).value === says.getSay(reactsId).name){ 
         warning.classList.remove('hidden')
@@ -129,7 +133,44 @@ export class TokenSaysSayForm extends FormApplication {
     } else {
       warning.classList.add('hidden');
       document.getElementById(`token-says-to-name`).classList.remove('hidden')
-      document.getElementById(`token-says-to-is-actor-name`).disabled=false
+      document.getElementById(`token-says-to-name-is-actor`).disabled=false
+    }
+  }
+
+  _notExistsWarning(){
+    this._existsCheck('name'); 
+    this._existsCheck('to-name'); 
+  }   
+
+  _existsCheck(id){
+    const fails = []; let warnId = '';
+    if (id ===`name` || id ===`to-name`){
+      const nameConcat = document.getElementById(`token-says-${id}-value`).value;
+      if(nameConcat){
+        const nameList = parseSeparator(nameConcat);
+        const isActor = document.getElementById(`token-says-${id}-is-actor`).checked ;
+        if(isActor){
+          warnId = 'actor';
+          for (const actor of nameList){
+            if(!game.actors.getName(actor)){fails.push(actor)}
+          }
+        } else {
+          warnId = 'token';
+          for (const token of nameList){
+            if(!game.scenes.find(s => s.tokens.find(t => t.name===token))){fails.push(token)}
+          }
+        }
+      }
+    }
+    const container = document.getElementById(`token-says-${id}-${warnId}-warning-container`);
+    if(!container)return
+    const warning = document.getElementById(`token-says-${id}-${warnId}-warning`);
+    if(fails.length) {
+      warning.innerHTML = fails.join(', ');
+      container.classList.remove('hidden');
+    } else {
+      container.classList.add('hidden');
+      warning.innerHTML = '';
     }
   }
 }

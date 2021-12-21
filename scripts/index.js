@@ -165,6 +165,7 @@ Hooks.once('init', async function() {
             app._tab();
         } else if (app.id ==="token-says-rules-rule"){
             app._duplicateNameWarning()
+            app._notExistsWarning()
         }
     });
 

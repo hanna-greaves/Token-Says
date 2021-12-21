@@ -18,15 +18,15 @@
         }
     ],
     "minimumCoreVersion": "0.8.6",
-    "compatibleCoreVersion": "9.244",
+    "compatibleCoreVersion": "9",
     "name": "token-says",
     "socket": true,
     "styles": [
         "styles/token-says.css"
     ],
     "title": "Token Says",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "url": "https://github.com/napolitanod/Token-Says",
     "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.5.2/module.zip"
+    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.5.3/module.zip"
 }

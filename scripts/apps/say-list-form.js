@@ -1,6 +1,7 @@
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
-import {TokenSaysSayForm} from './say-form.js'
+import {TokenSaysSayForm} from './say-form.js';
+import {parseSeparator} from './helpers.js';
 
 export var lastSearch = '', lastTab = 'token-says-roll-table';
 
@@ -43,8 +44,27 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
           break;
         }
         case 'delete': {
-          await says.deleteSay(sayId);
-          this.refresh();
+          new Dialog({
+            title: game.i18n.localize("TOKENSAYS.clear"),
+            content: game.i18n.localize("TOKENSAYS.confirm"),
+            buttons: {
+              yes: {
+                icon: '<i class="fas fa-check"></i>',
+                label: game.i18n.localize("TOKENSAYS.yes"),
+                callback: async () => {
+                  await says.deleteSay(sayId);
+                  this.refresh();
+                }
+              },
+              no: {
+                icon: '<i class="fas fa-times"></i>',
+                label: game.i18n.localize("TOKENSAYS.cancel")
+              }
+            },
+            default: "no"
+          }, {
+            width: 400
+          }).render(true);
           break;
         }
         default:
@@ -98,7 +118,7 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
       }
   
       $("form.token-says").find(".rule .rule-name").each(function() {
-        if(this.innerText.toLowerCase().search(lastSearch.toLowerCase()) > -1) {
+        if(!lastSearch || parseSeparator(lastSearch).find(s => this.innerText.toLowerCase().search(s.toLowerCase()) > -1)) {
           $(this).closest('.rule').show();
         } else {
           $(this).closest('.rule').hide();
@@ -131,7 +151,7 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
   
     async _exportSettingsToJSON() {
       await says.deleteSay("rules");///Temporary cleanup of alpha initialized data on early mods.
-      saveDataToFile(JSON.stringify(says.says, null, 2), "text/json", `fvtt-token-says-rules.json`);  
+      saveDataToFile(JSON.stringify(says._says, null, 2), "text/json", `fvtt-token-says-rules.json`);  
     }
   
     async _importFromJSON(json) {

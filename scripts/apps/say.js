@@ -1,5 +1,6 @@
 import {tokenSays} from '../token-says.js';
 import {tokenSaysHasPolyglot} from '../index.js';
+import {parseSeparator} from './helpers.js';
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -44,13 +45,73 @@ export class say {
         this.volume = 0.50
     }
 
-    get compendium() {
+    get _compendium() {
         if (this.compendiumName) {
             return this.compendiumName
         } else if (this.fileType === 'audio') {
-            return game.settings.get('token-says', 'defaultAudioCompendium')
+            return game.settings.get(tokenSays.ID, 'defaultAudioCompendium')
         } else {
-            return game.settings.get('token-says', 'defaultRollableTableCompendium')
+            return game.settings.get(tokenSays.ID, 'defaultRollableTableCompendium')
+        }
+    }
+
+    get documentNameList() {
+        return parseSeparator(this.documentName)
+    }
+
+    get nameList() {
+        return parseSeparator(this.name)
+    }
+
+    async compendium(){
+        const compendium = await game.packs.find(p=>p.collection === this._compendium)?.getDocuments();
+        if(!compendium){tokenSays.log(false, 'Compendium Not Found ', this)}
+        return compendium
+    }
+
+    async playlist() {
+        let playlist;
+        if(game.settings.get(tokenSays.ID, 'worldAudioInd')){
+            playlist = game.playlists.getName(this.fileName);
+        }
+        if(!playlist){
+            const pack = await this.compendium();
+            if(pack) playlist = pack.find(t=> t.name === this.fileName);
+        }
+        
+        if(!playlist){tokenSays.log(false, 'Playlist Not Found ', {say: this})}
+
+        return playlist
+    }
+
+    async rollableTable(){
+        let table;
+        if(game.settings.get(tokenSays.ID, 'worldRollableTableInd')){
+            table = game.tables.getName(this.fileName)
+        }
+        if(!table){
+            const pack = await this.compendium();
+            if(pack) table = pack.find(t=> t.name === this.fileName);
+        }
+        if(!table){tokenSays.log(false, 'No Rolltable Found ', {say: this})}
+
+        return table;
+    }
+
+    async sound(){
+        const playlist = await this.playlist();
+        if(!playlist) return {}
+        if(!this.fileTitle){
+            const roll = await new Roll(`1d`+ playlist.data.sounds.size).roll();
+            const rolledResult = roll.result;
+            let i = 1; 
+            for (let key of playlist.data.sounds) {
+                if (i++ == rolledResult) {
+                    return key;  
+                }
+            }
+        } else {
+            return playlist.sounds.find(p=>p.name === this.fileTitle)
         }
     }
 
@@ -108,14 +169,14 @@ export class say {
             chatMessage: false
         };
 
-        const suppressBubble = game.settings.get('token-says', 'suppressChatBubble');
-        const suppressMessage = game.settings.get('token-says', 'suppressChatMessage');
+        const suppressBubble = game.settings.get(tokenSays.ID, 'suppressChatBubble');
+        const suppressMessage = game.settings.get(tokenSays.ID, 'suppressChatMessage');
 
         if(!this.isActive){
             escape.all = true
         }
 
-        if(this.fileType !== 'audio' || game.settings.get('token-says', 'suppressAudio')){
+        if(this.fileType !== 'audio' || game.settings.get(tokenSays.ID, 'suppressAudio')){
             escape.audio = true
         }
 
@@ -156,44 +217,13 @@ export class say {
      * Method that performs the playlist find and execute then calls the final outputs to chat and audio
     */
     async sayAudio(){
-        //get playlist
-        let playlist;
-        if(game.settings.get('token-says', 'worldAudioInd')){
-            playlist = game.playlists.getName(this.fileName);
-        }
-        if(!playlist){
-            const pack = await game.packs.find(p=>p.collection === this.compendium)?.getDocuments();
-            if(!pack){
-                return tokenSays.log(false, 'Compendium Not Found ', this)
-            }
-            playlist = pack.find(t=> t.name === this.fileName);
-            if(!playlist){
-                return tokenSays.log(false, 'Playlist Not Found ', {say: this, pack: pack})
-            }
-        }
+        const audioFile = await this.sound();
 
-        //get audio file from playlist
-        let audioFile;
-        if(!this.fileTitle){
-            const roll = await new Roll(`1d`+ playlist.data.sounds.size).roll();
-            const rolledResult = roll.result;
-            let i = 1; 
-            for (let key of playlist.data.sounds) {
-                if (i++ == rolledResult) {
-                    audioFile = key;  
-                    break;
-                }
-            }
-        } else {
-            audioFile = playlist.sounds.find(p=>p.name === this.fileTitle)
-        }
-
-        //generate audio
         if(!audioFile?.path){
             return tokenSays.log(false, 'No Audio File Path ', audioFile); 
         }
         
-        const maxDuration = game.settings.get('token-says', 'audioDuration');
+        const maxDuration = game.settings.get(tokenSays.ID, 'audioDuration');
         const sound = await AudioHelper.play({src: audioFile.path, volume: this.volume, loop: false, autoplay: true}, true);
         sound.schedule(() => sound.fade(0), maxDuration);//set a duration based on system preferences.
         sound.schedule(() => sound.stop(), (maxDuration+1)); //stop once fade completes (1000 milliseconds default)
@@ -237,7 +267,7 @@ export class say {
     */
     async _sayChatMessage(token, actor, speaker, message) {
         let img = '', quotes = this.suppressQuotes ? '' : '"';
-        if(game.settings.get('token-says', 'suppressImage')){
+        if(game.settings.get(tokenSays.ID, 'suppressImage')){
             tokenSays.log(false, 'Chat image suppressed ', {});
         } else if(this.isActorName && actor?.data.img){
             img = '<img src="' + actor.data.img + '" alt="' + speaker.alias + '">'
@@ -261,22 +291,9 @@ export class say {
     }
 
     async _getRollMessage(){
-        let table;
-        if(game.settings.get('token-says', 'worldRollableTableInd')){
-            table = game.tables.getName(this.fileName)
-        }
-        if(!table){
-            const pack = await game.packs.find(p=>p.collection === this.compendium)?.getDocuments();
-            if(!pack){
-                return tokenSays.log(false, 'Compendium Not Found ', this.compendium)
-            }
-            table = pack.find(t=> t.name === this.fileName);
-        }
-        if(!table){
-            return tokenSays.log(false, 'No Rolltable Found ', this); 
-        }
-
-        let rolledResult = await table.roll(); 
+        const table = await this.rollableTable()
+        if(!table) return
+        const rolledResult = await table.roll(); 
         return rolledResult.results[0].data.text
     }
 
@@ -304,5 +321,13 @@ export class reacts extends say {
             isActorName: true,
             requireVision: false
         }
+    }
+
+    get toDocumentNameList() {
+        return parseSeparator(this.to.documentName)
+    }
+
+    get toNameList() {
+        return parseSeparator(this.to.name)
     }
 }
