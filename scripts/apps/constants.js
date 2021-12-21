@@ -23,6 +23,8 @@ export const UNIVERSALDOCUMENTTYPEOPS = {
     "say": "TOKENSAYS.document-type-options.say.label"
 }
 
+export const BYPASSNAMETYPES = ['initiative'];
+
 export function getUniversalDocumentNameOps(documentType) {
     switch (documentType) {
         case "say":
@@ -105,7 +107,7 @@ export const SUPPRESSOPTIONS = {
 };
 
 export function getCompendiumOps(fileType){
-    return game.packs.filter((x) => x.metadata.entity == FILETYPEENTITYTYPE[fileType]).reduce((obj, p) => {obj['']=''; obj[p.collection] = p.title; return obj;}, {})
+    return game.packs.filter((x) => x.documentName == FILETYPEENTITYTYPE[fileType]).reduce((obj, p) => {obj['']=''; obj[p.collection] = p.title; return obj;}, {})
 }
 
 

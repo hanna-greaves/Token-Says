@@ -120,7 +120,7 @@ export const WORKFLOWSTATES = {
                 }
                 return this.next(WORKFLOWSTATES.SAY);
             case WORKFLOWSTATES.SAY: 
-                if (Object.keys(this.say).length) { 
+                if (this.say && Object.keys(this.say).length) { 
                     this.log('Say found', {})
                     this.sayResult = await this.say.say({token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName, response: this.responseOptions})
                 } else {
@@ -236,7 +236,9 @@ export const WORKFLOWSTATES = {
             } else if (f.metadata?.item) {
                 this.documentType = 'flavor'; 
                 this.itemId = f.metadata.item
-            } 
+            }  else if (f.subject?.core === 'init') {
+                this.documentType = 'initiative'; 
+            }  
         }
         else if (this.flags.core?.initiativeRoll) {
             this.documentType = 'initiative'; 
@@ -269,10 +271,9 @@ export const WORKFLOWSTATES = {
         if(!canvas?.tokens?.placeables){return}
         for (let i = 0; i < this.responses.length; i++){
             const rsp = this.responses[i];
-            const sep = game.settings.get('token-says', 'separator');
             let tokens = [];
 
-            const names = rsp.name.split(sep).map(n => n.trim());
+            const names = rsp.nameList;
             if(!rsp.isActorName) {
                 tokens = canvas.tokens.placeables.filter(t => names.indexOf(t.name)!==-1)
             } else {

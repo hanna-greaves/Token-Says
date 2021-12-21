@@ -1,57 +1,46 @@
 import { tokenSays } from '../token-says.js';
 import {say, reacts} from './say.js';
+import {BYPASSNAMETYPES} from './constants.js';
 
  export class says {
+   static get _says() {
+        return game.settings.get(tokenSays.ID, 'rules');
+   }
+
     static get says() {
-        return game.settings.get('token-says', 'rules');
+        const flag = game.settings.get(tokenSays.ID, 'rules');
+        const ar = [];
+        for (var sy in flag) {
+            ar.push(this._toClass(flag[sy]));
+        }
+        return ar
     }
 
     static get saysList() {
         const obj = {};
-        const sys = this.says;
+        const sys = this._says;
         for (var sy in sys){
             obj[sy] = sys[sy].label
         }
         return obj;
     }
 
+    static get saysActive() {
+        return this.says.filter(s => s.isActive);
+    }
+
     static get rollTableSays() {
-        const obj = {}
-        const sys = this.says;
-        for (var sy in sys) {
-            if (sys[sy].fileType == 'rollTable') {
-                obj[sy]=sys[sy];
-            }
-        }
-        return obj;
+        return this.says.filter(s => s.fileType === 'rollTable')
     }
 
     static get audioSays() {
-        const obj = {}
-        const sys = this.says;
-        for (var sy in sys) {
-            if (sys[sy].fileType == 'audio') {
-                obj[sy]=sys[sy];
-            }
-        }
-        return obj;
+        return this.says.filter(s => s.fileType === 'audio')
     }
 
     static get responses() {
-        const obj = {}
-        const sys = this.says;
-        for (var sy in sys) {
-            if (sys[sy].documentType === 'reacts') {
-                obj[sy]=sys[sy];
-            }
-        }
-        return obj;
+        return this.says.filter(s => s.isActive && s.documentType === 'reacts')
     }
-    /**
-   * converts a JSON object to a zone class
-   * @param {object} flag 
-   * @returns 
-   */
+
     static _toClass(flag){
         if(!flag?.fileType){return {}}
         let sy = flag.documentType==='reacts' ? new reacts(flag.fileType) : new say(flag.fileType);
@@ -59,72 +48,51 @@ import {say, reacts} from './say.js';
     }
 
     static getSay(id){
-        return this._toClass(this.says[id]);
+        return this._toClass(this._says[id]);
     }
 
     static findSay(tokenName, actorName, documentType, documentName, isActive = true){
-        const bypassNameTypes = ['initiative'];
-        const sys = this.says;
-        const sep = game.settings.get('token-says', 'separator');
-        for (var sy in sys) {
-            const names = sys[sy].name.split(sep).map(n => n.trim());
-            if (
-                (!isActive || sys[sy].isActive)
-                && (
-                    (sys[sy].isActorName && actorName && names.indexOf(actorName) !== -1) 
-                    || (!sys[sy].isActorName && tokenName && names.indexOf(tokenName) !== -1)
-                ) 
-                && sys[sy].documentType === documentType 
-                && (
-                    !sys[sy].documentName 
-                    || bypassNameTypes.indexOf(documentType) !== -1
-                    || sys[sy].documentName.split(sep).map(n => n.trim()).indexOf(documentName) !== -1
-                    )
-                ) {
-              return this._toClass(sys[sy]);
-            }
-        }
-        return {}
+        const sys = isActive ? this.saysActive : this.says;
+        return sys.find(sy => 
+            sy.documentType === documentType 
+            && (
+               (sy.isActorName && actorName && sy.nameList.indexOf(actorName) !== -1) 
+                || (!sy.isActorName && tokenName && sy.nameList.indexOf(tokenName) !== -1)
+            ) 
+            && (
+                !sy.documentName 
+                || BYPASSNAMETYPES.indexOf(documentType) !== -1
+                || sy.documentNameList.indexOf(documentName) !== -1
+            )
+        )
     }
 
     static findResponses(tokenName, actorName, documentType, documentName, sayTrigger){
-        const bypassNameTypes = ['initiative'];
         const sys = this.responses;
-        const sep = game.settings.get('token-says', 'separator');
-        const rsp = [];
-        for (var sy in sys) {
-             if (sys[sy].to.documentType === 'say') {
-                if(sys[sy].to.documentName === sayTrigger?.id) {rsp.push(this._toClass(sys[sy]))}
-            }
-            else {
-                const names = sys[sy].to.name.split(sep).map(n => n.trim());
-                if (
-                    (
-                        (!sys[sy].to.name)
-                        || (sys[sy].to.isActorName && actorName && names.indexOf(actorName) !== -1) 
-                        || (!sys[sy].to.isActorName && tokenName && names.indexOf(tokenName) !== -1)
-                    ) 
-                    && sys[sy].to.documentType === documentType 
-                    && (
-                        !sys[sy].to.documentName 
-                        || bypassNameTypes.indexOf(documentType) !== -1
-                        || sys[sy].to.documentName.split(sep).map(n => n.trim()).indexOf(documentName) !== -1
-                        )
-                ) {
-                    rsp.push(this._toClass(sys[sy]))
-                }
-            }
-        }
-        return rsp      
+        return sys.filter(sy =>
+            sy.to.documentType === 'say' ? sy.to.documentName === sayTrigger?.id : (
+                sy.to.documentType === documentType 
+                && (
+                    (!sy.to.name)
+                    || (sy.to.isActorName && actorName && sy.toNameList.indexOf(actorName) !== -1) 
+                    || (!sy.to.isActorName && tokenName && sy.toNameList.indexOf(tokenName) !== -1)
+                ) 
+                && (
+                    !sy.to.documentName 
+                    || BYPASSNAMETYPES.indexOf(documentType) !== -1
+                    || sy.toDocumentNameList.indexOf(documentName) !== -1
+                ) 
+            )
+        )
     }
     
     static async updateSays(sys) {
-        return await game.settings.set('token-says', 'rules', sys);
+        return await game.settings.set(tokenSays.ID, 'rules', sys);
     }
 
     static async newSay(fileType) {
         const sy = new say(fileType)
-        const sys = this.says;
+        const sys = this._says;
         sys[sy.id] = sy;
         await this.updateSays(sys);
         return sy;
@@ -139,7 +107,7 @@ import {say, reacts} from './say.js';
     }
 
     static async updateSay(id, data, insertKeys = false) {
-        const sys = this.says;
+        const sys = this._says;
         const sy = mergeObject(data.documentType==='reacts' ? new reacts(data.fileType) : new say(data.fileType), sys[id], {insertKeys: false, enforceTypes: true});
         mergeObject(sy, data, {insertKeys: insertKeys, enforceTypes: true});
         sys[id] = sy;
@@ -147,13 +115,12 @@ import {say, reacts} from './say.js';
     }
 
     static async updateSayStatus(id, status) {
-        if(status  === undefined) {return} else {
-            return await this.updateSay(id, {isActive: status}) 
-        }
+        if(status  === undefined) return
+        return await this.updateSay(id, {isActive: status}) 
     }
 
     static async deleteSay(id) {
-        const sys = this.says;
+        const sys = this._says;
         const sy = sys[id];
         delete sys[id];
         await this.updateSays(sys);
@@ -165,7 +132,7 @@ import {say, reacts} from './say.js';
     }
 
     static async importSays(json){
-        const sys = this.says;
+        const sys = this._says;
         let added = [];
         let alreadyExists = [];
         let inError = [];

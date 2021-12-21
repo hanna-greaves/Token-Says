@@ -1,3 +1,4 @@
+import {tokenSays} from '../token-says.js';
 
 export function nullTokenSaysRuleString(inString, returnIfNull){
     if(inString === undefined) {return returnIfNull} else {return inString}
@@ -40,4 +41,9 @@ export async function checkToWorkflowData(actor, roll, type, check){
         documentType: type,
         speaker: {scene: sceneId, actor: actor.id, token: token?.id, alias: alias}
     }
+}
+
+export function parseSeparator(string){
+    const sep = game.settings.get(tokenSays.ID, 'separator');
+    return string.split(sep).map(n => n.trim())
 }
