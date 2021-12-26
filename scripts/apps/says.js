@@ -55,14 +55,11 @@ import {BYPASSNAMETYPES} from './constants.js';
         const sys = isActive ? this.saysActive : this.says;
         return sys.find(sy => 
             sy.documentType === documentType 
-            && (
-               (sy.isActorName && actorName && sy.nameList.indexOf(actorName) !== -1) 
-                || (!sy.isActorName && tokenName && sy.nameList.indexOf(tokenName) !== -1)
-            ) 
+            && sy.nameList.includes((sy.isActorName && actorName) ? actorName : tokenName)
             && (
                 !sy.documentName 
-                || BYPASSNAMETYPES.indexOf(documentType) !== -1
-                || sy.documentNameList.indexOf(documentName) !== -1
+                || BYPASSNAMETYPES.includes(documentType)
+                || sy.documentNameList.includes(documentName) 
             )
         )
     }
@@ -73,14 +70,13 @@ import {BYPASSNAMETYPES} from './constants.js';
             sy.to.documentType === 'say' ? sy.to.documentName === sayTrigger?.id : (
                 sy.to.documentType === documentType 
                 && (
-                    (!sy.to.name)
-                    || (sy.to.isActorName && actorName && sy.toNameList.indexOf(actorName) !== -1) 
-                    || (!sy.to.isActorName && tokenName && sy.toNameList.indexOf(tokenName) !== -1)
+                    !sy.to.name
+                    || sy.toNameList.includes((sy.to.isActorName && actorName) ? actorName : tokenName)
                 ) 
                 && (
                     !sy.to.documentName 
-                    || BYPASSNAMETYPES.indexOf(documentType) !== -1
-                    || sy.toDocumentNameList.indexOf(documentName) !== -1
+                    || BYPASSNAMETYPES.includes(documentType)
+                    || sy.toDocumentNameList.includes(documentName)
                 ) 
             )
         )
@@ -116,7 +112,7 @@ import {BYPASSNAMETYPES} from './constants.js';
 
     static async updateSayStatus(id, status) {
         if(status  === undefined) return
-        return await this.updateSay(id, {isActive: status}) 
+        await this.updateSay(id, {isActive: status}) 
     }
 
     static async deleteSay(id) {
@@ -128,7 +124,7 @@ import {BYPASSNAMETYPES} from './constants.js';
     }
 
     async _deleteSays() {
-        return await this.updateSays({});
+        await this.updateSays({});
     }
 
     static async importSays(json){
