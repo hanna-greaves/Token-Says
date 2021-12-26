@@ -41,19 +41,32 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
 * **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
-* **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. This is system-specific. See action name below for the list of current available action types.
+* **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. Some types are system-specific. 
+  * Ability Check: triggers on ability check roll by the token.
+  * Attack Roll: triggers on attack roll by the token.
+  * Condition/Effect Added: triggers when the condition or effect is added or toggled on for the token.
+  * Condition/Effect Removed: triggers when the condition or effect is removed or toggled off for the token.
+  * Damage Roll: triggers on damage roll by the token.
+  * Initiative Roll: triggers on initiative roll by the token.
+  * Item Name: triggers on roll of the item by the token (use this also for items that don't directly attack, such as items the invoke via saving throw in dnd)
+  * Macro (API): triggers by a macro. see the API section below for details on how this is used.
+  * Responds to: triggered by another token's action. Introduces a new form section where you specify an action that this saying is responding to. 
+  * Saving Throw: triggered by a saving throw roll by the token.
+  * Skill: triggered by a skill roll by the token.
+  * Turn in Combat: triggered at start of the token's turn in combat.
 * **Action Name:** Type in the name of the action associated to the action type. **Accepts multiple action names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ).
-  * Initiative Roll: leave blank
-  * Item Name: use the item name that triggers the saying when it is rolled (e.g. Action Surge)
   * Ability Check (dnd5e): select ability
+  * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
   * Condition/Effect Added: use the name of the condition or effect that triggers the saying when it is added or toggled on for the token.
   * Condition/Effect Removed: use the name of the condition or effect that triggers the saying when it is removed or toggled off for the token.
+  * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow)
+  * Initiative Roll: leave blank
+  * Item Name: use the item name that triggers the saying when it is rolled (e.g. Action Surge)
+  * Macro (API): see the API section below for details on how this is used
+  * Responds to: leave blank (see the response section that is made visible and complete the Action Type and Action Name there)
   * Saving Throw (dnd5e): select ability
   * Skill (dnd5e, pf2e): select or enter skill
-  * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
-  * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow)
-  * Macro (API): see the API section below for details on how this is used
-  * Responds to: Introduces a new form section where you specify an action that this saying is responding to   
+  * Turn in Combat: leave blank
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
 * **Playlist Name/Rollable Table Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
