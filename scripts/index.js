@@ -4,7 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData, checkToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData} from "./apps/helpers.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
@@ -156,6 +156,11 @@ Hooks.once('init', async function() {
             const wf = new workflow(data, userId, data);
             wf.next();
         }
+    });
+
+    Hooks.on('updateCombat', async(document, round, options, id) => {
+        const data = combatTurnToWorkflowData(document)
+        if(data) workflow.go(data, id, data);
     });
         
     //hook to ensure that, on token says settings render, the current tab is not lost

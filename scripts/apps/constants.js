@@ -20,10 +20,11 @@ export const UNIVERSALDOCUMENTTYPEOPS = {
     "flavor":  "TOKENSAYS.document-type-options.flavor.label",
     "macro":  "TOKENSAYS.document-type-options.macro.label",
     "reacts":  "TOKENSAYS.document-type-options.reacts.label",
-    "say": "TOKENSAYS.document-type-options.say.label"
+    "say": "TOKENSAYS.document-type-options.say.label",
+    "turn": "TOKENSAYS.document-type-options.turn.label"
 }
 
-export const BYPASSNAMETYPES = ['initiative'];
+export const BYPASSNAMETYPES = ['initiative', 'turn'];
 
 export function getUniversalDocumentNameOps(documentType) {
     switch (documentType) {

@@ -43,6 +43,15 @@ export async function checkToWorkflowData(actor, roll, type, check){
     }
 }
 
+export function combatTurnToWorkflowData(combat){
+    if(game.user.isGM && combat.started && !(combat.current.round === 1 && combat.current.turn === 0 && combat.combatants.find(c => c.initiative === null)))
+    return {
+        documentName: '',
+        documentType: 'turn',
+        speaker: {scene: combat.scene.id, actor: combat.combatant?.actor?.id, token: combat.combatant?.token?.id, alias: combat.combatant?.token.name}
+    }
+}
+
 export function parseSeparator(string){
     const sep = game.settings.get(tokenSays.ID, 'separator');
     return string.split(sep).map(n => n.trim())

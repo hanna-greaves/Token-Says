@@ -66,6 +66,11 @@ export const WORKFLOWSTATES = {
         return this.scene?.tokens?.get(this.speaker.token);
     }
 
+    static async go(message, user, options){
+        const wf = new workflow(message, user, options);
+        wf.next();
+    }
+
     hasCancelConditionResponse(token, exCon){
         if(!token.actor?.effects){return false}
         const sys = game.world.data.system;

@@ -24,7 +24,8 @@
       "reacts.label": "Responds to",
       "save.label": "Saving Throw",
       "say.label": "Saying",
-      "skill.label": "Skill"
+      "skill.label": "Skill",
+      "turn.label": "Turn in Combat"
     },
     "setting":{
       "audioDuration.label": "Audio Maximum Duration",
