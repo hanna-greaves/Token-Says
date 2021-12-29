@@ -48,7 +48,7 @@ export function combatTurnToWorkflowData(combat){
     return {
         documentName: '',
         documentType: 'turn',
-        speaker: {scene: combat.scene.id, actor: combat.combatant?.actor?.id, token: combat.combatant?.token?.id, alias: combat.combatant?.token.name}
+        speaker: {scene: combat.scene.id, actor: combat.combatant?.actor?.id, token: combat.combatant?.token?.id, alias: combat.combatant?.token?.name}
     }
 }
 
