@@ -37,6 +37,7 @@ export class say {
         this.fileTitle = '',
         this.fileType = fileType,
         this.label = '',
+        this.lang = '',
         this.likelihood = 100,
         this.name = '',
         this.suppressChatbubble = false,
@@ -46,17 +47,16 @@ export class say {
     }
 
     get _compendium() {
-        if (this.compendiumName) {
-            return this.compendiumName
-        } else if (this.fileType === 'audio') {
-            return game.settings.get(tokenSays.ID, 'defaultAudioCompendium')
-        } else {
-            return game.settings.get(tokenSays.ID, 'defaultRollableTableCompendium')
-        }
+        if (this.compendiumName) return this.compendiumName
+        return (this.fileType === 'audio') ? game.settings.get(tokenSays.ID, 'defaultAudioCompendium') : game.settings.get(tokenSays.ID, 'defaultRollableTableCompendium');
     }
 
     get documentNameList() {
         return parseSeparator(this.documentName)
+    }
+
+    get maxDuration(){
+        return game.settings.get(tokenSays.ID, 'audioDuration')
     }
 
     get nameList() {
@@ -65,7 +65,7 @@ export class say {
 
     async compendium(){
         const compendium = await game.packs.find(p=>p.collection === this._compendium)?.getDocuments();
-        if(!compendium){tokenSays.log(false, 'Compendium Not Found ', this)}
+        if(!compendium) tokenSays.log(false, 'Compendium Not Found ', this)
         return compendium
     }
 
@@ -79,7 +79,7 @@ export class say {
             if(pack) playlist = pack.find(t=> t.name === this.fileName);
         }
         
-        if(!playlist){tokenSays.log(false, 'Playlist Not Found ', {say: this})}
+        if(!playlist) tokenSays.log(false, 'Playlist Not Found ', {say: this})
 
         return playlist
     }
@@ -93,7 +93,7 @@ export class say {
             const pack = await this.compendium();
             if(pack) table = pack.find(t=> t.name === this.fileName);
         }
-        if(!table){tokenSays.log(false, 'No Rolltable Found ', {say: this})}
+        if(!table) tokenSays.log(false, 'No Rolltable Found ', {say: this})
 
         return table;
     }
@@ -106,111 +106,11 @@ export class say {
             const rolledResult = roll.result;
             let i = 1; 
             for (let key of playlist.data.sounds) {
-                if (i++ == rolledResult) {
-                    return key;  
-                }
+                if (i++ == rolledResult) return key;  
             }
         } else {
             return playlist.sounds.find(p=>p.name === this.fileTitle)
         }
-    }
-
-    async say(options){
-        const result = {escape: {}, likelihood: {}, message:''}
-
-        result.escape = this._escape();
-        if(result.escape.all){
-            tokenSays.log(false,`Say escaped: not active `, {escape: result.escape, say: this});
-            return result
-        }
-
-        result.likelihood = await this.mightSay();
-        if(!result.likelihood.doesSay){
-            tokenSays.log(false,`Say canceled: likelihood not met `, {escape: result.escape, likelihood: result.likelihood, say: this});
-            return result
-        }
-
-        if(this.delay) {
-            await wait(this.delay);
-        }
-        
-        if(!result.escape.audio){
-            this.sayAudio(); 
-        }
-
-        if(this.fileType === 'rollTable' && (!result.escape.chatMessage || !result.escape.chatBubble)) {
-            if (this.fileTitle) {      
-                result.message = this._parameterizeMessage(this.fileTitle, options)
-            } else {
-                let rolledMessage = await this._getRollMessage();
-                result.message = rolledMessage ? this._parameterizeMessage(rolledMessage, options) : ""
-            }
-        } else {       
-            result.message = "............"
-        }
-
-        if(!result.escape.chatMessage && result.message){
-            this._sayChatMessage(options.token, options.actor, options.speaker, result.message)
-        }
-
-        if(!result.escape.chatBubble && result.message){
-           this._sayChatBubble(options.token, result.message)
-        }
-
-        tokenSays.log(false, 'Say Complete Execution', {say: this, options: options, escape: result.escape, likelihood: result.likelihood});
-        return result
-    }
-
-    _escape(){
-        const escape = {
-            all: false,
-            audio: false,
-            chatBubble: false,
-            chatMessage: false
-        };
-
-        const suppressBubble = game.settings.get(tokenSays.ID, 'suppressChatBubble');
-        const suppressMessage = game.settings.get(tokenSays.ID, 'suppressChatMessage');
-
-        if(!this.isActive){
-            escape.all = true
-        }
-
-        if(this.fileType !== 'audio' || game.settings.get(tokenSays.ID, 'suppressAudio')){
-            escape.audio = true
-        }
-
-        if(suppressBubble === 'X' 
-            || (this.fileType === 'audio' && suppressBubble === 'A')  
-            || (this.fileType === 'rollTable' && suppressBubble === 'R')
-            || (this.suppressChatbubble)
-            ) {
-            escape.chatBubble = true
-        }
-
-        if(suppressMessage === 'X' 
-            || (this.fileType === 'audio' && suppressMessage === 'A')  
-            || (this.fileType === 'rollTable' && suppressMessage === 'R')
-            || (this.suppressChatMessage)
-            ) {
-            escape.chatMessage = true
-        }
-
-        return escape;
-    }
-
-    /**
-     * Method that compares a random roll of a 1d100 against the incoming likelihood
-     * A roll above the likelihood indicates a fail / that they don't say something 
-    */
-    async mightSay() {
-        let doesSay = true; let rolledResult = 100;
-        if(this.likelihood < 100){
-            const roll = await new Roll(`1d100`).roll();
-            rolledResult = roll.result;
-            if (rolledResult > this.likelihood){doesSay = false}
-        }
-        return {doesSay: doesSay, roll: rolledResult}
     }
 
     /**
@@ -218,96 +118,186 @@ export class say {
     */
     async sayAudio(){
         const audioFile = await this.sound();
-
-        if(!audioFile?.path){
-            return tokenSays.log(false, 'No Audio File Path ', audioFile); 
-        }
-        
-        const maxDuration = game.settings.get(tokenSays.ID, 'audioDuration');
+        if(!audioFile?.path) return tokenSays.log(false, 'No Audio File Path ', audioFile);
         const sound = await AudioHelper.play({src: audioFile.path, volume: this.volume, loop: false, autoplay: true}, true);
-        sound.schedule(() => sound.fade(0), maxDuration);//set a duration based on system preferences.
-        sound.schedule(() => sound.stop(), (maxDuration+1)); //stop once fade completes (1000 milliseconds default)
-        return true;
+        sound.schedule(() => sound.fade(0), this.maxDuration);
+        sound.schedule(() => sound.stop(), (this.maxDuration+1));
+    }
+}
+
+export class tokenSay {
+    constructor(say, options){
+        this._say = say,
+        this.actor = options.actor,
+        this.item = options.item,
+        this.likelihood ={
+            result: 0,
+            value: say.likelihood
+        },
+        this._message = this._say.fileTitle,
+        this.message =  "............",
+        this.response = options.response,
+        this.speaker = options.speaker,
+        this.token = options.token
+    }
+
+    get active(){
+        return this._say.isActive
+    }
+
+    get delay(){
+        return this._say.delay
+    }
+
+    get img(){
+        if(!game.settings.get(tokenSays.ID, 'suppressImage')){
+            if(this.isActorName && this.actor?.data.img) return this.actor.data.img
+            if(this.token?.data.img) return this.token.data.img
+        } 
+        return ''
+    }
+
+    get isAudio(){
+        return this._say.fileType === 'audio' ? true : false
+    }
+
+    get lang(){
+        return this._say.lang
+    }
+
+    get language(){
+        return tokenSaysHasPolyglot ? (this.lang ? this.lang : ui.chat.element.find("select[name=polyglot-language]").val()) : false;
+    }
+
+    get likelihoodMet(){
+        return (this.likelihood.result > this.likelihood.value) ? false : true
+    }
+
+    get quotes(){
+        return this.suppressQuotes ? '' : '"'
+    }
+
+    get suppressAudio(){
+       return (this.isAudio && !game.settings.get(tokenSays.ID, 'suppressAudio')) ? false : true
+    }
+
+    get suppressChatBubble(){
+        return (this._say.suppressChatbubble || this._suppressCodes.includes(game.settings.get(tokenSays.ID, 'suppressChatBubble'))) ? true : false
+    } 
+
+    get suppressChatMessage(){
+        return (this._say.suppressChatMessage || this._suppressCodes.includes(game.settings.get(tokenSays.ID, 'suppressChatMessage'))) ? true : false 
+    }
+
+    get _suppressCodes(){
+        return ['X',`${this.isAudio ? 'A' : 'R'}`]
+    }
+
+    get valid(){
+        return (!this.active || (this.lang && !this.speaksLang(this.token))) ? false : true
+    }
+
+    _imageFormat(){
+        return this.img ? `<img src="${this.img}" alt="${this.speaker.alias}">` : ''
+    }
+
+    _parameterizeMessage(){
+         this.message = this._message
+             .replace('[@alias]', this.speaker.alias ? this.speaker.alias : '')
+             .replace('[@actor]', this.actor ? this.actor.name : '')
+             .replace('[@item]', this.item ? this.item.toLowerCase() : '')
+             .replace('[@r_alias]', this.response?.speaker?.alias ? this.response?.speaker?.alias : '')
+             .replace('[@r_actor]', this.response?.actor?.name ? this.response.actor.name : '')
+             .replace('[@r_item]', this.response?.item ? this.response.item.toLowerCase() : '')
+     }
+
+    async _setMessage(){
+        if(!this.suppressChatBubble || !this.suppressChatMessage){
+            if(this.isAudio) {this.message = "............"}
+            else {
+                if (!this._message) await this._rollMessage();    
+                this._parameterizeMessage()
+            }
+        }
+    }
+
+    /**
+     * Method that compares a random roll of a 1d100 against the incoming likelihood
+     * A roll above the likelihood indicates a fail / that they don't say something 
+    */
+    async mightSay() {
+        if(this.likelihood.value < 100){
+            const roll = await new Roll(`1d100`).roll();
+            this.likelihood.result = roll.result;
+        } else {this.likelihood.result = 100}
+    }
+
+    async _rollMessage(){
+        const table = await this._say.rollableTable()
+        if(table) {
+            const rolledResult = await table.roll(); 
+            this._message = rolledResult.results[0].data.text
+        }
+    }
+
+    async ready(){
+        if(this.valid) {
+            await this.mightSay();
+            if(this.likelihoodMet) await this._setMessage() 
+        }       
+    }
+
+    async play(){
+        if(this.likelihoodMet){
+            if(this.delay) await wait(this.delay);
+            if(!this.suppressAudio) this.sayAudio();
+            if(!this.suppressChatMessage && this.message) this.sayChatMessage();
+            if(!this.suppressChatBubble && this.message) this.sayChatBubble();
+            return true
+        } else {
+            return console.log(`Say canceled: likelihood threshold of ${this.likelihood.value} was not met with a roll of ${this.likelihood.result} (roll must be at or lower)`)
+        }
+    }
+
+    async sayAudio(){
+        await this._say.sayAudio()
     }
 
     /**
      * Method that executes the chat bubble 
     */
-    async _sayChatBubble(token, message) {
-        if(!token){
-            return false
+    async sayChatBubble() {
+        const emote = this.language ? {language: this.language} : false
+        if(this.token){ 
+            game.socket.emit("module.token-says", {
+                token: this.token.id,
+                says: this.message,
+                emote: emote
+            });
+            await canvas.hud.bubbles.say(this.token, this.message, emote);
         }
-        
-        let options;
-        if(tokenSaysHasPolyglot){
-            let language = ui.chat.element.find("select[name=polyglot-language]").val();
-            if (language === null) {
-                options = false
-            }
-            else{
-                options = {language: language}
-            }
-        } else {
-            options = false
-        }
-        
-        await canvas.hud.bubbles.say(token, message);
-
-        game.socket.emit("module.token-says", {
-            token: token.id,
-            says: message,
-            emote: {options}
-        });
-
-        return true;
     }
 
     /**
      * Method that executes the chat message 
     */
-    async _sayChatMessage(token, actor, speaker, message) {
-        let img = '', quotes = this.suppressQuotes ? '' : '"';
-        if(game.settings.get(tokenSays.ID, 'suppressImage')){
-            tokenSays.log(false, 'Chat image suppressed ', {});
-        } else if(this.isActorName && actor?.data.img){
-            img = '<img src="' + actor.data.img + '" alt="' + speaker.alias + '">'
-        } else { 
-            if(token?.data.img){img = '<img src="' + token.data.img + '" alt="' + speaker.alias + '">'}       
-        }
-        
-        let finalMessage;
-        if(tokenSaysHasPolyglot){
-            finalMessage = message;
-        } else {
-            finalMessage = '<div class="token-says chat-window">'+ img + '<div class="what-is-said">' + quotes + message + quotes + '</div></div>';
-        }   
-        ChatMessage.create({
-            speaker: speaker,
-            content : finalMessage,
+     async sayChatMessage() {
+        const img = this._imageFormat()
+        const messageData = {
+            speaker: this.speaker,
             type: CONST.CHAT_MESSAGE_TYPES.IC,
-            flags: {TOKENSAYS: {cancel: true, img: img}}
-        },{chatBubble : false})
-        return true;
+            flags: {TOKENSAYS: {cancel: true, img: img}} 
+        };
+
+        if(this.language) messageData['lang'] = this.language
+        messageData['content'] = tokenSaysHasPolyglot ?  this.message : `<div class="token-says chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
+        ChatMessage.create(messageData,{chatBubble : false})
     }
 
-    async _getRollMessage(){
-        const table = await this.rollableTable()
-        if(!table) return
-        const rolledResult = await table.roll(); 
-        return rolledResult.results[0].data.text
+    speaksLang(){
+        return (!tokenSaysHasPolyglot || (this.token?.actor && this.token.actor.data.data.traits.languages.value.includes(this.lang))) ? true : false
     }
 
-    _parameterizeMessage(message, options){
-        const act = game.actors.get(options.actor?.id)?.name;
-        const r_act = game.actors.get(options.response?.actor?.id)?.name;
-        return message
-            .replace('[@alias]', options.speaker.alias ? options.speaker.alias : '')
-            .replace('[@actor]', act ? act : '')
-            .replace('[@item]', options.item ? options.item.toLowerCase() : '')
-            .replace('[@r_alias]', options.response?.speaker?.alias ? options.response?.speaker?.alias : '')
-            .replace('[@r_actor]', r_act ? r_act : '')
-            .replace('[@r_item]', options.response?.item ? options.response.item.toLowerCase() : '')
-    }
 }
 
 export class reacts extends say {

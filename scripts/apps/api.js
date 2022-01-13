@@ -45,10 +45,8 @@ export class api {
         message.data.speaker = {scene: scene.id, actor: actorId, token: tokenId, alias: alias};
 
         tokenSays.log(false,'Macro Generated Rule... ', {message, user, documentType: "macro", documentName: actionName});
-
-        const wf = new workflow(message.data, user, {documentType: "macro", documentName: actionName});
-        
-        const result = await wf.next();
+        const result = await workflow.go(message.data, user, {documentType: "macro", documentName: actionName});
+                
         return result?.say
     }
 
@@ -100,7 +98,7 @@ export class api {
 
         tokenSays.log(false,'Direct Generated Say... ', {message, user, "rule": sy});
         
-        const wf = new workflow(message.data, user, {documentType: sy.documentType, documentName: sy.documentName, say: sy});
-        return await wf.next();
+        const result = await workflow.go(message.data, user, {documentType: sy.documentType, documentName: sy.documentName, say: sy});
+        return result
     }
 }

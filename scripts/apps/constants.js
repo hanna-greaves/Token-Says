@@ -1,4 +1,5 @@
 import {says} from './says.js';
+import {tokenSaysHasPolyglot} from '../index.js';
 
 export const FILETYPEENTITYTYPE = {
     rollTable: "RollTable",
@@ -19,12 +20,13 @@ export const UNIVERSALDOCUMENTTYPEOPS = {
     "initiative":  "TOKENSAYS.document-type-options.initiative.label",
     "flavor":  "TOKENSAYS.document-type-options.flavor.label",
     "macro":  "TOKENSAYS.document-type-options.macro.label",
+    "move": "TOKENSAYS.document-type-options.move.label",
     "reacts":  "TOKENSAYS.document-type-options.reacts.label",
     "say": "TOKENSAYS.document-type-options.say.label",
     "turn": "TOKENSAYS.document-type-options.turn.label"
 }
 
-export const BYPASSNAMETYPES = ['initiative', 'turn'];
+export const BYPASSNAMETYPES = ['initiative', 'turn', 'move'];
 
 export function getUniversalDocumentNameOps(documentType) {
     switch (documentType) {
@@ -54,6 +56,10 @@ export function getDnd5eDocumentNameOps(documentType){
         default:
             return getUniversalDocumentNameOps(documentType)
         }
+}
+
+export function getPolyglotLanguages() {
+    return  tokenSaysHasPolyglot ? polyglot.polyglot.languages : false
 }
 
 export const PF1DOCUMENTTYPEOPS  = {

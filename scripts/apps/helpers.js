@@ -52,7 +52,30 @@ export function combatTurnToWorkflowData(combat){
     }
 }
 
+export function inDistance(provokingToken, respondingToken, distance){
+    const d = canvas.grid.measureDistances([{ray:_ray(provokingToken, respondingToken)}], {gridSpaces: true})[0];
+    return (d <= distance) ? true : false
+}
+
+export function inView(provokingToken, respondingToken){
+    return (canvas.walls?.checkCollision(_ray(provokingToken, respondingToken)) || !respondingToken.hasSight) ? false : true
+}
+
+export function movementToWorkflowData(token, userId){
+    return {
+        documentName: '',
+        documentType: 'move',
+        speaker: {scene: token.parent.id, actor: token.actor?.id, token: token.id, alias: token.name}
+    }
+}
+
 export function parseSeparator(string){
     const sep = game.settings.get(tokenSays.ID, 'separator');
     return string.split(sep).map(n => n.trim())
+}
+
+function _ray(provokingToken, respondingToken){
+    const orig = new PIXI.Point(...canvas.grid.getCenter(provokingToken.data.x, provokingToken.data.y));
+    const dest = new PIXI.Point(...canvas.grid.getCenter(respondingToken.data.x, respondingToken.data.y));
+    return new Ray(orig, dest);
 }

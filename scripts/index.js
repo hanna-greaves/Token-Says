@@ -4,7 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
@@ -127,40 +127,42 @@ Hooks.once('init', async function() {
         type: Object
     }); 
     
-    Hooks.on("createChatMessage", (message, options, user) => {
-        if(message.data){
-            const wf = new workflow(message.data, user, {hook:"createChatMessage"} );
-            wf.next();
-        }
+    Hooks.on("createChatMessage", (message, options, userId) => {
+        if(message.data) workflow.go(message.data, userId, {hook:"createChatMessage"});
     });
 
     Hooks.on("createActiveEffect", (document, options, userId) => {
         if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
             const data = activeEffectToWorkflowData(document)
-            const wf = new workflow(data, userId, data);
-            wf.next();
+            if(data) workflow.go(data, userId, data);
         }
     });
 
     Hooks.on("deleteActiveEffect", (document, options, userId) => {
         if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
             const data = activeEffectToWorkflowData(document, true)
-            const wf = new workflow(data, userId, data);
-            wf.next();
+            if(data) workflow.go(data, userId, data);
         }
     });
     
     Hooks.on("updateActiveEffect", (document, change, options, userId) => {
         if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ("disabled" in change || ("label" in change && !document.data.disabled))){
             const data = activeEffectToWorkflowData(document, change.disabled)
-            const wf = new workflow(data, userId, data);
-            wf.next();
+            if(data) workflow.go(data, userId, data);
         }
     });
 
     Hooks.on('updateCombat', async(document, round, options, id) => {
         const data = combatTurnToWorkflowData(document)
         if(data) workflow.go(data, id, data);
+    });
+
+    
+    Hooks.on("updateToken", async (token, update, options, id) => {
+        if ("x" in update || "y" in update || "elevation" in update) {
+            const data = movementToWorkflowData(token, id)
+            if(data) workflow.go(data, id, data);
+        }
     });
         
     //hook to ensure that, on token says settings render, the current tab is not lost
@@ -241,40 +243,29 @@ Hooks.once('init', async function() {
     if(game.world.data.system === "dnd5e"){
         Hooks.on("Actor5e.rollSkill", async (actor, roll, ability, options)  => {
             const data = await checkToWorkflowData(actor, roll, 'skill', ability)
-            const wf = new workflow(data, game.userId, data);
-            wf.next();
+            if(data) workflow.go(data, game.userId, data);
         });
 
         Hooks.on("Actor5e.rollAbilitySave", async (actor, roll, ability, options) => {
             const data = await checkToWorkflowData(actor, roll, 'save', ability)
-            const wf = new workflow(data, game.userId, data);
-            wf.next();
+            if(data) workflow.go(data, game.userId, data);
         });
 
         Hooks.on("Actor5e.rollAbilityTest", async (actor, roll, ability, options) => {
             const data = await checkToWorkflowData(actor, roll, 'ability', ability)
-            const wf = new workflow(data, game.userId, data);
-            wf.next();
+            if(data) workflow.go(data, game.userId, data);
         });
     }
     if (tokenSaysHasMQ){
-        tokenSays.log(false,'Module Support ', 'Midi-Qol Support Activated');
-
         Hooks.on("midi-qol.AttackRollComplete", (data) => {            
-            const wf = new workflow(data, game.user.id, {documentType: 'attack', itemId: data.itemId});
-            wf.next();
-            tokenSays.log(false,'Attack Roll Complete ', data);
+            if(data) workflow.go(data, game.userId, {documentType: 'attack', itemId: data.itemId});
         });
 
         Hooks.on("midi-qol.DamageRollComplete", (data) => {
-            const wf = new workflow(data, game.user.id, {documentType: 'damage', itemId: data.itemId});
-            wf.next();
-            tokenSays.log(false,'Damage Roll Complete ', data);
+            if(data) workflow.go(data, game.userId, {documentType: 'damage', itemId: data.itemId});
         });
     }
     if (tokenSaysHasPolyglot){
-        tokenSays.log(false,'Module Support ', 'Polyglot Support Activated');
-
         Hooks.on("renderChatMessage", (chatMessage, html, message) => {
             if(chatMessage.data.flags?.TOKENSAYS?.img && chatMessage.data.flags?.polyglot){
                 tokenSays._insertHTMLToPolyglotMessage(chatMessage, html, message);
@@ -295,6 +286,6 @@ Hooks.once('init', async function() {
  * sets global variables that indicate which modules that danger zone integrates with are available
  */
  function setModsAvailable () {
-    if (game.modules.get("polyglot")?.active){tokenSaysHasPolyglot = true};
-    if (game.modules.get("midi-qol")?.active){tokenSaysHasMQ = true};
+    if (game.modules.get("polyglot")?.active) tokenSaysHasPolyglot = true;
+    if (game.modules.get("midi-qol")?.active) tokenSaysHasMQ = true;
 }

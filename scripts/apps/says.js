@@ -51,9 +51,9 @@ import {BYPASSNAMETYPES} from './constants.js';
         return this._toClass(this._says[id]);
     }
 
-    static findSay(tokenName, actorName, documentType, documentName, isActive = true){
+    static findSays(tokenName, actorName, documentType, documentName, isActive = true){
         const sys = isActive ? this.saysActive : this.says;
-        return sys.find(sy => 
+        return sys.filter(sy => 
             sy.documentType === documentType 
             && sy.nameList.includes((sy.isActorName && actorName) ? actorName : tokenName)
             && (

@@ -1,4 +1,4 @@
-import {BYPASSNAMETYPES, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
+import {BYPASSNAMETYPES, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
@@ -99,7 +99,7 @@ export class TokenSaysSayForm extends FormApplication {
     return finalHTML
   }
 
-  getData(options){
+  getData(){
     const sy = says.getSay(this.sayId);
     return {
       say: sy,
@@ -109,7 +109,8 @@ export class TokenSaysSayForm extends FormApplication {
       documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName, ''),
       documentNameReactsOptions: this._createNameOptionsHTML(sy.to?.documentType, sy.to?.documentName, 'to.'),
       isAudio: sy.fileType === 'audio' ? true : false,
-      isReact: sy.documentType === 'reacts' ? true : false
+      isReact: sy.documentType === 'reacts' ? true : false,
+      languageOptions: getPolyglotLanguages()
     } 
   }
   

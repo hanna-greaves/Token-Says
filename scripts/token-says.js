@@ -16,6 +16,20 @@ export class tokenSays {
       SAY: `modules/${this.ID}/templates/say-form.hbs`
     }
 
+    
+    /**
+     * Performs escape of token says if certain game settings are matched. Settings may be world or client.
+    */
+    get _escape(){
+      if(this.flags?.TOKENSAYS?.cancel) return 'Token Says flag'
+      if(!game.settings.get('token-says','isActive')) return 'Token Says is set to Inactive'
+      if(game.user?.id !== this.user) return 'Chat user is not game user'
+      if(!this.message?.speaker?.actor || !this.message?.speaker?.alias || !this.message?.speaker?.token) return 'No speaker in message data'
+      if(game.settings.get('token-says','suppressPrivateGMRoles') && (this.message.whisper?.length || this.message.whisperAttackCard)) return 'Private GM Roll to be escaped due to world settings'
+      if(this.hasCancelConditionResponse(this.token, true)) return 'TokenSays response killed - condition'
+      return false;
+    }
+
     /**
      * A small helper function which leverages developer mode flags to gate debug logs.
      * @param {boolean} force - forces the log even if the debug flag is not on

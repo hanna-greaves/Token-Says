@@ -1,8 +1,9 @@
 import {says} from './says.js';
+import {tokenSay} from './say.js';
 import {tokenSays} from '../token-says.js';
+import {inDistance, inView} from './helpers.js';
 
 export const WORKFLOWSTATES = {
-    GLOBALESCAPE: 0,
     INIT: 1,
     PARSE: 2,
     GETITEM: 3,
@@ -22,8 +23,6 @@ export const WORKFLOWSTATES = {
         this.currentState = WORKFLOWSTATES.INIT,
         this.documentName = (options.documentName === undefined) ? '' : options.documentName,
         this.documentType = (options.documentType === undefined) ? '' : options.documentType,
-        this.escape = false,
-        this.escapeReason = '',
         this.hook = (options.hook === undefined) ? '' : options.hook,
         this.id = foundry.utils.randomID(16),
         this.isResponse = (options.responseOptions === undefined) ? false : true
@@ -32,13 +31,10 @@ export const WORKFLOWSTATES = {
         this.responses = [],
         this.responseOptions = options.responseOptions,
         this.say = (options.say === undefined) ? {} : options.say,
-        this.sayResult = {},
+        this.says = (options.say === undefined) ? [] : [options.say],
+        this.tokenSay = {},
         this.user = user
     } 
-
-    log(message, data){
-        tokenSays.log(false,`${message} ${this.id}...... `, {workflow: this, data:data});
-    }
 
     get actor() {
         return game.actors.get(this.speaker.actor)
@@ -66,10 +62,82 @@ export const WORKFLOWSTATES = {
         return this.scene?.tokens?.get(this.speaker.token);
     }
 
-    static async go(message, user, options){
-        const wf = new workflow(message, user, options);
-        wf.next();
+    get _tokenSayData(){
+        return {
+            token: this.token, 
+            actor: this.actor, 
+            speaker: this.speaker, 
+            item: this.documentName, 
+            response: this.responseOptions
+        }
     }
+
+    static async go(message, user, options){
+        if(tokenSays._escapeGlobal) return this.log(tokenSays._escapeGlobal)
+        const wf = new workflow(message, user, options);
+        const result = await wf.next();
+        return result
+    }
+
+    log(message, data){
+        tokenSays.log(false,`${this.documentType ? this.documentType +' ' : ''}${message} ${this.id}...... `, {workflow: this, data:data});
+    }
+
+    async next(nextState){
+        await this._next(nextState);
+    }
+
+    async _next(state){
+        this.currentState = state;
+        switch(state) {
+            case WORKFLOWSTATES.NONE:
+                return this.next(WORKFLOWSTATES.PARSE);
+            case WORKFLOWSTATES.PARSE:
+                if (this.hook==="createChatMessage") this._parseChatMessage()
+                return this.next(WORKFLOWSTATES.GETITEM);
+            case WORKFLOWSTATES.GETITEM:
+                this._findItemName();
+                return this.next(WORKFLOWSTATES.GETSAY);
+            case WORKFLOWSTATES.GETSAY:
+                if(!this.says.length) this.says = says.findSays(this.alias, this.actor?.name, this.documentType, this.documentName)
+                return this.next(WORKFLOWSTATES.SAY);
+            case WORKFLOWSTATES.SAY: 
+                if (this.says.length) { 
+                    for(const s of this.says){
+                        this.say = s;
+                        this.tokenSay = new tokenSay(this.say, this._tokenSayData)
+                        if(this.tokenSay.valid) {
+                            await this.tokenSay.ready();
+                            await this.tokenSay.play();
+                            this.log('say played', {tokenSay: this.tokenSay}); 
+                            break;
+                        }
+                    }
+                } else {
+                    this.log('say not found', {});
+                }
+                if (!this.isResponse || (this.isResponse && this.tokenSay?.likelihoodMet) ){
+                    return this.next(WORKFLOWSTATES.GETRESPONSES);
+                } else {
+                    return this.next(WORKFLOWSTATES.COMPLETE);
+                }
+            case WORKFLOWSTATES.GETRESPONSES:
+                this.responses = says.findResponses(this.alias, this.actor?.name, this.documentType, this.documentName, this.tokenSay?.likelihoodMet ? this.say : {});
+                return this.next(WORKFLOWSTATES.RESPONDS);
+            case WORKFLOWSTATES.RESPONDS: 
+                if (this.responses.length) {
+                    this.log('responses found ', {});
+                    this._respondsWorkflow()
+                } 
+                return this.next(WORKFLOWSTATES.COMPLETE);
+            case WORKFLOWSTATES.CANCEL: 
+                this.log('workflow canceled', {})
+                return this
+            case WORKFLOWSTATES.COMPLETE: 
+                this.log('workflow complete', {})
+                return this
+        }
+    } 
 
     hasCancelConditionResponse(token, exCon){
         if(!token.actor?.effects){return false}
@@ -93,93 +161,6 @@ export const WORKFLOWSTATES = {
             }
         }
         return false
-    }
-
-    async next(nextState){
-        if(this.escape){nextState = WORKFLOWSTATES.CANCEL}
-        await this._next(nextState);
-    }
-
-    async _next(state){
-        this.currentState = state;
-        switch(state) {
-            case WORKFLOWSTATES.NONE:
-                return this.next(WORKFLOWSTATES.GLOBALESCAPE);
-            case WORKFLOWSTATES.GLOBALESCAPE:
-                this._escapeGlobal();
-                return this.next(WORKFLOWSTATES.PARSE);
-            case WORKFLOWSTATES.PARSE:
-                this.log('Parsing message ', {});
-                if (this.hook==="createChatMessage") {
-                    this._parseChatMessage()
-                }
-                return this.next(WORKFLOWSTATES.GETITEM);
-            case WORKFLOWSTATES.GETITEM:
-                this.log('Getting Item ', {});
-                this._findItemName();
-                return this.next(WORKFLOWSTATES.GETSAY);
-            case WORKFLOWSTATES.GETSAY:
-                this.log('Getting Say ', {});
-                if(!Object.keys(this.say).length){
-                    this.say = says.findSay(this.alias, this.actor.name, this.documentType, this.documentName)
-                }
-                return this.next(WORKFLOWSTATES.SAY);
-            case WORKFLOWSTATES.SAY: 
-                if (this.say && Object.keys(this.say).length) { 
-                    this.log('Say found', {})
-                    this.sayResult = await this.say.say({token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName, response: this.responseOptions})
-                } else {
-                    this.log('Say not found', {});
-                }
-                if (!this.isResponse || (this.isResponse && this.sayResult?.likelihood?.doesSay) ){
-                    return this.next(WORKFLOWSTATES.GETRESPONSES);
-                } else {
-                    return this.next(WORKFLOWSTATES.COMPLETE);
-                }
-            case WORKFLOWSTATES.GETRESPONSES:
-                this.log('Getting Responses ', {});
-                this.responses = says.findResponses(this.alias, this.actor?.name, this.documentType, this.documentName, this.sayResult?.likelihood?.doesSay ? this.say : {});
-                return this.next(WORKFLOWSTATES.RESPONDS);
-            case WORKFLOWSTATES.RESPONDS: 
-                if (this.responses.length) {
-                    this._respondsWorkflow()
-                } else {
-                    this.log('Responses not found', {});
-                }
-                return this.next(WORKFLOWSTATES.COMPLETE);
-            case WORKFLOWSTATES.CANCEL: 
-                this.log('TokenSays workflow canceled', {})
-                return this
-            case WORKFLOWSTATES.COMPLETE: 
-                this.log('TokenSays workflow complete', {})
-                return this
-        }
-    } 
-    
-    /**
-     * Performs escape of token says if certain game settings are matched. Settings may be world or client.
-    */
-    _escapeGlobal(){
-        if (this.flags?.TOKENSAYS?.cancel){
-            this.escape = true,
-            this.escapeReason = 'Token Says flag'
-        } else if (game.user?.id !== this.user){
-            this.escape = true,
-            this.escapeReason = 'Chat user is not game user'
-        } else if(!this.message?.speaker?.actor || !this.message?.speaker?.alias || !this.message?.speaker?.token){
-            this.escape = true,
-            this.escapeReason = 'No speaker in message data'
-        } else if(!game.settings.get('token-says','isActive')){
-            this.escape = true,
-            this.escapeReason = 'Token Says is set to Inactive'
-        } else if (game.settings.get('token-says','suppressPrivateGMRoles') && (this.message.whisper?.length || this.message.whisperAttackCard)){
-            this.escape = true,
-            this.escapeReason = 'Private GM Roll to be escaped due to world settings'
-        } else if(this.hasCancelConditionResponse(this.token, true)){
-            this.escape = true,
-            this.escapeReason = 'TokenSays response killed - condition'
-        }
-        return;
     }
 
     /**
@@ -263,70 +244,25 @@ export const WORKFLOWSTATES = {
     */
     _findItemName(){
         if(this.itemId && !this.documentName){
-            if(this.token) {
-                this.documentName = this.token?.actor.items.get(this.itemId)?.name; 
-            }
-            if(!this.documentName){
-                this.documentName = this.actor?.items.get(this.itemId).name;
-            }
+            if(this.token) this.documentName = this.token?.actor.items.get(this.itemId)?.name;
+            if(!this.documentName) this.documentName = this.actor?.items.get(this.itemId).name;
         }
     }
 
     async _respondsWorkflow(){
         if(!canvas?.tokens?.placeables){return}
-        for (let i = 0; i < this.responses.length; i++){
-            const rsp = this.responses[i];
-            let tokens = [];
-
-            const names = rsp.nameList;
-            if(!rsp.isActorName) {
-                tokens = canvas.tokens.placeables.filter(t => names.indexOf(t.name)!==-1)
-            } else {
-                tokens = canvas.tokens.placeables.filter(t => t.actor?.id && names.indexOf(game.actors.get(t.actor?.id)?.name)!==-1)
-            }
-
-            for(let i=0; i<tokens.length; i++){
-                const token = tokens[i];
-                const alias = token.name, actorId = token.data.actorId, tokenId = token.id, message = new ChatMessage;
-                if(tokenId === this.token.id) {
-                    this.log('TokenSays response killed - loop', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id});
-                    continue
-                }
-                if(this.hasCancelConditionResponse(token, false)){
-                    this.log('TokenSays response killed - condition', {id: rsp.id, respondingToken: tokenId, speakingToken: this.token.id});
-                    continue
-                }
-                if(rsp.to.distance || rsp.to.requireVision && canvas.grid && canvas.dimensions){
-                    const orig = new PIXI.Point(...canvas.grid.getCenter(this.token.data.x, this.token.data.y));
-                    const dest = new PIXI.Point(...canvas.grid.getCenter(token.data.x, token.data.y));
-                    const ray = new Ray(orig, dest);
-                    if(rsp.to.distance){
-                        if(!this._inDistance(ray, rsp.to.distance)){
-                            this.log('TokenSays response killed - distance', {id: rsp.id, respondingToken: token, speakingToken: this.token});
-                            continue
-                        }
-                    }
-                    if(rsp.to.requireVision){
-                        if(!this._inView(ray, token)){
-                            this.log('TokenSays response killed - view', {id: rsp.id, respondingToken: token, speakingToken: this.token});
-                            continue
-                        }
-                    }
-                }
-                message.data.speaker = {scene: this.scene.id, actor: actorId, token: tokenId, alias: alias};
-                const wf = new workflow(message.data, this.user, {say: rsp, responseOptions: {token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}} );
-                wf.next();
+        for (const rsp of this.responses){
+            let tokens = (!rsp.isActorName) ? canvas.tokens.placeables.filter(t => rsp.nameList.includes(t.name)) : canvas.tokens.placeables.filter(t => t.actor?.id && rsp.nameList.includes(game.actors.get(t.actor?.id)?.name));
+            for(const token of tokens){
+                if(token.id === this.token.id) continue
+                if(this.hasCancelConditionResponse(token, false)) continue
+                if(rsp.to.requireVision && canvas.grid && canvas.dimensions && !inView(this.token, token)) continue
+                if(rsp.to.distance && canvas.grid && canvas.dimensions && !inDistance(this.token, token, rsp.to.distance)) continue
+     
+                const message = new ChatMessage;
+                message.data.speaker = {scene: this.scene.id, actor: token.data.actorId, token: token.id, alias: token.name};
+                workflow.go(message.data, this.user, {say: rsp, responseOptions: {token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}});
             }
         }
-    }
-
-    _inDistance(ray, distance){
-        const d = canvas.grid.measureDistances([{ray:ray}], {gridSpaces: true})[0];
-        if(d <= distance){return true} 
-        return false
-    }
-
-    _inView(ray, token){
-        return (canvas.walls?.checkCollision(ray) || !token.hasSight) ? false : true
     }
 }
