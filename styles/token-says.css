@@ -1,4 +1,3 @@
-
 form.token-says .content {
     height: 460px;
 }
@@ -64,7 +63,7 @@ form.token-says .content {
     color: #7a7971;
 }
 
-.token-says .rule-active input[type="checkbox"], form.token-says-rule .flexrow input[type="checkbox"] {
+.token-says .rule-active input[type="checkbox"]{
     flex: 0 0 15px;
     width: 15px;
     height: 15px;
@@ -99,76 +98,58 @@ form.token-says .content {
     margin-bottom: 12px;
 }
 
-form.token-says-rule {
-    padding: 0px 10px;
-}
-
-form.token-says-rule .form-group {
-    margin: 0;
-    padding: .4rem;
+.token-says-rule .suppress {
+    flex: 1 1 100%;
+    display: flex;
     align-items: flex-start;
-    justify-content: flex-end;
-    transition: background .3s ease;
-    position: relative;
-    display: block;
 }
 
-form.token-says-rule .flexrow input[type="text"] {
-    padding-left: 6px;
-}
-
-form.token-says-rule .flexrow.suppress > div {
+.token-says-rule .suppress > div {
     flex: 0 0 33%;
     white-space: nowrap;
     margin-bottom: 5px;
+    align-items: center;
+    display: flex;
 }
 
-form.token-says-rule .hidden, #token-says-search-clear.hidden {
+.token-says-rule .hidden, #token-says-search-clear.hidden {
     display: none;
 }
 
-form.token-says-rule .alert {
+.token-says-rule .alert {
     padding: 5px 8px;
     background-color: rgba(245, 209, 7, 0.411);
     border-radius: 5px;
 }
 
-form.token-says-rule .warning {
+.token-says-rule .warning {
     color: #FF0000;
 }
 
-form.token-says-rule .toolt {
-    color: #757575;
-    vertical-align: super;
-    font-size: 8px;
+.token-says-rule .toolt {
+    color: #9e9e9e;
+    /*vertical-align: super;*/
+    font-size: 10px;
 }
 
-.token-says-rule .flexrow > div {
-    flex-grow: 4;
-    justify-content: flex-start;
-    align-items: center;
-    vertical-align: middle;
+.token-says-rule > div {
+    padding: 1px 6px;
 }
 
-.token-says-rule .flexrow > div > select {
-    max-width: 516.333px;
-}
-
-.token-says-rule .flexrow.check-three {
-    flex: 0 0 100%;
-    white-space: nowrap;
-}
-
-.token-says-rule .flexrow.check-three input[type="range"]  {
-    flex: 0 0 30%;
+.token-says-rule .reacts select {
+    max-width: 287px;
 }
 
 .token-says-rule .reacts {
     background: rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    margin-bottom: 6px;
 }
 
 .token-says-rule h4 {
-    padding-bottom: 3px;
+    padding: 3px 6px;
+    margin-bottom: 4px;
+    margin-top: 6px;
     border-bottom: 1px solid rgba(0,0,0,.1);
 }
 

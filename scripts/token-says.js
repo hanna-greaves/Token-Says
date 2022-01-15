@@ -16,18 +16,15 @@ export class tokenSays {
       SAY: `modules/${this.ID}/templates/say-form.hbs`
     }
 
+    static get conditionEscape(){
+      return game.settings.get(this.ID, 'conditions').split('|').map(n => n.trim()).filter(n => n !== "")
+    }
     
     /**
      * Performs escape of token says if certain game settings are matched. Settings may be world or client.
     */
-    get _escape(){
-      if(this.flags?.TOKENSAYS?.cancel) return 'Token Says flag'
-      if(!game.settings.get('token-says','isActive')) return 'Token Says is set to Inactive'
-      if(game.user?.id !== this.user) return 'Chat user is not game user'
-      if(!this.message?.speaker?.actor || !this.message?.speaker?.alias || !this.message?.speaker?.token) return 'No speaker in message data'
-      if(game.settings.get('token-says','suppressPrivateGMRoles') && (this.message.whisper?.length || this.message.whisperAttackCard)) return 'Private GM Roll to be escaped due to world settings'
-      if(this.hasCancelConditionResponse(this.token, true)) return 'TokenSays response killed - condition'
-      return false;
+    static get escape(){
+      return !game.settings.get(this.ID,'isActive') ? true : false
     }
 
     /**
@@ -74,7 +71,6 @@ export class tokenSays {
                 let contentSays = html.find('.what-is-said');
                 translatedContent.prependTo(contentSays);
             }
-            tokenSays.log(false,'Polyglot chat rendered ', {chatMessage, html, message}); 
         }
     }
 }

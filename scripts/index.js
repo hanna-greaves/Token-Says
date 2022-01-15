@@ -4,12 +4,16 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
+import { says } from "./apps/says.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
 Hooks.once('init', async function() { 
     const module = 'token-says';
+    const debouncedReload = foundry.utils.debounce(() => {
+        window.location.reload();
+      }, 100);
     
     game.settings.registerMenu(module, "tokenSaysRules", {
         name: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
@@ -46,6 +50,16 @@ Hooks.once('init', async function() {
         default: 'B',
         type: String,
         choices: TOKENFORMICONDISPLAYOPTIONS
+    });
+
+    game.settings.register(module, 'cacheAudio', {
+        name: game.i18n.localize('TOKENSAYS.setting.cacheAudio.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.cacheAudio.description'),
+        scope: 'client',
+        config: true,
+        default: true,
+        type: Boolean,
+        onChange: debouncedReload
     });
     
     game.settings.register(module, 'suppressPrivateGMRoles', {
@@ -128,43 +142,55 @@ Hooks.once('init', async function() {
     }); 
     
     Hooks.on("createChatMessage", (message, options, userId) => {
-        if(message.data) workflow.go(message.data, userId, {hook:"createChatMessage"});
+        const data = chatMessageToWorkflowData(message.data)
+        if(data) workflow.go(userId, data);
     });
 
     Hooks.on("createActiveEffect", (document, options, userId) => {
         if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
             const data = activeEffectToWorkflowData(document)
-            if(data) workflow.go(data, userId, data);
+            if(data) workflow.go(userId, data);
         }
     });
 
     Hooks.on("deleteActiveEffect", (document, options, userId) => {
         if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
             const data = activeEffectToWorkflowData(document, true)
-            if(data) workflow.go(data, userId, data);
+            if(data) workflow.go(userId, data);
         }
     });
     
     Hooks.on("updateActiveEffect", (document, change, options, userId) => {
         if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ("disabled" in change || ("label" in change && !document.data.disabled))){
             const data = activeEffectToWorkflowData(document, change.disabled)
-            if(data) workflow.go(data, userId, data);
+            if(data) workflow.go(userId, data);
         }
     });
 
     Hooks.on('updateCombat', async(document, round, options, id) => {
         const data = combatTurnToWorkflowData(document)
-        if(data) workflow.go(data, id, data);
+        if(data) workflow.go(id, data);
     });
 
     
-    Hooks.on("updateToken", async (token, update, options, id) => {
-        if ("x" in update || "y" in update || "elevation" in update) {
-            const data = movementToWorkflowData(token, id)
-            if(data) workflow.go(data, id, data);
+    Hooks.on("preUpdateToken", async (token, update, options, id) => {
+        if (("x" in update || "y" in update || "elevation" in update) && token?.data) {
+            options[`${tokenSays.FLAGS.TOKENSAYS}`] = {start: {x: token.data.x, y: token.data.y}, end: {x: (update.x ? update.x : token.data.x), y: (update.y ? update.y : token.data.y)}}
         }
     });
         
+    
+    Hooks.on("updateToken", async (token, update, options, id) => {
+        if (("x" in update || "y" in update || "elevation" in update) && options[`${tokenSays.FLAGS.TOKENSAYS}`]) {
+            const data = movementToWorkflowData(token, id, options[`${tokenSays.FLAGS.TOKENSAYS}`])
+            if(data) {
+                workflow.go(id, data);
+                data['documentType']='arrive'
+                workflow.go(id, data);
+            }
+        }
+    });
+
     //hook to ensure that, on token says settings render, the current tab is not lost
     Hooks.on("renderApplication", (app, html, options) => {
         if(app.id ==="token-says-rules"){
@@ -231,6 +257,22 @@ Hooks.once('init', async function() {
     });  
 
     game.socket.on("module.token-says", async (inSays) => {
+        if(inSays.sound){
+            tokenSays.log(false,'Socket Call... ', {sound: inSays.sound});
+            const sounds = game.audio.playing.values();
+            for (const s of sounds){
+                if(s.id === inSays.sound) {
+                    await s.fade(0, {duration: 250})
+                    s.stop();
+                    break;
+                }
+            }
+            return
+        }
+        if(inSays.load){
+            AudioHelper.preloadSound(inSays.load);
+            return
+        }
         let saysToken = canvas.tokens.get(inSays.token);
         tokenSays.log(false,'Socket Call... ', {inSays: inSays, foundToken: saysToken});
         await canvas.hud.bubbles.say(saysToken, inSays.says, inSays.emote);
@@ -240,29 +282,44 @@ Hooks.once('init', async function() {
 
     setModsAvailable();
 
+    if( game.settings.get(tokenSays.ID, 'cacheAudio')){
+        Hooks.on("canvasReady", async (canvas, options)=>{
+            says.preloadSceneSounds()
+        });
+        says.preloadSceneSounds()
+
+        Hooks.on("preCreateToken", async (token, change, options, id)=>{
+            if(token) {
+                says.preloadTokenSounds(token);
+            }
+        });
+    }
+
     if(game.world.data.system === "dnd5e"){
         Hooks.on("Actor5e.rollSkill", async (actor, roll, ability, options)  => {
-            const data = await checkToWorkflowData(actor, roll, 'skill', ability)
-            if(data) workflow.go(data, game.userId, data);
+            const data = checkToWorkflowData(actor, 'skill', ability, options)
+            if(data) workflow.go(game.userId, data);
         });
 
         Hooks.on("Actor5e.rollAbilitySave", async (actor, roll, ability, options) => {
-            const data = await checkToWorkflowData(actor, roll, 'save', ability)
-            if(data) workflow.go(data, game.userId, data);
+            const data = checkToWorkflowData(actor, 'save', ability, options)
+            if(data) workflow.go(game.userId, data);
         });
 
         Hooks.on("Actor5e.rollAbilityTest", async (actor, roll, ability, options) => {
-            const data = await checkToWorkflowData(actor, roll, 'ability', ability)
-            if(data) workflow.go(data, game.userId, data);
+            const data = checkToWorkflowData(actor, 'ability', ability, options)
+            if(data) workflow.go(game.userId, data);
         });
     }
     if (tokenSaysHasMQ){
-        Hooks.on("midi-qol.AttackRollComplete", (data) => {            
-            if(data) workflow.go(data, game.userId, {documentType: 'attack', itemId: data.itemId});
+        Hooks.on("midi-qol.AttackRollComplete", (midiWorkflow) => {     
+            const data = midiToWorkflowData(midiWorkflow, 'attack');
+            if(data) workflow.go(game.userId, data);
         });
 
-        Hooks.on("midi-qol.DamageRollComplete", (data) => {
-            if(data) workflow.go(data, game.userId, {documentType: 'damage', itemId: data.itemId});
+        Hooks.on("midi-qol.DamageRollComplete", (midiWorkflow) => {
+            const data = midiToWorkflowData(midiWorkflow, 'damage');
+            if(data) workflow.go(game.userId, data);
         });
     }
     if (tokenSaysHasPolyglot){

@@ -1,6 +1,6 @@
 import {tokenSays} from '../token-says.js';
 import {tokenSaysHasPolyglot} from '../index.js';
-import {parseSeparator} from './helpers.js';
+import {parseSeparator,getDistance} from './helpers.js';
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -26,6 +26,7 @@ const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 export class say {
     constructor(fileType) {
+        this.cap = false,
         this.compendiumName = '',
         this.delay = 0,
         this.documentName = '',
@@ -53,10 +54,6 @@ export class say {
 
     get documentNameList() {
         return parseSeparator(this.documentName)
-    }
-
-    get maxDuration(){
-        return game.settings.get(tokenSays.ID, 'audioDuration')
     }
 
     get nameList() {
@@ -99,6 +96,7 @@ export class say {
     }
 
     async sound(){
+        if(!this.fileName) return this.fileTitle ? this.fileTitle : {}
         const playlist = await this.playlist();
         if(!playlist) return {}
         if(!this.fileTitle){
@@ -106,22 +104,11 @@ export class say {
             const rolledResult = roll.result;
             let i = 1; 
             for (let key of playlist.data.sounds) {
-                if (i++ == rolledResult) return key;  
+                if (i++ == rolledResult) return key?.path;  
             }
         } else {
-            return playlist.sounds.find(p=>p.name === this.fileTitle)
+            return playlist.sounds.find(p=>p.name === this.fileTitle)?.path
         }
-    }
-
-    /**
-     * Method that performs the playlist find and execute then calls the final outputs to chat and audio
-    */
-    async sayAudio(){
-        const audioFile = await this.sound();
-        if(!audioFile?.path) return tokenSays.log(false, 'No Audio File Path ', audioFile);
-        const sound = await AudioHelper.play({src: audioFile.path, volume: this.volume, loop: false, autoplay: true}, true);
-        sound.schedule(() => sound.fade(0), this.maxDuration);
-        sound.schedule(() => sound.stop(), (this.maxDuration+1));
     }
 }
 
@@ -129,6 +116,7 @@ export class tokenSay {
     constructor(say, options){
         this._say = say,
         this.actor = options.actor,
+        this.diff = options.diff,
         this.item = options.item,
         this.likelihood ={
             result: 0,
@@ -137,6 +125,7 @@ export class tokenSay {
         this._message = this._say.fileTitle,
         this.message =  "............",
         this.response = options.response,
+        this.sound = '',
         this.speaker = options.speaker,
         this.token = options.token
     }
@@ -145,10 +134,22 @@ export class tokenSay {
         return this._say.isActive
     }
 
-    get delay(){
-        return this._say.delay
+    get _adjDelay(){
+        return (this.documentType === 'arrive' || this.reacts.documentType === 'arrive' ) ? true : false
     }
 
+    get delay(){
+        return (this._say.delay + this.delayAdj)
+    }
+
+    get delayAdj(){
+        return this._adjDelay ? this.movementTime : 0 //movement is 100 every grid distance, adding buffer
+    }
+
+    get documentType(){
+        return this._say.documentType
+    }
+    
     get img(){
         if(!game.settings.get(tokenSays.ID, 'suppressImage')){
             if(this.isActorName && this.actor?.data.img) return this.actor.data.img
@@ -173,8 +174,24 @@ export class tokenSay {
         return (this.likelihood.result > this.likelihood.value) ? false : true
     }
 
+    get maxDuration(){
+        return (this._say.cap && this.isAudio && this.documentType === 'move') ? this.movementTime : (game.settings.get(tokenSays.ID, 'audioDuration') * 1000)
+    }
+
+    get movementTime(){
+        return (getDistance(this.diff.start, this.diff.end, false)/this.scene.data.grid) * 100
+    }
+
     get quotes(){
         return this.suppressQuotes ? '' : '"'
+    }
+
+    get reacts(){
+        return this._say.to ? this._say.to : {}
+    }
+
+    get scene() {
+        return game.scenes.get(this.speaker.scene)
     }
 
     get suppressAudio(){
@@ -259,8 +276,17 @@ export class tokenSay {
         }
     }
 
-    async sayAudio(){
-        await this._say.sayAudio()
+    /**
+     * Method that performs the playlist find and execute then calls the final outputs to chat and audio
+    */
+     async sayAudio(){
+        const audioFile = await this._say.sound();
+        if(!audioFile) return tokenSays.log(false, 'No Audio File Path ', audioFile);
+        this.sound = await AudioHelper.play({src: audioFile, volume: this._say.volume, loop: false, autoplay: true}, true);
+        await wait(this.maxDuration)
+        game.socket.emit('module.token-says', {sound: this.sound.id})
+        await this.sound.fade(0, {duration: 250})
+        this.sound.stop();
     }
 
     /**
@@ -269,12 +295,12 @@ export class tokenSay {
     async sayChatBubble() {
         const emote = this.language ? {language: this.language} : false
         if(this.token){ 
+            canvas.hud.bubbles.say(this.token, this.message, emote);
             game.socket.emit("module.token-says", {
                 token: this.token.id,
                 says: this.message,
                 emote: emote
             });
-            await canvas.hud.bubbles.say(this.token, this.message, emote);
         }
     }
 
@@ -290,7 +316,7 @@ export class tokenSay {
         };
 
         if(this.language) messageData['lang'] = this.language
-        messageData['content'] = tokenSaysHasPolyglot ?  this.message : `<div class="token-says chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
+        messageData['content'] = tokenSaysHasPolyglot ?  `${this.quotes}${this.message}${this.quotes}` : `<div class="token-says chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
         ChatMessage.create(messageData,{chatBubble : false})
     }
 
