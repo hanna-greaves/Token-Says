@@ -41,6 +41,15 @@ import {BYPASSNAMETYPES} from './constants.js';
         return this.says.filter(s => s.isActive && s.documentType === 'reacts')
     }
 
+    static get sceneAudioFileSays(){
+        return this.says.filter(s => 
+            s.fileType === 'audio' 
+            && s.fileTitle 
+            && s.isActive 
+            && (!s.documentName || !['arrive', 'move'].includes(s.documentType) || s.documentNameList.includes(canvas.scene.name)) 
+            && canvas.scene.tokens.find(t=> (!s.isActorName && s.nameList.includes(t.name)) || s.nameList.includes(t.actor?.name)))
+    }
+
     static _toClass(flag){
         if(!flag?.fileType){return {}}
         let sy = flag.documentType==='reacts' ? new reacts(flag.fileType) : new say(flag.fileType);
@@ -51,9 +60,9 @@ import {BYPASSNAMETYPES} from './constants.js';
         return this._toClass(this._says[id]);
     }
 
-    static findSay(tokenName, actorName, documentType, documentName, isActive = true){
+    static findSays(tokenName, actorName, documentType, documentName, isActive = true){
         const sys = isActive ? this.saysActive : this.says;
-        return sys.find(sy => 
+        return sys.filter(sy => 
             sy.documentType === documentType 
             && sy.nameList.includes((sy.isActorName && actorName) ? actorName : tokenName)
             && (
@@ -64,22 +73,24 @@ import {BYPASSNAMETYPES} from './constants.js';
         )
     }
 
-    static findResponses(tokenName, actorName, documentType, documentName, sayTrigger){
-        const sys = this.responses;
-        return sys.filter(sy =>
-            sy.to.documentType === 'say' ? sy.to.documentName === sayTrigger?.id : (
-                sy.to.documentType === documentType 
-                && (
-                    !sy.to.name
-                    || sy.toNameList.includes((sy.to.isActorName && actorName) ? actorName : tokenName)
-                ) 
-                && (
-                    !sy.to.documentName 
-                    || BYPASSNAMETYPES.includes(documentType)
-                    || sy.toDocumentNameList.includes(documentName)
-                ) 
-            )
+    static findEventResponses(tokenName, actorName, documentType, documentName){
+        return this.responses.filter(sy =>
+            sy.to.documentType !== 'say' 
+            && sy.to.documentType === documentType 
+            && (
+                !sy.to.name
+                || sy.toNameList.includes((sy.to.isActorName && actorName) ? actorName : tokenName)
+            ) 
+            && (
+                !sy.to.documentName 
+                || BYPASSNAMETYPES.includes(documentType)
+                || sy.toDocumentNameList.includes(documentName)
+            ) 
         )
+    }
+
+    static findSayResponses(sayTrigger){
+        return this.responses.filter(sy => sy.to.documentType === 'say' && sy.to.documentName === sayTrigger?.id)
     }
     
     static async updateSays(sys) {
@@ -100,6 +111,35 @@ import {BYPASSNAMETYPES} from './constants.js';
 
     static async newAudioSay() {
        return await this.newSay("audio")
+    }
+
+    static async preloadSceneSounds(){
+        tokenSays.log(false, 'Caching audio ', {says: this.sceneAudioFileSays})
+        for(const sy of this.sceneAudioFileSays){
+            const sound = await sy.sound()
+            AudioHelper.preloadSound(sound)
+        }
+    }
+
+    static async preloadTokenSounds(token){
+        if(canvas.scene.tokens.find(t=> token.name === t.name || token.actor?.name === t.actor?.name)) return
+        const sys = this.tokenAudioFileSays(token);
+        tokenSays.log(false, 'Caching audio ', {says: sys})
+        for(const sy of sys){
+            const sound = await sy.sound()
+            AudioHelper.preloadSound(sound)
+            game.socket.emit('module.token-says', {load: sound});
+        }
+    }
+
+    static tokenAudioFileSays(token){
+        return this.says.filter(s => 
+            s.fileType === 'audio' 
+            && s.fileTitle 
+            && s.isActive 
+            && (!s.documentName || !['arrive', 'move'].includes(s.documentType) || s.documentNameList.includes(canvas.scene.name))  
+            && ((!s.isActorName && s.nameList.includes(token.name)) || s.nameList.includes(token.actor?.name))
+        )
     }
 
     static async updateSay(id, data, insertKeys = false) {

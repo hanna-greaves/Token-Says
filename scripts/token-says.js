@@ -16,6 +16,17 @@ export class tokenSays {
       SAY: `modules/${this.ID}/templates/say-form.hbs`
     }
 
+    static get conditionEscape(){
+      return game.settings.get(this.ID, 'conditions').split('|').map(n => n.trim()).filter(n => n !== "")
+    }
+    
+    /**
+     * Performs escape of token says if certain game settings are matched. Settings may be world or client.
+    */
+    static get escape(){
+      return !game.settings.get(this.ID,'isActive') ? true : false
+    }
+
     /**
      * A small helper function which leverages developer mode flags to gate debug logs.
      * @param {boolean} force - forces the log even if the debug flag is not on
@@ -60,7 +71,6 @@ export class tokenSays {
                 let contentSays = html.find('.what-is-said');
                 translatedContent.prependTo(contentSays);
             }
-            tokenSays.log(false,'Polyglot chat rendered ', {chatMessage, html, message}); 
         }
     }
 }

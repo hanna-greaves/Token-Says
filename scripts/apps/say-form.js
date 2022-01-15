@@ -1,4 +1,4 @@
-import {BYPASSNAMETYPES, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getUniversalDocumentNameOps, getDnd5eDocumentNameOps, getCompendiumOps, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
+import {BYPASSNAMETYPES, DOCUMENTNAMELABELS, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
@@ -18,7 +18,7 @@ export class TokenSaysSayForm extends FormApplication {
       title : game.i18n.localize("TOKENSAYS.setting.tokenSaysRule.name"),
       id : "token-says-rules-rule",
       template : tokenSays.TEMPLATES.SAY,
-      width : 700,
+      width : 500,
       height : "auto",
       closeOnSubmit: true
     });
@@ -33,32 +33,20 @@ export class TokenSaysSayForm extends FormApplication {
     return allOps;
   }
 
-  _determineWorldDocumentNameOptions(documentType) {
-    if (game.world.data.system === "dnd5e"){ 
-      return getDnd5eDocumentNameOps(documentType)
-    } else if (game.world.data.system === "pf1"){ 
-      return getPF1DocumentNameOps(documentType)
-    } 
-    return getUniversalDocumentNameOps(documentType)
-  }
-
   activateListeners(html) {
     super.activateListeners(html);
 
     html.on('change', "#token-says-documenttype-value",(event) => {
-      if(event.currentTarget.id === "token-says-documenttype-value") {
-        const documentType = event.currentTarget.value;
-        this._refreshDocumentNameOptions(documentType, '');
-        let reactsDiv = document.getElementById(`token-says-reacts`);
-        if(documentType === 'reacts'){
-          reactsDiv.classList.remove('hidden');
-        } else {
-          reactsDiv.classList.add('hidden');
-        }
-      }
+      this._refreshDocumentNameOptions(event.currentTarget.value, '');
+      let reactsDiv = document.getElementById(`token-says-reacts`);
+      event.currentTarget.value === 'reacts' ? reactsDiv.classList.remove('hidden') : reactsDiv.classList.add('hidden');
+      let capDiv = document.getElementById(`token-says-cap`);
+      if(capDiv) event.currentTarget.value === 'move' ? capDiv.classList.remove('hidden') : capDiv.classList.add('hidden');
+      document.getElementById(`token-says-documentname-label`).innerHTML = this.documentNameLabel(event.currentTarget.value);
     });
     html.on('change', "#token-says-documenttype-reacts-value",(event) => {
       this._refreshDocumentNameOptions(event.currentTarget.value, 'to.');
+      document.getElementById(`token-says-documentname-reacts-label`).innerHTML = this.documentNameLabel(event.currentTarget.value);
       this._duplicateNameWarning();
     });
     html.on('change', '#token-says-documentname-reacts-value', this._duplicateNameWarning.bind(this));  
@@ -79,7 +67,7 @@ export class TokenSaysSayForm extends FormApplication {
   _createNameOptionsHTML(documentType, documentName, reacts) {
     let finalHTML = ''; let reactsHTML = reacts ? '-reacts' : '';
     documentName = documentName ? documentName : '';
-    const optionListOptions  = this._determineWorldDocumentNameOptions(documentType);
+    const optionListOptions  = getWorldDocumentNameOptions(documentType);
     if(optionListOptions) {
       const sortedList = Object.entries(optionListOptions).sort(([,a],[,b]) => a.localeCompare(b))
       let optionList = '<option value=""></option>';
@@ -99,17 +87,25 @@ export class TokenSaysSayForm extends FormApplication {
     return finalHTML
   }
 
-  getData(options){
+  documentNameLabel(documentType){
+    return (documentType && DOCUMENTNAMELABELS[documentType]) ? game.i18n.localize(DOCUMENTNAMELABELS[documentType]) : game.i18n.localize(DOCUMENTNAMELABELS[''])
+  }
+
+  getData(){
     const sy = says.getSay(this.sayId);
     return {
       say: sy,
       documentTypeOptions: this._determineWorldOptions(false),
       documentTypeReactsOptions: this._determineWorldOptions(true),
       compendiumList: getCompendiumOps(sy.fileType),
+      documentNameLabel: this.documentNameLabel(sy.documentType),
       documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName, ''),
       documentNameReactsOptions: this._createNameOptionsHTML(sy.to?.documentType, sy.to?.documentName, 'to.'),
       isAudio: sy.fileType === 'audio' ? true : false,
-      isReact: sy.documentType === 'reacts' ? true : false
+      isMove: (sy.fileType === 'audio' && sy.documentType === 'move') ? true : false,
+      isReact: sy.documentType === 'reacts' ? true : false,
+      languageOptions: getPolyglotLanguages(),
+      responseDocumentNameLabel: this.documentNameLabel(sy.to?.documentType)
     } 
   }
   

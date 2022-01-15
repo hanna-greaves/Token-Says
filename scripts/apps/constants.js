@@ -1,4 +1,5 @@
 import {says} from './says.js';
+import {tokenSaysHasPolyglot} from '../index.js';
 
 export const FILETYPEENTITYTYPE = {
     rollTable: "RollTable",
@@ -19,6 +20,8 @@ export const UNIVERSALDOCUMENTTYPEOPS = {
     "initiative":  "TOKENSAYS.document-type-options.initiative.label",
     "flavor":  "TOKENSAYS.document-type-options.flavor.label",
     "macro":  "TOKENSAYS.document-type-options.macro.label",
+    "move": "TOKENSAYS.document-type-options.move.label",
+    "arrive": "TOKENSAYS.document-type-options.arrive.label",
     "reacts":  "TOKENSAYS.document-type-options.reacts.label",
     "say": "TOKENSAYS.document-type-options.say.label",
     "turn": "TOKENSAYS.document-type-options.turn.label"
@@ -43,6 +46,14 @@ export const DND5EDOCUMENTTYPEOPS  = {
     "skill":  "TOKENSAYS.document-type-options.skill.label"
 }
 
+export function getWorldDocumentNameOptions(documentType) {
+    switch(game.world.data.system){
+      case "dnd5e": return getDnd5eDocumentNameOps(documentType)
+      case "pf1":  return getPF1DocumentNameOps(documentType)
+      default: return getUniversalDocumentNameOps(documentType)
+    }
+}
+
 export function getDnd5eDocumentNameOps(documentType){
     switch (documentType) {
         case "ability": 
@@ -54,6 +65,10 @@ export function getDnd5eDocumentNameOps(documentType){
         default:
             return getUniversalDocumentNameOps(documentType)
         }
+}
+
+export function getPolyglotLanguages() {
+    return  tokenSaysHasPolyglot ? polyglot.polyglot.languages : false
 }
 
 export const PF1DOCUMENTTYPEOPS  = {
@@ -111,5 +126,23 @@ export function getCompendiumOps(fileType){
     return game.packs.filter((x) => x.documentName == FILETYPEENTITYTYPE[fileType]).reduce((obj, p) => {obj['']=''; obj[p.collection] = p.title; return obj;}, {})
 }
 
-
+  
+export const DOCUMENTNAMELABELS = {
+    "":"TOKENSAYS.document-type-label.action",
+    "ability":  "TOKENSAYS.document-type-label.ability",
+    "attack":  "TOKENSAYS.document-type-label.item",
+    "damage":  "TOKENSAYS.document-type-label.item",
+    "initiative": "TOKENSAYS.document-type-label.action",
+    "save": "TOKENSAYS.document-type-label.ability",
+    "skill":  "TOKENSAYS.document-type-label.skill",
+    "effectAdd": "TOKENSAYS.document-type-label.effect",
+    "effectDelete": "TOKENSAYS.document-type-label.effect",
+    "flavor":  "TOKENSAYS.document-type-label.item",
+    "macro":  "TOKENSAYS.document-type-label.macro",
+    "move": "TOKENSAYS.document-type-label.scene",
+    "arrive": "TOKENSAYS.document-type-label.scene",
+    "reacts": "TOKENSAYS.document-type-label.action",
+    "say": "TOKENSAYS.document-type-label.saying",
+    "turn": "TOKENSAYS.document-type-label.action"
+}
   
