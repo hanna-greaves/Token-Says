@@ -38,6 +38,10 @@ Token Says sayings can be configured within the "Open Sayings" area of the Token
 
 
 ## Configure a Saying
+![tsmove](https://user-images.githubusercontent.com/22696153/149647075-77013fc2-9321-46e7-ae79-30ff242320a8.gif)
+
+> A Haregon speaks on arrival and his friend responds to their arrival - these are two sayings, one is an action type of Token Movement End and the other is an action type of Reponds To with the responding to action type of Token Movement End.
+
 Each saying is configured on a specific token or actor, based on name, for a given action and the saying is only hit when that token or actor performs the action. 
 * **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
 * **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
@@ -87,6 +91,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
   * **Only If In Sight:** requires the token to be able to see the token that they are responding to. Based on center-point calculation. Walls block.
   * **Distance:** token must be within this distance from the token that they are responding to. Consider this comparable to the distance within which they can hear the other token.
+   * If responding to movement, distance is calculated from start of token position for 'Token Movement Start' and ending token position for 'Token Movement End'. Both are useful - in the former you may want to insult people who are retreating. In the latter you may want to let a person sneaking by know that you can see them.
 * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
 * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
 * **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
