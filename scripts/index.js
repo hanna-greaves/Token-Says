@@ -294,7 +294,7 @@ Hooks.once('init', async function() {
             }
         });
     }
-
+    /*
     if(game.world.data.system === "dnd5e"){
         Hooks.on("Actor5e.rollSkill", async (actor, roll, ability, options)  => {
             const data = checkToWorkflowData(actor, 'skill', ability, options)
@@ -310,7 +310,7 @@ Hooks.once('init', async function() {
             const data = checkToWorkflowData(actor, 'ability', ability, options)
             if(data) workflow.go(game.userId, data);
         });
-    }
+    }*/
     if (tokenSaysHasMQ){
         Hooks.on("midi-qol.AttackRollComplete", (midiWorkflow) => {     
             const data = midiToWorkflowData(midiWorkflow, 'attack');

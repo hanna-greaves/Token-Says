@@ -30,7 +30,7 @@ export function activeEffectToWorkflowData(document, isDelete = false){
 }
 
 export function checkToWorkflowData(actor, type, check, options){
-    if(options.messageData) return //kicked out because these will be handled in chat message parsing 
+    if(options?.messageData) return //kicked out because these will be handled in chat message parsing 
     return {
         documentName: check,
         documentType: type,
