@@ -91,7 +91,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
   * **Only If In Sight:** requires the token to be able to see the token that they are responding to. Based on center-point calculation. Walls block.
   * **Distance:** token must be within this distance from the token that they are responding to. Consider this comparable to the distance within which they can hear the other token.
-   * If responding to movement, distance is calculated from start of token position for 'Token Movement Start' and ending token position for 'Token Movement End'. Both are useful - in the former you may want to insult people who are retreating. In the latter you may want to let a person sneaking by know that you can see them.
+    * If responding to movement, distance is calculated from start of token position for 'Token Movement Start' and ending token position for 'Token Movement End'. Both are useful - in the former you may want to insult people who are retreating. In the latter you may want to let a person sneaking by know that you can see them.
 * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
 * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
 * **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
