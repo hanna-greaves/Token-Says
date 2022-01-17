@@ -65,8 +65,7 @@ export function inView(provokingToken, respondingToken){
 }
 
 export function chatMessageToWorkflowData(message){
-    if(message.flags?.TOKENSAYS?.cancel) return
-    if(game.settings.get(tokenSays.ID,'suppressPrivateGMRoles') && message.whisper?.length) return
+    if(message.flags?.TOKENSAYS?.cancel || (game.settings.get(tokenSays.ID,'suppressPrivateGMRoles') && message.whisper?.length)) return
     let f='';
     const options = {
         documentName: '',
@@ -74,76 +73,38 @@ export function chatMessageToWorkflowData(message){
         itemId: '',
         speaker: message.speaker
     }
+    function parsed(edits) {
+        Object.assign(options, edits);
+        return options
+    }
     if(f=message.flags.dnd5e){
-        if(f.roll?.skillId){
-            options.documentType = 'skill'; options.documentName = f.roll.skillId;           
-        } else if(f.roll?.abilityId){
-            options.documentType = f.roll.type; options.documentName = f.roll.abilityId;           
-        } else if(f.roll?.type ==="attack" && f.roll?.itemId) {
-            options.documentType = 'attack'; options.itemId = f.roll.itemId;
-        } else if(f.roll?.type ==="damage" && f.roll?.itemId) {
-            options.documentType = 'damage'; options.itemId = f.roll.itemId;
-        } else if(f.roll?.itemId){
-            options.documentType = 'flavor';  options.itemId = f.roll.itemId;         
-        } 
+        if(f.roll?.skillId) return parsed({documentType: 'skill', documentName: f.roll.skillId});          
+        if(f.roll?.abilityId) return parsed({documentType: f.roll.type, documentName: f.roll.abilityId});           
+        if(f.roll?.type ==="attack" && f.roll?.itemId) return parsed({documentType: 'attack', itemId: f.roll.itemId});
+        if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId});
+        if(f.roll?.itemId) return parsed({documentType: 'flavor', itemId: f.roll.itemId});        
     } else if(f=message.flags['midi-qol']) {
-        if (f.type === 0){
-            options.documentType = 'flavor'; options.documentName = message.flavor;           
-        } else if (f.type === 1){
-            options.documentType = 'hit'; options.itemId = f.itemId;         
-        } else if (f.type === 2){
-            options.documentType = 'save'; options.itemId = f.itemId;          
-        } else if (f.type === 3){
-            options.documentType = 'attack'; options.itemId = f.itemId;          
-        } else if (f.type === 4){
-            options.documentType = 'damage'; options.itemId = f.itemId;     
-        }
+        if(f.type === 0) return parsed({documentType: 'flavor', documentName: message.flavor});         
+        if(f.type === 1) return parsed({documentType: 'hit', itemId: f.itemId});        
+        if(f.type === 2) return parsed({documentType: 'save', itemId: f.itemId});         
+        if(f.type === 3) return parsed({documentType: 'attack', itemId: f.itemId});         
+        if(f.type === 4) return parsed({documentType: 'damage', itemId: f.itemId});    
     } else if(f = message.flags['pf2e']) {
-        if (f.context?.type === 'skill-check') {
-            options.documentType = 'skill'; 
-            options.documentName = f.modifierName.replace("Skill Check: ", ""); //e.g. Skill Check: Athletics
-        } else if (f.context?.type === 'attack-roll') {
-            options.documentType = 'attack'; 
-            if(f.origin?.uuid){options.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)}
-        } else if (f.damageRoll) {
-            options.documentType = 'damage'; 
-            if(f.origin?.uuid){options.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)}
-        } else if (f.origin?.uuid) {
-            options.documentType = 'flavor'; 
-            options.itemId = f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)
-        } 
+        if(f.context?.type === 'skill-check') return parsed({documentType: 'skill', documentName: f.modifierName.substring(f.modifierName.lastIndexOf(':')+2)});
+        if(f.context?.type === 'attack-roll') return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''});
+        if(f.damageRoll) return  parsed({documentType: 'damage',  itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''})
+        if(f.origin?.uuid) return  parsed({documentType: 'flavor', itemId: f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)});
     } else if(f = message.flags['pf1']) {
-        if (f.subject?.skill) {
-            options.documentType = 'skill'; 
-            options.documentName = f.subject.skill
-        } else if (f.subject?.ability) {
-            options.documentType = 'ability'; 
-            options.documentName = f.subject.ability
-        } else if (f.subject?.save) {
-            options.documentType = 'save'; 
-            options.documentName = f.subject.save
-        } else if (f.metadata?.rolls?.attacks) {
-            options.documentType = 'attack'; 
-            options.itemId = f.metadata.item;
-        } else if (f.metadata?.item) {
-            options.documentType = 'flavor'; 
-            options.itemId = f.metadata.item
-        }  else if (f.subject?.core === 'init') {
-            options.documentType = 'initiative'; 
-        }  
+        if(f.subject?.skill) return parsed({documentType: 'skill', documentName: f.subject.skill});
+        if(f.subject?.ability) return parsed({documentType: 'ability', documentName: f.subject.ability});
+        if(f.subject?.save) return parsed({documentType: 'save', documentName: f.subject.save});
+        if (f.metadata?.rolls?.attacks) return parsed({documentType: 'attack', itemId: f.metadata.item});
+        if(f.metadata?.item) return parsed({documentType: 'flavor', itemId: f.metadata.item});
+        if(f.subject?.core === 'init') return parsed({documentType: 'initiative'});
     }
-    else if (message.flags.core?.initiativeRoll) {
-        options.documentType = 'initiative'; 
-    }   
-    else if(message.flavor){
-        options.documentType = 'flavor'; 
-        options.documentName =  message.flavor 
-    }   
-    else if(message.document?.itemSource?.name ){
-        options.documentType = 'flavor'; 
-        options.documentName =  message.document.itemSource.name
-    }
-    return options
+    if(message.flags.core?.initiativeRoll) return parsed({documentType: 'initiative'});  
+    if(message.flavor) return parsed({documentType: 'flavor', documentName: message.flavor});
+    if(message.document?.itemSource?.name) return parsed({documentType: 'flavor', documentName: message.document.itemSource.name})
 }
 
 export function midiToWorkflowData(midiWorkflow, rollType){
