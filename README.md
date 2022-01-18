@@ -23,6 +23,7 @@ Token Says sayings are fully customizable by the GM and are designed to be flexi
 The Token Says feature uses a set of Token Says sayings that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
 * Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can use your world's data too).
 * Sayings can be specific to a certain action (e.g. token performs an attack roll with a warhammer) or generic (e.g. token performs an ability check).
+* Sayings can be any text or sound - it doesn't have to be actual talking. Explosions on attack or footsteps on movement are valid uses.
 * Likelihood can be set so that the token doesn't always say something. For example, with a likelihood of 10 set for a token's initiative check, they will only say something on 10% of their initiative sayings.
 
 
@@ -37,10 +38,15 @@ Token Says sayings can be configured within the "Open Sayings" area of the Token
 
 
 ## Configure a Saying
+![tsmove](https://user-images.githubusercontent.com/22696153/149647075-77013fc2-9321-46e7-ae79-30ff242320a8.gif)
+
+> A Haregon speaks on arrival and his friend responds to their arrival - these are two sayings, one is an action type of Token Movement End and the other is an action type of Reponds To with the responding to action type of Token Movement End.
+
 Each saying is configured on a specific token or actor, based on name, for a given action and the saying is only hit when that token or actor performs the action. 
 * **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
 * **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
+* **Language:** (only available if Polyglot module is installed). Choose a language to output the chat text and bubble in. If the token does not speak this language then the saying will not generate.
 * **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. Some types are system-specific. 
   * Ability Check: triggers on ability check roll by the token.
   * Attack Roll: triggers on attack roll by the token.
@@ -53,6 +59,8 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Responds to: triggered by another token's action. Introduces a new form section where you specify an action that this saying is responding to. 
   * Saving Throw: triggered by a saving throw roll by the token.
   * Skill: triggered by a skill roll by the token.
+  * Token Movement Start: triggered at the start of a token's move. The chat bubble will display at the token's start position. Audio will play at movement start.
+  * Token Movement End: triggered at the end of a token's move. The chat bubble will display at the token's arrival position. Audio will play at movement end.
   * Turn in Combat: triggered at start of the token's turn in combat.
 * **Action Name:** Type in the name of the action associated to the action type. **Accepts multiple action names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ).
   * Ability Check (dnd5e): select ability
@@ -66,12 +74,15 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Responds to: leave blank (see the response section that is made visible and complete the Action Type and Action Name there)
   * Saving Throw (dnd5e): select ability
   * Skill (dnd5e, pf2e): select or enter skill
+  * Token Movement Start: list the scenes where this saying can play (using the Scene Name). Leave blank to play on all scenes.
+  * Token Movement End: list the scenes where this saying can play (using the Scene Name). Leave blank to play on all scenes.
   * Turn in Combat: leave blank
-* **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist.
+* **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist or, if no playlist is included, this is the actual path to the audio file.
 * **Playlist Name/Rollable Table Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Delay:** add a time, in milliseconds, to wait between the generating action and the saying. Note that delays due to accessing compendium content and rolling on compendiums may add to this delay.
 * **Volume:** Set the volume for this saying.
+* **Only While Moving:** This toggle is available for the Action Type of Token Movement Start for audio sayings. The sound will play from the time when the token begins movement up to the time when the token stops movement. Useful for things like audible footsteps.
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
 * **Responds To:** this section is made visible if the 'Responds to' Action Name is selected
   * **Action Type:** the type of action that this saying responds to. Has the same set of options as the 'Action Type' within this saying's 'Provoking action' section, accept 'Responds to' is not an option while 'Saying' is. 
@@ -80,6 +91,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
   * **Only If In Sight:** requires the token to be able to see the token that they are responding to. Based on center-point calculation. Walls block.
   * **Distance:** token must be within this distance from the token that they are responding to. Consider this comparable to the distance within which they can hear the other token.
+    * If responding to movement, distance is calculated from start of token position for 'Token Movement Start' and ending token position for 'Token Movement End'. Both are useful - in the former you may want to insult people who are retreating. In the latter you may want to let a person sneaking by know that you can see them.
 * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
 * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
 * **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
