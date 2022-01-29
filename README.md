@@ -5,7 +5,7 @@
 
 
 # Token Says
-Bring some penache into your world. With Token Says, make tokens speak dialog or play audio based on in game actions. Use rolltables and playlists to randomize what tokens say. 
+Bring some penache into your world. With Token Says, make tokens speak dialog and play audio based on in game actions. Use rolltables and playlists to randomize what tokens say. 
 
 ![Animation](https://user-images.githubusercontent.com/22696153/127725224-f9af308d-fcfb-4f2b-a090-f267348928c6.gif)
 
@@ -21,7 +21,7 @@ Token Says sayings are fully customizable by the GM and are designed to be flexi
 
 ## How it Works
 The Token Says feature uses a set of Token Says sayings that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
-* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can use your world's data too).
+* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can use your world's data too). KEEP IN MIND THAT PLAYING FROM A COMPENDIUM CAN BE SLOW.
 * Sayings can be specific to a certain action (e.g. token performs an attack roll with a warhammer) or generic (e.g. token performs an ability check).
 * Sayings can be any text or sound - it doesn't have to be actual talking. Explosions on attack or footsteps on movement are valid uses.
 * Likelihood can be set so that the token doesn't always say something. For example, with a likelihood of 10 set for a token's initiative check, they will only say something on 10% of their initiative sayings.
