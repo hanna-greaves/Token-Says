@@ -5,7 +5,7 @@
 
 
 # Token Says
-Bring some penache into your world. With Token Says, make tokens speak dialog or play audio based on in game actions. Use rolltables and playlists to randomize what tokens say. 
+Bring some penache into your world. With Token Says, make tokens speak dialog and play audio based on in game actions. Use rolltables and playlists to randomize what tokens say. 
 
 ![Animation](https://user-images.githubusercontent.com/22696153/127725224-f9af308d-fcfb-4f2b-a090-f267348928c6.gif)
 
@@ -21,7 +21,7 @@ Token Says sayings are fully customizable by the GM and are designed to be flexi
 
 ## How it Works
 The Token Says feature uses a set of Token Says sayings that you create for your world in order to auto generate chat messages, chat bubbles and audio sounds when specific tokens or actors do something. The token may say the same thing every time or it can be randomized using a playlist or rollable table. Other features include:
-* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can use your world's data too).
+* Use of compendium data so that the rollable tables and playlists do not need to be in your world (though you can use your world's data too). KEEP IN MIND THAT PLAYING FROM A COMPENDIUM CAN BE SLOW.
 * Sayings can be specific to a certain action (e.g. token performs an attack roll with a warhammer) or generic (e.g. token performs an ability check).
 * Sayings can be any text or sound - it doesn't have to be actual talking. Explosions on attack or footsteps on movement are valid uses.
 * Likelihood can be set so that the token doesn't always say something. For example, with a likelihood of 10 set for a token's initiative check, they will only say something on 10% of their initiative sayings.
@@ -31,7 +31,7 @@ The Token Says feature uses a set of Token Says sayings that you create for your
 
 ![image](https://user-images.githubusercontent.com/22696153/132096482-8fb1b093-d27a-49b3-ae5c-3312413dd5cd.png)
 
-Token Says sayings can be configured within the "Open Sayings" area of the Token Says game module settings. Sayings are tabbed by rollable table or audio. Here you can:
+Token Says sayings can be configured within the "Open Sayings" area of the Token Says game module settings. Here you can:
 * Add: add a new saying by select + Add in the subheader of that tab
 * Edit: update an existing saying by selecting the edit pencil icon for that saying
 * Delete: delete a saying by selecting the trash beside that saying's name
@@ -160,7 +160,7 @@ This module has been tested in DND5e. Though my intent is to have it be system a
 See a list of upcoming enhancements on the project board https://github.com/napolitanod/Token-Says/projects/1
 
 ## Acknowledgements
+This was my first module:
 * Thank you to Calego for their walkthrough on Foundry VTT module building (https://hackmd.io/@akrigline/ByHFgUZ6u/%2FNBub2oFIT6yeh4NlOGTVFw), this helped me quickly pick up the  basics. 
-* If you use Monk's Enhanced Journal you'll see that the layout on one of my forms shares inspiration (and some CSS) from his ironmonk's module (https://github.com/ironmonk88)
 * Thank you to everybody in the League of Extraordinary Developers Discord for their assistance in answering questions and troubleshooting
 
