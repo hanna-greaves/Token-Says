@@ -60,8 +60,11 @@
       "separator.description": "When used in text inputs, allows for multiple entries within the same form field. Use this as the separator between each entry (e.g. goblin|hobgoblin|bugbear). Currently supported in Token Name input box on the saying form.",
       "say":{
         "actions.label": "Provoking Action",
+        "audio.label": "Audio",
+        "basic.label": "Basics",
         "cap.description": "Plays the sound for the length of time that the token is moving.",
         "cap.label": "Only While Moving",
+        "chat.label": "Chat",
         "compendiumName.label": "Compendium",
         "compendiumName.description.audio": "The compendium that holds the playlist. Leave blank to use your default (compendium or world). Note that audio played from a compendium may be slow to load.",
         "compendiumName.description.rolltable": "The compendium that holds the rollable table. Leave blank to use your default (compendium or world). Note that tables rolled from a compendium may be slow to return a result.",
@@ -133,8 +136,7 @@
       "tokenSaysRules.label": "Open Sayings",
       "tokenSaysRule.name": "Configure Saying",
       "subheader":{
-        "rolltablename": "Rollable Table Saying",
-        "audioname": "Playlist Saying",
+        "name": "Saying",
         "isActive": "Active"
       },
       "export.title": "Export Token Sayings",

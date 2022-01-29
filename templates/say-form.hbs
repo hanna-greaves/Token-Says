@@ -1,83 +1,198 @@
-<form class="flexcol token-says-rule" autocomplete="off">
-    <div class="hidden">
-        <input type="text" value="{{say.id}}" name="id"/>
+<form autocomplete="off">
+    <nav class="sheet-tabs tabs">
+        <a class="item active" data-tab="basics"><i class="fas fa-comment"></i>&nbsp;{{localize 'TOKENSAYS.setting.say.basic.label'}}</a>
+        <a class="item {{#unless isReact}} hidden{{/unless}}" data-tab="reacts"><i class="fas fa-reply"></i></i>&nbsp;{{localize 'TOKENSAYS.setting.say.reacts.label'}}</a>
+        <a class="item" data-tab="chat"><i class="fas fa-th-list"></i></i>&nbsp;{{localize 'TOKENSAYS.setting.say.chat.label'}}</a>
+        <a class="item" data-tab="audio"><i class="fas fa-music"></i></i>&nbsp;{{localize 'TOKENSAYS.setting.say.audio.label'}}</a>
+        <a class="item" data-tab="trigger"><i class="fas fa-play"></i>&nbsp;{{localize 'TOKENSAYS.setting.say.trigger.label'}}</a>
+    </nav>
+    <div class="tab active" data-tab="basics">
+        <div class="hidden">
+            <input type="text" value="{{say.id}}" name="id"/>
+        </div>
+        <div class="form-group">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.label.label'}}
+            </label>
+            <div class="form-fields">
+                <input type="text" name="label" value="{{say.label}}" required/>
+            </div>
+        </div>
+        <h4>
+            <i class="fas fa-user-alt"></i>&nbsp;
+            <span>{{localize 'TOKENSAYS.setting.say.token.label'}}</span>
+        </h4>
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.name.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input id="token-says-name-value" type="text" name="name" value="{{say.name}}" required/>
+            </div>
+            <p id="token-says-name-actor-warning-container" class="notes alert hidden">
+                <i class="fas fa-exclamation-triangle"></i>
+                    {{localize 'TOKENSAYS.warning.actor-not-found'}}
+                <span id="token-says-name-actor-warning"></span>
+            </p>
+            <p id="token-says-name-token-warning-container" class="notes alert hidden">
+                <i class="fas fa-exclamation-triangle"></i>
+                    {{localize 'TOKENSAYS.warning.token-not-found'}}
+                <span id="token-says-name-token-warning"></span>
+            </p>
+        </div>
+        <div class="form-group">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.isActorName.label'}}
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.isActorName.description'}} {{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input id="token-says-name-is-actor" type="checkbox" name="isActorName" {{checked say.isActorName}} />
+            </div>
+        </div>
+        <div class="form-group {{#unless languageOptions}}hidden{{/unless}}">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.language.label'}}
+            </label>
+            <div class="form-fields">
+                <select id="token-says-language-value" name="lang" value="say.lang">  
+                    <option value=""></option>
+                    {{selectOptions languageOptions selected=say.lang localize=false}}
+                </select>
+            </div>
+        </div>
+        <h4>
+            <i class="fas fa-exclamation"></i>&nbsp;
+            <span>{{localize 'TOKENSAYS.setting.say.actions.label'}}</span>
+        </h4>
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.documentType.label'}}</span>
+            </label>
+            <div class="rule-value form-fields">
+                <select id="token-says-documenttype-value" name="documentType" value="say.documentType" required>  
+                    <option value=""></option>
+                    {{selectOptions documentTypeOptions selected=say.documentType localize=true}}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>
+                <span id="token-says-documentname-label">{{documentNameLabel}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.separator'}} {{localize 'TOKENSAYS.setting.say.documentName.description'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div id="token-says-documentname" class="form-fields">
+                {{{documentNameOptions}}}
+            </div>
+        </div>        
     </div>
-    <div class="form-group">
-        <label>
-            {{localize 'TOKENSAYS.setting.say.label.label'}}
-        </label>
-        <div class="form-fields">
-            <input type="text" name="label" value="{{say.label}}" required/>
+    <div class="tab" data-tab="chat">
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.compendiumName.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="rule-value form-fields">
+                <select name="{{#if isAudio}}paired.{{/if}}compendiumName" value="say.{{#if isAudio}}paired.{{/if}}compendiumName">  
+                    {{#if isAudio}}{{selectOptions compendiumList selected=say.paired.compendiumName localize=true}}{{/if}}
+                    {{#unless isAudio}}{{selectOptions compendiumList selected=say.compendiumName localize=true}}{{/unless}}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.fileName.label.rolltable'}}</span>
+            </label>
+            <div class="form-fields">
+                <input type="text" name="{{#if isAudio}}paired.{{/if}}fileName" value="{{#unless isAudio}}{{say.fileName}}{{/unless}}{{#if isAudio}}{{say.paired.fileName}}{{/if}}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.fileTitle.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.fileTitle.description.rolltable'}}{{localize 'TOKENSAYS.parameters'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="text" name="{{#if isAudio}}paired.{{/if}}fileTitle" value="{{#unless isAudio}}{{say.fileTitle}}{{/unless}}{{#if isAudio}}{{say.paired.fileTitle}}{{/if}}"/>
+            </div>
+        </div>
+        <h4>
+            <i class="fas fa-comment-slash"></i>&nbsp;
+            <span>{{localize 'TOKENSAYS.setting.say.suppress.label'}}</span>
+        </h4>
+        <div class="suppress">
+            <div>
+                <input type="checkbox" name="suppressChatbubble" {{checked say.suppressChatbubble}} />
+                <label>
+                    {{localize 'TOKENSAYS.setting.say.suppressChatbubble.label'}}
+                </label>
+            </div>
+            <div>
+                <input type="checkbox" name="suppressChatMessage" {{checked say.suppressChatMessage}} />
+                <label>
+                    {{localize 'TOKENSAYS.setting.say.suppressChatMessage.label'}}
+                </label>
+            </div>
+            <div>
+                <input type="checkbox" name="suppressQuotes" {{checked say.suppressQuotes}} />
+                <label>
+                    {{localize 'TOKENSAYS.setting.say.suppressQuotes.label'}}
+                </label>
+            </div>
         </div>
     </div>
-    <h4>
-        <i class="fas fa-user-alt"></i>&nbsp;
-        <span>{{localize 'TOKENSAYS.setting.say.token.label'}}</span>
-    </h4>
-    <div class="form-group">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.name.label'}}</span>
-            <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div class="form-fields">
-            <input id="token-says-name-value" type="text" name="name" value="{{say.name}}" required/>
+    <div class="tab" data-tab="audio">
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.compendiumName.description.audio'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="rule-value form-fields">
+                <select name="{{#unless isAudio}}paired.{{/unless}}compendiumName" value="say.{{#unless isAudio}}paired.{{/unless}}compendiumName">  
+                    {{#if isAudio}}{{selectOptions compendiumList selected=say.compendiumName localize=true}}{{/if}}
+                    {{#unless isAudio}}{{selectOptions compendiumList selected=say.paired.compendiumName localize=true}}{{/unless}}
+                </select>
+            </div>
         </div>
-        <p id="token-says-name-actor-warning-container" class="notes alert hidden">
-            <i class="fas fa-exclamation-triangle"></i>
-                {{localize 'TOKENSAYS.warning.actor-not-found'}}
-            <span id="token-says-name-actor-warning"></span>
-        </p>
-        <p id="token-says-name-token-warning-container" class="notes alert hidden">
-            <i class="fas fa-exclamation-triangle"></i>
-                {{localize 'TOKENSAYS.warning.token-not-found'}}
-            <span id="token-says-name-token-warning"></span>
-        </p>
-    </div>
-    <div class="form-group">
-        <label>
-            {{localize 'TOKENSAYS.setting.say.isActorName.label'}}
-            <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.isActorName.description'}} {{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div class="form-fields">
-            <input id="token-says-name-is-actor" type="checkbox" name="isActorName" {{checked say.isActorName}} />
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.fileName.label.audio'}}</span>
+            </label>
+            <div class="form-fields">
+                <input type="text" name="{{#unless isAudio}}paired.{{/unless}}fileName" value="{{#unless isAudio}}{{say.paired.fileName}}{{/unless}}{{#if isAudio}}{{say.fileName}}{{/if}}"/>
+            </div>
         </div>
-    </div>
-    <div class="form-group {{#unless languageOptions}}hidden{{/unless}}">
-        <label>
-            {{localize 'TOKENSAYS.setting.say.language.label'}}
-        </label>
-        <div class="form-fields">
-            <select id="token-says-language-value" name="lang" value="say.lang">  
-                <option value=""></option>
-                {{selectOptions languageOptions selected=say.lang localize=false}}
-            </select>
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.fileTitle.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.fileTitle.description.audio'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                {{#if isAudio}}{{filePicker target="fileTitle" type="audio"}}{{/if}}
+                {{#unless isAudio}}{{filePicker target="paired.fileTitle" type="audio"}}{{/unless}}
+                <input type="text" name="{{#unless isAudio}}paired.{{/unless}}fileTitle" value="{{#unless isAudio}}{{say.paired.fileTitle}}{{/unless}}{{#if isAudio}}{{say.fileTitle}}{{/if}}"/>
+            </div>
         </div>
-    </div>
-    <h4>
-        <i class="fas fa-exclamation"></i>&nbsp;
-        <span>{{localize 'TOKENSAYS.setting.say.actions.label'}}</span>
-    </h4>
-    <div class="form-group">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.documentType.label'}}</span>
-        </label>
-        <div class="rule-value form-fields">
-            <select id="token-says-documenttype-value" name="documentType" value="say.documentType" required>  
-                <option value=""></option>
-                {{selectOptions documentTypeOptions selected=say.documentType localize=true}}
-            </select>
+        <div class="form-group">
+            <label>
+                <i class="volume-icon fas fa-volume-down"></i>
+            </label>
+            <div class="form-fields">
+                <input type="range" title="{{localize "TOKENSAYS.setting.say.volume.label"}}" name="volume" value="{{#unless say.volume}}0.5{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}" min="0.05" max="1.00" step="0.05"/>
+                <span class="range-value">{{#unless say.volume}}0.50{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}</span>
+            </div>
+        </div>
+        <div id="token-says-cap" class="form-group {{#unless isMove}} hidden{{/unless}}">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.cap.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.cap.description'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="checkbox" name="cap" {{checked say.cap}} />
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        <label>
-            <span id="token-says-documentname-label">{{documentNameLabel}}</span>
-            <span class="toolt" title="{{localize 'TOKENSAYS.separator'}} {{localize 'TOKENSAYS.setting.say.documentName.description'}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div id="token-says-documentname" class="form-fields">
-            {{{documentNameOptions}}}
-        </div>
-    </div>
-    <div id="token-says-reacts" class="reacts {{#unless isReact}} hidden{{/unless}}">
+    <div id="token-says-reacts" data-tab="reacts" class="tab reacts {{#unless isReact}} hidden{{/unless}}">
         <h4>
             <i class="fas fa-reply"></i>&nbsp;
             {{localize 'TOKENSAYS.setting.say.reacts.label'}}
@@ -124,7 +239,7 @@
             </p>
         </div>
         <div class="form-group">
-             <label>
+            <label>
                 {{localize 'TOKENSAYS.setting.say.isActorName.label'}}
             </label>
             <div class="form-fields">
@@ -144,115 +259,37 @@
                 {{localize 'TOKENSAYS.setting.say.maxDistance.label'}}
             </label>
             <div class="form-fields">
-                <input type="range" name="to.distance" min="0" max="200" step="1" value="{{say.to.distance}}"/>
-                <span class="range-value">{{say.to.distance}}</span>
+                <input type="range" name="to.distance" min="0" max="200" step="1" value="{{#unless say.to.distance}}0{{/unless}}{{#if say.to.distance}}{{say.to.distance}}{{/if}}"/>
+                <span class="range-value">{{#unless say.to.distance}}0{{/unless}}{{#if say.to.distance}}{{say.to.distance}}{{/if}}</span>
             </div>
         </div>
     </div>
-    <h4>
-        <i class="fas {{#if isAudio}}fa-music{{/if}}{{#unless isAudio}}fa-th-list{{/unless}}"></i>&nbsp;
-        <span>{{localize 'TOKENSAYS.setting.say.source.label'}}</span>
-    </h4>
-    <div class="form-group">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
-            <span class="toolt" title="{{#if isAudio}}{{localize 'TOKENSAYS.setting.say.compendiumName.description.audio'}}{{/if}}{{#unless isAudio}}{{localize 'TOKENSAYS.setting.say.compendiumName.description.rolltable'}}{{/unless}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div class="rule-value form-fields">
-            <select name="compendiumName" value="say.compendiumName">  
-                {{selectOptions compendiumList selected=say.compendiumName localize=true}}
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>
-            {{#if isAudio}}<span>{{localize 'TOKENSAYS.setting.say.fileName.label.audio'}}</span>{{/if}}
-            {{#unless isAudio}}<span>{{localize 'TOKENSAYS.setting.say.fileName.label.rolltable'}}</span>{{/unless}}
-        </label>
-        <div class="form-fields">
-            <input type="text" name="fileName" value="{{say.fileName}}"/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.fileTitle.label'}}</span>
-            <span class="toolt" title="{{#if isAudio}}{{localize 'TOKENSAYS.setting.say.fileTitle.description.audio'}}{{/if}}{{#unless isAudio}}{{localize 'TOKENSAYS.setting.say.fileTitle.description.rolltable'}}{{localize 'TOKENSAYS.parameters'}}{{/unless}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div class="form-fields">
-            {{#if isAudio}}{{filePicker target="fileTitle" type="audio"}}{{/if}}
-            <input type="text" name="fileTitle" value="{{say.fileTitle}}"/>
-        </div>
-    </div>
-    <div class="form-group {{#unless isAudio}} hidden{{/unless}}">
-        <label>
-            <i class="volume-icon fas fa-volume-down"></i>
-        </label>
-        <div class="form-fields">
-            <input type="range" title="{{localize "TOKENSAYS.setting.say.volume.label"}}" name="volume" value="{{#unless say.volume}}0.5{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}" min="0.05" max="1.00" step="0.05"/>
-            <span class="range-value">{{#unless say.volume}}0.50{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}</span>
-        </div>
-    </div>
-    <div {{#if isAudio}} id="token-says-cap"{{/if}} class="form-group {{#unless isMove}} hidden{{/unless}}">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.cap.label'}}</span>
-            <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.cap.description'}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div class="form-fields">
-            <input type="checkbox" name="cap" {{checked say.cap}} />
-        </div>
-    </div>
-    <h4>
-        <i class="fas fa-play"></i>&nbsp;
-        <span>{{localize 'TOKENSAYS.setting.say.trigger.label'}}</span>
-    </h4>
-    <div class="form-group">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.delay.label'}}</span>
-        </label>
-        <div class="form-fields">
-            <input type="number" name="delay" value="{{say.delay}}" min="0" step="1"/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>
-            <span>{{localize 'TOKENSAYS.setting.say.likelihood.label'}}</span>
-            <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.likelihood.description'}}"><i class="fas fa-info-circle"></i></span>
-        </label>
-        <div class="form-fields">
-            <input type="range" name="likelihood" value="{{say.likelihood}}" min="1" max="100" step="1"/>
-            <span class="range-value">{{say.likelihood}}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>
-            {{localize 'TOKENSAYS.setting.say.isActive.label'}}
-        </label>
-        <div class="form-fields">
-            <input type="checkbox" name="isActive" {{checked say.isActive}} />
-        </div>
-    </div>
-    <h4>
-        <i class="fas fa-comment-slash"></i>&nbsp;
-        <span>{{localize 'TOKENSAYS.setting.say.suppress.label'}}</span>
-    </h4>
-    <div class="suppress">
-        <div>
-            <input type="checkbox" name="suppressChatbubble" {{checked say.suppressChatbubble}} />
+    <div class="tab" data-tab="trigger">
+        <div class="form-group">
             <label>
-                {{localize 'TOKENSAYS.setting.say.suppressChatbubble.label'}}
+                <span>{{localize 'TOKENSAYS.setting.say.delay.label'}}</span>
             </label>
+            <div class="form-fields">
+                <input type="number" name="delay" value="{{say.delay}}" min="0" step="1"/>
+            </div>
         </div>
-        <div>
-            <input type="checkbox" name="suppressChatMessage" {{checked say.suppressChatMessage}} />
+        <div class="form-group">
             <label>
-                {{localize 'TOKENSAYS.setting.say.suppressChatMessage.label'}}
+                <span>{{localize 'TOKENSAYS.setting.say.likelihood.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.likelihood.description'}}"><i class="fas fa-info-circle"></i></span>
             </label>
+            <div class="form-fields">
+                <input type="range" name="likelihood" value="{{say.likelihood}}" min="1" max="100" step="1"/>
+                <span class="range-value">{{say.likelihood}}</span>
+            </div>
         </div>
-        <div>
-            <input type="checkbox" name="suppressQuotes" {{checked say.suppressQuotes}} />
+        <div class="form-group">
             <label>
-                {{localize 'TOKENSAYS.setting.say.suppressQuotes.label'}}
+                {{localize 'TOKENSAYS.setting.say.isActive.label'}}
             </label>
+            <div class="form-fields">
+                <input type="checkbox" name="isActive" {{checked say.isActive}} />
+            </div>
         </div>
     </div>
 	<footer class="sheet-footer">

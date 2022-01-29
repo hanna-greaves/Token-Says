@@ -10,6 +10,11 @@ export class tokenSays {
     static FLAGS = {
       TOKENSAYS: 'token-says'
     }
+
+    static KEYBINDS = {
+      TALK: 'token prompt',
+      ALTTALK: 'alt token prompt'
+    }
     
     static TEMPLATES = {
       SAYS: `modules/${this.ID}/templates/says-form.hbs`,

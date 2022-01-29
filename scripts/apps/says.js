@@ -29,22 +29,14 @@ import {BYPASSNAMETYPES} from './constants.js';
         return this.says.filter(s => s.isActive);
     }
 
-    static get rollTableSays() {
-        return this.says.filter(s => s.fileType === 'rollTable')
-    }
-
-    static get audioSays() {
-        return this.says.filter(s => s.fileType === 'audio')
-    }
-
     static get responses() {
         return this.says.filter(s => s.isActive && s.documentType === 'reacts')
     }
 
     static get sceneAudioFileSays(){
         return this.says.filter(s => 
-            s.fileType === 'audio' 
-            && s.fileTitle 
+            s.hasAudio 
+            && s.audioFileTitle 
             && s.isActive 
             && (!s.documentName || !['arrive', 'move'].includes(s.documentType) || s.documentNameList.includes(canvas.scene.name)) 
             && canvas.scene.tokens.find(t=> (!s.isActorName && s.nameList.includes(t.name)) || s.nameList.includes(t.actor?.name)))
@@ -117,7 +109,7 @@ import {BYPASSNAMETYPES} from './constants.js';
         tokenSays.log(false, 'Caching audio ', {says: this.sceneAudioFileSays})
         for(const sy of this.sceneAudioFileSays){
             const sound = await sy.sound()
-            AudioHelper.preloadSound(sound)
+            if(sound) AudioHelper.preloadSound(sound)
         }
     }
 
@@ -134,8 +126,8 @@ import {BYPASSNAMETYPES} from './constants.js';
 
     static tokenAudioFileSays(token){
         return this.says.filter(s => 
-            s.fileType === 'audio' 
-            && s.fileTitle 
+            s.hasAudio 
+            && s.audioFileTitle 
             && s.isActive 
             && (!s.documentName || !['arrive', 'move'].includes(s.documentType) || s.documentNameList.includes(canvas.scene.name))  
             && ((!s.isActorName && s.nameList.includes(token.name)) || s.nameList.includes(token.actor?.name))

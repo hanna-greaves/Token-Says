@@ -12,72 +12,38 @@
             <button id="token-says-import-config" title="{{localize "TOKENSAYS.setting.import.title"}}"><i class="fas fa-file-import fa-fw"></i></button>  
         </div>
     </div>
-    <nav class="sheet-tabs tabs" data-group="primary-tabs">
-        <a class="item" data-tab="token-says-roll-table"><i class="fas fa-th-list"></i>&nbsp;{{localize 'TOKENSAYS.setting.rollableTableRules'}}</a>
-        <a class="item" data-tab="token-says-audio"><i class="fas fa-music"></i>&nbsp;{{localize 'TOKENSAYS.setting.audioFileRules'}}</a>
-    </nav>
-    <section class="content">
-        <div class="tab" data-tab="token-says-roll-table" data-group="primary-tabs">
-            <div class="rules-header flexrow">
-                <div class="rule-name">
-                    <div class="label">{{localize 'TOKENSAYS.setting.subheader.rolltablename'}}</div>
-                    <div class="name">{{localize 'TOKENSAYS.setting.say.name.label'}}</div>
-                </div>
-                <div class="rule-active">{{localize 'TOKENSAYS.setting.subheader.isActive'}}</div>
-                <div class="rule-controls">
-                    <a class="rule-control rolltable-rule-create" title="{{localize 'TOKENSAYS.addRull'}}" data-type="rule" data-action="create-rolltable">
-                        <i class="fas fa-plus"></i> {{localize 'TOKENSAYS.add'}}
-                    </a>
-                </div>
-            </div>
-            <ol class="rules-list">
-                {{#each rollTable}}
-                <li class="rule flexrow" data-id="{{id}}" data-container="rules" draggable="true">
-                    <div class="rule-name">
-                        <div class="label">{{label}}</div>
-                        <div class="name">{{name}}</div>
-                    </div>
-                    <div class="rule-active">
-                        <input type="checkbox" name="{{id}}.isActive" class="rule-active" data-dtype="Boolean" {{checked this.isActive}} />
-                    </div>
-                    <div class="rule-controls">
-                        <a class="rule-control rule-edit" title="{{localize 'TOKENSAYS.editRule'}}" data-action="edit"><i class="fas fa-edit"></i></a>&nbsp;&nbsp;
-                        <a class="rule-control rule-delete" title="{{localize 'TOKENSAYS.deleteRule'}}" data-action="delete"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
+    <div class="rules-header flexrow">
+        <div class="rule-name">
+            <div class="label">{{localize 'TOKENSAYS.setting.subheader.name'}}</div>
+            <div class="name">{{localize 'TOKENSAYS.setting.say.name.label'}}</div>
         </div>
-        <div class="tab" data-tab="token-says-audio" data-group="primary-tabs">
-            <div class="rules-header flexrow">
-                <div class="rule-name">
-                    <div class="label">{{localize 'TOKENSAYS.setting.subheader.audioname'}}</div>
-                    <div class="name">{{localize 'TOKENSAYS.setting.say.name.label'}}</div>
-                </div>
-                <div class="rule-active">{{localize 'TOKENSAYS.setting.subheader.isActive'}}</div>
-                <div class="rule-controls">
-                    <a class="rule-control audio-rule-create" title="{{localize 'TOKENSAYS.addRull'}}" data-type="rule" data-action="create-audio">
-                        <i class="fas fa-plus"></i> {{localize 'TOKENSAYS.add'}}
-                    </a>
-                </div>
-            </div>
-            <ol class="rules-list">
-                {{#each audio}}
-                <li class="rule flexrow" data-id="{{id}}" data-container="rules" draggable="true">
-                    <div class="rule-name">
-                        <div class="label">{{label}}</div>
-                        <div class="name">{{name}}</div>
-                    </div>
-                    <div class="rule-active">
-                        <input type="checkbox" name="{{id}}.isActive" class="rule-active" data-dtype="Boolean" {{checked this.isActive}} />
-                    </div>
-                    <div class="rule-controls">
-                        <a class="rule-control rule-edit" title="{{localize 'TOKENSAYS.editRule'}}" data-action="edit"><i class="fas fa-edit"></i></a>&nbsp;&nbsp;
-                        <a class="rule-control rule-delete" title="{{localize 'TOKENSAYS.deleteRule'}}" data-action="delete"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
+        <div></div>
+        <div class="rule-active">{{localize 'TOKENSAYS.setting.subheader.isActive'}}</div>
+        <div class="rule-controls">
+            <a class="rule-control rolltable-rule-create" title="{{localize 'TOKENSAYS.addRull'}}" data-type="rule" data-action="create">
+                <i class="fas fa-plus"></i> {{localize 'TOKENSAYS.add'}}
+            </a>
         </div>
-    </section>
+    </div>
+    <ol class="rules-list">
+        {{#each says}}
+        <li class="rule flexrow" data-id="{{id}}" data-container="rules" draggable="true">
+            <div class="rule-name">
+                <div class="label">{{label}}</div>
+                <div class="name">{{name}}</div>
+            </div>
+            <div>
+                {{#if this.hasAudio}}<i class="fas fa-music"></i>{{/if}}
+                {{#if this.hasChat}}<i class="fas fa-th-list"></i>{{/if}}
+            </div>
+            <div class="rule-active">
+                <input type="checkbox" name="{{id}}.isActive" class="rule-active" data-dtype="Boolean" {{checked this.isActive}} />
+            </div>
+            <div class="rule-controls">
+                <a class="rule-control rule-edit" title="{{localize 'TOKENSAYS.editRule'}}" data-action="edit"><i class="fas fa-edit"></i></a>&nbsp;&nbsp;
+                <a class="rule-control rule-delete" title="{{localize 'TOKENSAYS.deleteRule'}}" data-action="delete"><i class="fas fa-trash"></i></a>
+            </div>
+        </li>
+        {{/each}}
+    </ol>
 </form>
