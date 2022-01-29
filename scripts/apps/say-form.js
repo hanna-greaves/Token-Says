@@ -17,10 +17,14 @@ export class TokenSaysSayForm extends FormApplication {
     return foundry.utils.mergeObject(defaults, {
       title : game.i18n.localize("TOKENSAYS.setting.tokenSaysRule.name"),
       id : "token-says-rules-rule",
+      classes: ["sheet", "token-says-rule"],
       template : tokenSays.TEMPLATES.SAY,
-      width : 500,
+      width : 400,
       height : "auto",
-      closeOnSubmit: true
+      closeOnSubmit: true,
+      tabs : [
+        {navSelector: ".tabs", contentSelector: "form", initial: "basics"}
+      ]   
     });
   }
 
@@ -40,6 +44,7 @@ export class TokenSaysSayForm extends FormApplication {
       this._refreshDocumentNameOptions(event.currentTarget.value, '');
       let reactsDiv = document.getElementById(`token-says-reacts`);
       event.currentTarget.value === 'reacts' ? reactsDiv.classList.remove('hidden') : reactsDiv.classList.add('hidden');
+      event.currentTarget.value === 'reacts' ? $(this.form).find(`[data-tab="reacts"]`).removeClass('hidden') :  $(this.form).find(`[data-tab="reacts"]`).addClass('hidden');
       let capDiv = document.getElementById(`token-says-cap`);
       if(capDiv) event.currentTarget.value === 'move' ? capDiv.classList.remove('hidden') : capDiv.classList.add('hidden');
       document.getElementById(`token-says-documentname-label`).innerHTML = this.documentNameLabel(event.currentTarget.value);

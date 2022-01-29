@@ -3,21 +3,19 @@ import {says} from './says.js';
 import {TokenSaysSayForm} from './say-form.js';
 import {parseSeparator} from './helpers.js';
 
-export var lastSearch = '', lastTab = 'token-says-roll-table';
+export var lastSearch = '';
 
-export class TokenSaysSettingsConfig extends SettingsConfig {
+export class TokenSaysSettingsConfig extends FormApplication {
     static get defaultOptions(){
       return foundry.utils.mergeObject(super.defaultOptions, {
         title : game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
         id : "token-says-rules",
+        classes: ["sheet", "token-says"],
         template : tokenSays.TEMPLATES.SAYS,
         width : 700,
         height : "auto",
         closeOnSubmit: false,
-        submitOnChange: true, 
-        tabs : [
-          {navSelector: ".tabs", contentSelector: ".content", initial: lastTab}
-        ],
+        submitOnChange: true
       });
     }
   
@@ -27,13 +25,7 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
       const sayId = clickedElement.parents('[data-id]')?.data()?.id;
   
       switch (action) {
-        case 'create-audio': {
-          const sy =  await says.newAudioSay(); 
-          this.refresh();
-          new TokenSaysSayForm(sy.id).render(true);
-          break;
-        }
-        case 'create-rolltable': {
+        case 'create': {
           const sy =  await says.newRollTableSay(); 
           this.refresh();
           new TokenSaysSayForm(sy.id).render(true);
@@ -67,8 +59,7 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
           }).render(true);
           break;
         }
-        default:
-          tokenSays.log(false, 'Invalid action detected', action);
+        default: break;
       }
     }
   
@@ -79,23 +70,15 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
     activateListeners(html) {
       super.activateListeners(html);
       html.on('click', "[data-action]", this._handleButtonClick.bind(this));
-      html.on('click',"[data-tab]", this._handleTabClick.bind(this))
       html.on('click',"#token-says-search-clear", this._clearFilter.bind(this))
       html.on('input', '#token-says-search-input', this._preFilter.bind(this))
       html.on('click', "#token-says-export-config", this._exportSettingsToJSON.bind(this))
       html.on('click', "#token-says-import-config", this._importSettingsFromJSON.bind(this))
     }
   
-    //ensures that current tab selected isn't lost on rerender
-    async _handleTabClick (event) {
-      let clickedTab = $(event.currentTarget).data().tab;
-      if(clickedTab){lastTab=clickedTab;}
-    }
-  
     getData(options){
       return {
-        rollTable: Object.values(says.rollTableSays).sort((a, b) => a.label.localeCompare(b.label)),
-        audio: Object.values(says.audioSays).sort((a, b) => a.label.localeCompare(b.label)),
+        says: Object.values(says.says).sort((a, b) => a.label.localeCompare(b.label)),
         search: lastSearch
       }
     }
@@ -133,10 +116,6 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
         this._filter();
     }
 
-    _tab(){
-        $(`a[data-tab=${lastTab}]`)[0].click();
-    }
-
     setLastSearch(search){
         lastSearch = search;
     }
@@ -150,7 +129,7 @@ export class TokenSaysSettingsConfig extends SettingsConfig {
     }
   
     async _exportSettingsToJSON() {
-      await says.deleteSay("rules");///Temporary cleanup of alpha initialized data on early mods.
+      await says.deleteSay("rules");
       saveDataToFile(JSON.stringify(says._says, null, 2), "text/json", `fvtt-token-says-rules.json`);  
     }
   

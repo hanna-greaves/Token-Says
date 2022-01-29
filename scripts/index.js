@@ -195,7 +195,6 @@ Hooks.once('init', async function() {
     Hooks.on("renderApplication", (app, html, options) => {
         if(app.id ==="token-says-rules"){
             app._filter();
-            app._tab();
         } else if (app.id ==="token-says-rules-rule"){
             app._duplicateNameWarning()
             app._notExistsWarning()

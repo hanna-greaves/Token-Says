@@ -41,27 +41,73 @@ export class say {
         this.lang = '',
         this.likelihood = 100,
         this.name = '',
+        this.paired = {
+            compendiumName:  '',
+            fileName: '',
+            fileTitle: '',
+        },
         this.suppressChatbubble = false,
         this.suppressChatMessage = false,
         this.suppressQuotes = false,
         this.volume = 0.50
     }
 
-    get _compendium() {
-        if (this.compendiumName) return this.compendiumName
-        return (this.fileType === 'audio') ? game.settings.get(tokenSays.ID, 'defaultAudioCompendium') : game.settings.get(tokenSays.ID, 'defaultRollableTableCompendium');
+    get audioCompendiumName(){
+        return this.isAudio ? this.compendiumName : this.paired.compendiumName
+    }
+
+    get chatCompendiumName(){
+        return !this.isAudio ? this.compendiumName : this.paired.compendiumName
+    }
+
+    get audioFileName(){
+        return this.isAudio ? this.fileName : this.paired.fileName
+    }
+
+    get chatFileName(){
+        return !this.isAudio ? this.fileName : this.paired.fileName
+    }
+
+    get audioFileTitle(){
+        return this.isAudio ? this.fileTitle : this.paired.fileTitle
+    }
+
+    get chatFileTitle(){
+        return !this.isAudio ? this.fileTitle : this.paired.fileTitle
+    }
+
+    get _audioCompendium() {
+        if (this.audioCompendiumName) return this.audioCompendiumName
+        return game.settings.get(tokenSays.ID, 'defaultAudioCompendium')
+    }
+
+    get _chatCompendium() {
+        if (this.chatCompendiumName) return this.chatCompendiumName
+        return game.settings.get(tokenSays.ID, 'defaultRollableTableCompendium');
     }
 
     get documentNameList() {
         return parseSeparator(this.documentName)
     }
 
+    get hasAudio(){
+        return (this.audioFileName || this.audioFileTitle) ? true : false
+    }
+
+    get hasChat(){
+        return (this.chatFileName || this.chatFileTitle) ? true : false
+    }
+
+    get isAudio(){
+        return this.fileType === 'audio' ? true : false
+    }
+
     get nameList() {
         return parseSeparator(this.name)
     }
 
-    async compendium(){
-        const compendium = await game.packs.find(p=>p.collection === this._compendium)?.getDocuments();
+    async compendium(isAudio = true){
+        const compendium = await game.packs.find(p=>p.collection === isAudio ? this._audioCompendium : this._chatCompendium)?.getDocuments();
         if(!compendium) tokenSays.log(false, 'Compendium Not Found ', this)
         return compendium
     }
@@ -69,11 +115,11 @@ export class say {
     async playlist() {
         let playlist;
         if(game.settings.get(tokenSays.ID, 'worldAudioInd')){
-            playlist = game.playlists.getName(this.fileName);
+            playlist = game.playlists.getName(this.audioFileName);
         }
         if(!playlist){
             const pack = await this.compendium();
-            if(pack) playlist = pack.find(t=> t.name === this.fileName);
+            if(pack) playlist = pack.find(t=> t.name === this.audioFileName);
         }
         
         if(!playlist) tokenSays.log(false, 'Playlist Not Found ', {say: this})
@@ -84,11 +130,11 @@ export class say {
     async rollableTable(){
         let table;
         if(game.settings.get(tokenSays.ID, 'worldRollableTableInd')){
-            table = game.tables.getName(this.fileName)
+            table = game.tables.getName(this.chatFileName)
         }
         if(!table){
-            const pack = await this.compendium();
-            if(pack) table = pack.find(t=> t.name === this.fileName);
+            const pack = await this.compendium(false);
+            if(pack) table = pack.find(t=> t.name === this.chatFileName);
         }
         if(!table) tokenSays.log(false, 'No Rolltable Found ', {say: this})
 
@@ -96,10 +142,10 @@ export class say {
     }
 
     async sound(){
-        if(!this.fileName) return this.fileTitle ? this.fileTitle : {}
+        if(!this.audioFileName) return this.audioFileTitle ? this.audioFileTitle : ''
         const playlist = await this.playlist();
         if(!playlist) return {}
-        if(!this.fileTitle){
+        if(!this.audioFileTitle){
             const roll = await new Roll(`1d`+ playlist.data.sounds.size).roll();
             const rolledResult = roll.result;
             let i = 1; 
@@ -107,7 +153,7 @@ export class say {
                 if (i++ == rolledResult) return key?.path;  
             }
         } else {
-            return playlist.sounds.find(p=>p.name === this.fileTitle)?.path
+            return playlist.sounds.find(p=>p.name === this.audioFileTitle)?.path
         }
     }
 }
@@ -122,7 +168,7 @@ export class tokenSay {
             result: 0,
             value: say.likelihood
         },
-        this._message = this._say.fileTitle,
+        this._message = this._say.chatFileTitle,
         this.message =  "............",
         this.response = options.response,
         this.sound = '',
@@ -149,7 +195,7 @@ export class tokenSay {
     get documentType(){
         return this._say.documentType
     }
-    
+
     get img(){
         if(!game.settings.get(tokenSays.ID, 'suppressImage')){
             if(this.isActorName && this.actor?.data.img) return this.actor.data.img
@@ -158,8 +204,12 @@ export class tokenSay {
         return ''
     }
 
-    get isAudio(){
-        return this._say.fileType === 'audio' ? true : false
+    get hasAudio(){
+        return this._say.hasAudio
+    }
+
+    get hasChat(){
+        return this._say.hasChat
     }
 
     get lang(){
@@ -175,7 +225,7 @@ export class tokenSay {
     }
 
     get maxDuration(){
-        return (this._say.cap && this.isAudio && this.documentType === 'move') ? this.movementTime : (game.settings.get(tokenSays.ID, 'audioDuration') * 1000)
+        return (this._say.cap && this.hasAudio && this.documentType === 'move') ? this.movementTime : (game.settings.get(tokenSays.ID, 'audioDuration') * 1000)
     }
 
     get movementTime(){
@@ -195,7 +245,7 @@ export class tokenSay {
     }
 
     get suppressAudio(){
-       return (this.isAudio && !game.settings.get(tokenSays.ID, 'suppressAudio')) ? false : true
+       return (this.hasAudio && !game.settings.get(tokenSays.ID, 'suppressAudio')) ? false : true
     }
 
     get suppressChatBubble(){
@@ -207,7 +257,10 @@ export class tokenSay {
     }
 
     get _suppressCodes(){
-        return ['X',`${this.isAudio ? 'A' : 'R'}`]
+        const ar = ['X']
+        if(!this.hasAudio) ar.push('R')
+        if(!this.hasChat) ar.push('A')
+        return ar
     }
 
     get valid(){
@@ -230,7 +283,7 @@ export class tokenSay {
 
     async _setMessage(){
         if(!this.suppressChatBubble || !this.suppressChatMessage){
-            if(this.isAudio) {this.message = "............"}
+            if(!this.hasChat) {this.message = "............"}
             else {
                 if (!this._message) await this._rollMessage();    
                 this._parameterizeMessage()
