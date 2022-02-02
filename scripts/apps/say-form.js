@@ -136,6 +136,7 @@ export class TokenSaysSayForm extends FormApplication {
       document.getElementById(`token-says-to-name`).classList.remove('hidden')
       document.getElementById(`token-says-to-name-is-actor`).disabled=false
     }
+    this.setPosition()
   }
 
   _notExistsWarning(){
@@ -173,5 +174,6 @@ export class TokenSaysSayForm extends FormApplication {
       container.classList.add('hidden');
       warning.innerHTML = '';
     }
+    this.setPosition()
   }
 }

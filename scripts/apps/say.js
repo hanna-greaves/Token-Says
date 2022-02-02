@@ -217,7 +217,7 @@ export class tokenSay {
     }
 
     get language(){
-        return tokenSaysHasPolyglot ? (this.lang ? this.lang : ui.chat.element.find("select[name=polyglot-language]").val()) : false;
+        return !tokenSaysHasPolyglot ? false : (this.lang ? this.lang : (this.documentType === 'reacts' ? false : ui.chat.element.find("select[name=polyglot-language]").val()))
     }
 
     get likelihoodMet(){
@@ -346,7 +346,7 @@ export class tokenSay {
      * Method that executes the chat bubble 
     */
     async sayChatBubble() {
-        const emote = this.language ? {language: this.language} : false
+        const emote = this.language ? {emote: {language: this.language}} : false
         if(this.token){ 
             canvas.hud.bubbles.say(this.token, this.message, emote);
             game.socket.emit("module.token-says", {
