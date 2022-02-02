@@ -217,7 +217,7 @@ export class tokenSay {
     }
 
     get language(){
-        return tokenSaysHasPolyglot ? (this.lang ? this.lang : ui.chat.element.find("select[name=polyglot-language]").val()) : false;
+        return !tokenSaysHasPolyglot ? false : (this.lang ? this.lang : (this.documentType === 'reacts' ? false : ui.chat.element.find("select[name=polyglot-language]").val()))
     }
 
     get likelihoodMet(){
