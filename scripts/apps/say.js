@@ -346,7 +346,7 @@ export class tokenSay {
      * Method that executes the chat bubble 
     */
     async sayChatBubble() {
-        const emote = this.language ? {language: this.language} : false
+        const emote = this.language ? {emote: {language: this.language}} : false
         if(this.token){ 
             canvas.hud.bubbles.say(this.token, this.message, emote);
             game.socket.emit("module.token-says", {
