@@ -1,7 +1,7 @@
 import {say} from './say.js';
 import {workflow} from './workflow.js';
 import {tokenSays} from '../token-says.js';
-import {nullTokenSaysRuleString, outOfRangTokenSaysRuleInt} from './helpers.js'
+import {outOfRangNum} from './helpers.js'
 
 export class api {
     static register() {
@@ -56,42 +56,33 @@ export class api {
      * @param {string} sceneId - id of the scene
      * @param {object} options - some values in object form that replicate a tokenSays saying
     */
-    static async _saysDirect(tokenId, actorId, sceneId, options) {
-        if((!actorId && !tokenId) || (!['audio', 'rollTable'].includes(options?.type))) return tokenSays.log(false,'Says Direct No Type Provided.. ', {options});
-            
-        let token, scene, alias, sy = new say(options.type);
+    static async _saysDirect(tokenId, actorId, sceneId, options = {}) {
+        if(!actorId && !tokenId) return console.log('Says Direct, must an actor id or token id.. ');
+        if(!['audio', 'rollTable'].includes(options?.type)) return console.log('Says Direct, must provide "audio" or "rollTable" as type in options.. ', {options});
+        if(!options.quote && !options.source) return console.log('Says Direct, must provide quote or source in options.. ', {options});
 
-        sy.fileName = nullTokenSaysRuleString(options.source, sy.fileName );
-        sy.compendiumName = nullTokenSaysRuleString(options.compendium, sy.compendiumName);
-        sy.fileTitle = nullTokenSaysRuleString(options.quote, sy.fileTitle);
-        sy.likelihood = outOfRangTokenSaysRuleInt(options.likelihood, 1,100, sy.likelihood);
-        sy.documentName = 'direct';
+        const scene = sceneId ? game.scenes.get(sceneId) : game.scenes.current;
+        const token = tokenId ? scene.tokens.get(tokenId) : ''
+        const actor = actorId ? game.actors.get(actorId) : game.actors.get(token?.actor?.id) 
+
+        if(!token && !actor) return console.log('Says Direct, no token or actor found with the given ids.. ', {"token": tokenId, "actor": actorId, "scene": scene?.id, "options": options});
         
-        if(sy.fileTitle === '' && sy.fileName === '') {
-            tokenSays.log(false,'Says Direct No Source and Says Provided.. ', {options, sy});
-            return false
-        }
-        if(sceneId){
-            scene = game.scenes.get(sceneId)
-        } else {
-            scene = game.scenes.current;
-        }
-
-        if(tokenId){token = scene.tokens.get(tokenId)}
-        if(!actorId && token){actorId = token.actor?.id}
-
-        if(token){
-            alias = token.name
-        } else if(actorId){
-            alias = game.actors.get(actorId).name
-        } else {
-            tokenSays.log(false,'Says Direct No Token or Actor Found.. ', {"token": tokenId, "actor": actorId, "scene": scene.id, options, sy});
-            return false
-        }
+        const alias = token ? token.name : actor.name
+        const sy = new say(options.type);
+        sy.documentName = 'direct';
+        if(options.delay) sy.delay = options.delay;
+        if(options.source) sy.fileName = options.source;
+        if(options.compendium) sy.compendiumName = options.compendium;
+        if(options.quote) sy.fileTitle = options.quote;
+        if(options.lang) sy.lang = options.lang;
+        if(options.suppress?.bubble) sy.suppressChatbubble = true;
+        if(options.suppress?.message) sy.suppressChatMessage = true;
+        if(options.suppress?.quotes) sy.suppressQuotes = true;
+        sy.likelihood = outOfRangNum(options.likelihood, 1,100, sy.likelihood);
+        sy.volume = outOfRangNum(options.volume,0.01,1.00, sy.volume)
 
         tokenSays.log(false,'Direct Generated Say... ', {"rule": sy});
-        
-        const result = await workflow.go(game.userId, {documentType: sy.documentType, documentName: sy.documentName, say: sy, speaker: {scene: scene.id, actor: actorId, token: tokenId, alias: alias}});
+        const result = await workflow.go(game.userId, {documentType: sy.documentType, documentName: sy.documentName, say: sy, speaker: {scene: scene.id, actor: actor?.id, token: tokenId, alias: alias}});
         return result
     }
 }
