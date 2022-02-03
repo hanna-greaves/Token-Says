@@ -107,7 +107,7 @@ export class say {
     }
 
     async compendium(isAudio = true){
-        const compendium = await game.packs.find(p=>p.collection === isAudio ? this._audioCompendium : this._chatCompendium)?.getDocuments();
+        const compendium = await game.packs.find(p=>p.collection === (isAudio ? this._audioCompendium : this._chatCompendium))?.getDocuments();
         if(!compendium) tokenSays.log(false, 'Compendium Not Found ', this)
         return compendium
     }
@@ -233,7 +233,7 @@ export class tokenSay {
     }
 
     get quotes(){
-        return this.suppressQuotes ? '' : '"'
+        return this._say.suppressQuotes ? '' : '"'
     }
 
     get reacts(){
