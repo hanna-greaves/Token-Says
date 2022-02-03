@@ -68,7 +68,7 @@ export function getDnd5eDocumentNameOps(documentType){
 }
 
 export function getPolyglotLanguages() {
-    return  tokenSaysHasPolyglot ? polyglot.polyglot.languages : false
+    return  tokenSaysHasPolyglot ? game.polyglot?.languages : false
 }
 
 export const PF1DOCUMENTTYPEOPS  = {

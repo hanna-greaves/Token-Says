@@ -58,9 +58,6 @@ export class api {
     */
     static async _saysDirect(tokenId, actorId, sceneId, options = {}) {
         if(!actorId && !tokenId) return console.log('Says Direct, must an actor id or token id.. ');
-        if(!['audio', 'rollTable'].includes(options?.type)) return console.log('Says Direct, must provide "audio" or "rollTable" as type in options.. ', {options});
-        if(!options.quote && !options.source) return console.log('Says Direct, must provide quote or source in options.. ', {options});
-
         const scene = sceneId ? game.scenes.get(sceneId) : game.scenes.current;
         const token = tokenId ? scene.tokens.get(tokenId) : ''
         const actor = actorId ? game.actors.get(actorId) : game.actors.get(token?.actor?.id) 
@@ -68,16 +65,21 @@ export class api {
         if(!token && !actor) return console.log('Says Direct, no token or actor found with the given ids.. ', {"token": tokenId, "actor": actorId, "scene": scene?.id, "options": options});
         
         const alias = token ? token.name : actor.name
-        const sy = new say(options.type);
+        const sy = new say('rollTable');
         sy.documentName = 'direct';
         if(options.delay) sy.delay = options.delay;
-        if(options.source) sy.fileName = options.source;
-        if(options.compendium) sy.compendiumName = options.compendium;
-        if(options.quote) sy.fileTitle = options.quote;
+        sy.fileName = (options.chat?.source ? options.chat.source : (options.type === 'rollTable' ? options.source : ''));
+        sy.compendiumName = (options.chat?.compendium ? options.chat.compendium : (options.type === 'rollTable' ? options.compendium : ''));
+        sy.fileTitle = (options.chat?.quote ? options.chat.quote : (options.type === 'rollTable' ? options.quote : ''));
         if(options.lang) sy.lang = options.lang;
         if(options.suppress?.bubble) sy.suppressChatbubble = true;
         if(options.suppress?.message) sy.suppressChatMessage = true;
         if(options.suppress?.quotes) sy.suppressQuotes = true;
+        sy['paired'] = {
+            compendiumName: (options.audio?.compendium ? options.audio.compendium : (options.type === 'audio' ? options.compendium : '')),
+            fileName: (options.audio?.source ? options.audio.source : (options.type === 'audio' ? options.source : '')),
+            fileTitle: (options.audio?.quote ? options.audio.quote : (options.type === 'audio' ? options.quote : ''))
+        };
         sy.likelihood = outOfRangNum(options.likelihood, 1,100, sy.likelihood);
         sy.volume = outOfRangNum(options.volume,0.01,1.00, sy.volume)
 
