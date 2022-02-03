@@ -135,7 +135,6 @@ export class say {
         if(!table){
             const pack = await this.compendium(false);
             if(pack) table = pack.find(t=> t.name === this.chatFileName);
-            console.log(pack); console.log(this.chatFileName)
         }
         if(!table) tokenSays.log(false, 'No Rolltable Found ', {say: this})
 
