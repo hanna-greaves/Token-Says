@@ -157,7 +157,7 @@ export const WORKFLOWSTATES = {
     _findItemName(){
         if(this.itemId && !this.documentName){
             if(this.token) this.documentName = this.token?.actor.items.get(this.itemId)?.name;
-            if(!this.documentName) this.documentName = this.actor?.items.get(this.itemId).name;
+            if(!this.documentName) this.documentName = this.actor?.items.get(this.itemId)?.name;
         }
     }
 

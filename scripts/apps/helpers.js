@@ -79,7 +79,7 @@ export function chatMessageToWorkflowData(message){
         if(f.type === 4) return parsed({documentType: 'damage', itemId: f.itemId});    
     } else if(f = message.flags['pf2e']) {
         if(f.context?.type === 'skill-check') return parsed({documentType: 'skill', documentName: f.modifierName.substring(f.modifierName.lastIndexOf(':')+2)});
-        if(f.context?.type === 'attack-roll') return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''});
+        if(['attack-roll','spell-attack-roll'].includes(f.context?.type)) return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''});
         if(f.damageRoll) return  parsed({documentType: 'damage',  itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''})
         if(f.origin?.uuid) return  parsed({documentType: 'flavor', itemId: f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)});
     } else if(f = message.flags['pf1']) {
