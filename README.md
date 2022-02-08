@@ -58,7 +58,6 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Macro (API): triggers by a macro. see the API section below for details on how this is used.
   * Prompt: triggers by hovering over the token and pressing the 'P' key on the keyboard. Requires that the token layer be active (on left side panel controls).
   * Prompt Other: triggers by hovering over the token and pressing the 'Shift+P' key on the keyboard. Requires that the token layer be active (on left side panel controls).
-  * Prompt Other: add scene name or list of scene names to optionally restrict to certain scenes
   * Responds to: triggered by another token's action. Introduces a new form section where you specify an action that this saying is responding to. 
   * Saving Throw: triggered by a saving throw roll by the token.
   * Skill: triggered by a skill roll by the token.
@@ -70,15 +69,15 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
   * Condition/Effect Added: use the name of the condition or effect that triggers the saying when it is added or toggled on for the token.
   * Condition/Effect Removed: use the name of the condition or effect that triggers the saying when it is removed or toggled off for the token.
-  * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow)
-  * Initiative Roll: leave blank
-  * Item Name: use the item name that triggers the saying when it is rolled (e.g. Action Surge)
-  * Macro (API): see the API section below for details on how this is used
-  * Prompt: add scene name or list of scene names to optionally restrict to certain scenes
-  * Prompt Other: add scene name or list of scene names to optionally restrict to certain scenes
-  * Responds to: leave blank (see the response section that is made visible and complete the Action Type and Action Name there)
-  * Saving Throw (dnd5e): select ability
-  * Skill (dnd5e, pf2e): select or enter skill
+  * Damage Roll (dnd5e, pf2e): use the item name making the damage roll (e.g. Longbow).
+  * Initiative Roll: leave blank.
+  * Item Name: use the item name that triggers the saying when it is rolled (e.g. Action Surge).
+  * Macro (API): see the API section below for details on how this is used.
+  * Prompt: add scene name or list of scene names to optionally restrict to certain scenes.
+  * Prompt Other: add scene name or list of scene names to optionally restrict to certain scenes.
+  * Responds to: leave blank (see the response section that is made visible and complete the Action Type and Action Name there).
+  * Saving Throw (dnd5e): select ability.
+  * Skill (dnd5e, pf2e): select or enter skill.
   * Token Movement Start: list the scenes where this saying can play (using the Scene Name). Leave blank to play on all scenes.
   * Token Movement End: list the scenes where this saying can play (using the Scene Name). Leave blank to play on all scenes.
   * Turn in Combat: leave blank
