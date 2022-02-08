@@ -140,6 +140,15 @@ Hooks.once('init', async function() {
         default: {},
         type: Object
     }); 
+
+    const {SHIFT, CONTROL, ALT} = KeyboardManager.MODIFIER_KEYS;
+    game.keybindings.register(module, 'prompt', {
+        name: "Prompt Token Saying",
+        hint: "Prompts a token to speak using a Token Says 'Prompt' or 'Alternate Prompt' saying.",
+        editable: [{key: "KeyP"}],
+        onDown: tokenSays._prompt,
+        reservedModifiers: [SHIFT]
+    });
     
     Hooks.on("createChatMessage", (message, options, userId) => {
         const data = chatMessageToWorkflowData(message.data)

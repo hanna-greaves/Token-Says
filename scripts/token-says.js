@@ -1,4 +1,6 @@
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
+import {workflow} from "./apps/workflow.js";
+import {promptToWorkflowData} from './apps/helpers.js';
 
 /**
  * A class which holds some constants for tokenSays
@@ -11,11 +13,6 @@ export class tokenSays {
       TOKENSAYS: 'token-says'
     }
 
-    static KEYBINDS = {
-      TALK: 'token prompt',
-      ALTTALK: 'alt token prompt'
-    }
-    
     static TEMPLATES = {
       SAYS: `modules/${this.ID}/templates/says-form.hbs`,
       SAY: `modules/${this.ID}/templates/say-form.hbs`
@@ -77,5 +74,20 @@ export class tokenSays {
                 translatedContent.prependTo(contentSays);
             }
         }
+    }
+
+    static _prompt(context) {
+      if (canvas.ready) {
+        const layer = canvas.activeLayer;
+        if ((layer instanceof TokenLayer)) {
+          const token = layer.placeables.find(t => t._hover);
+          if(token) tokenSays.prompt(token, context.isShift)
+        }
+      }
+    }
+
+    static prompt(token, isShift = false){
+      const data = promptToWorkflowData(token, isShift ? 'prompt-alt' : 'prompt');
+      if(data) workflow.go(game.userId, data);
     }
 }
