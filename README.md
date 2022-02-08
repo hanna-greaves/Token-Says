@@ -56,6 +56,9 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Initiative Roll: triggers on initiative roll by the token.
   * Item Name: triggers on roll of the item by the token (use this also for items that don't directly attack, such as items the invoke via saving throw in dnd)
   * Macro (API): triggers by a macro. see the API section below for details on how this is used.
+  * Prompt: triggers by hovering over the token and pressing the 'P' key on the keyboard. Requires that the token layer be active (on left side panel controls).
+  * Prompt Other: triggers by hovering over the token and pressing the 'Shift+P' key on the keyboard. Requires that the token layer be active (on left side panel controls).
+  * Prompt Other: add scene name or list of scene names to optionally restrict to certain scenes
   * Responds to: triggered by another token's action. Introduces a new form section where you specify an action that this saying is responding to. 
   * Saving Throw: triggered by a saving throw roll by the token.
   * Skill: triggered by a skill roll by the token.
@@ -71,6 +74,8 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Initiative Roll: leave blank
   * Item Name: use the item name that triggers the saying when it is rolled (e.g. Action Surge)
   * Macro (API): see the API section below for details on how this is used
+  * Prompt: add scene name or list of scene names to optionally restrict to certain scenes
+  * Prompt Other: add scene name or list of scene names to optionally restrict to certain scenes
   * Responds to: leave blank (see the response section that is made visible and complete the Action Type and Action Name there)
   * Saving Throw (dnd5e): select ability
   * Skill (dnd5e, pf2e): select or enter skill
