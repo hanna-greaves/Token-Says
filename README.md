@@ -112,7 +112,9 @@ Your sayings, or sayings from others, can be imported into your world. Imports a
 
 ## API / Macro Use
 
-### .says() - call a specific saying from macro/script
+### tokenSays.says() - ASYNC - call a specific saying from macro/script
+> tokenSays.says(tokenId, actorId, sayingName);
+
 The tokenSays.says(tokenId, actorId, actionName) function is made available for use within you macros and scripts. The function generates a Token Says message if a saying is found that matches the parameters that you pass in. The return from this function is the Token Says saying data for the saying identified by this function. 
 
 To use this function you must have Token Says installed as a module and active and must have a saying with action type = "Macro (API)" with an Token Name that matches the alias of the token or name of the actor that you pass into the function as well as an Action Name that matches the actionName passed into the function.
@@ -125,28 +127,63 @@ To use this function you must have Token Says installed as a module and active a
 > An example saying set up to trigger an audio saying via macro. Note that the macro code is 2 lines. In the first line it grabs a token id by using the current token controlled by the user triggering the macro.
 
 
-### .saysDirect() - use Token Says functionality without a saying in place
+### tokenSays.saysDirect() - ASYNC - use Token Says functionality without a saying in place
+> tokenSays.saysDirect(tokenId, actorId, sceneId, options)
+
 The tokenSays.saysDirect(tokenId, actorId, sceneId, options) function is available to module developers and Foundry users. The function generates a Token Says message based on the parameters. No existing sayings are referenced. This allows module developers and macro writers to dynamically have a token speak, giving them full control over the trigger. The return from this function is the Token Says workflow class that generated the saying.
 
 To use this function you must have Token Says installed 
 * tokenId (optional) - the token.id. Though optional, either this or actor must be passed in, else the function will be escaped
 * actorId (optional) - the actor.id. Can be derived from token if not provided.
 * sceneId (optional) - the scene.id. If not provided, the scene id for the current scene will be used
-* options - dictates the rolltable or playlist that will be sourced as well as any compendium or likelihood data. This is an object, so each key below is wrapped in the same object. e.g. const options = { type: "rollTable",source: "Possession"}
-  * type (required) - either rollTable or audio. Identifies if this is a playlist or rollable table.
-  * source (optional) - the name of the rolltable or playlist. if not set for rolltable, then quote is required.
-  * compendium (optional) - the compendium holding the playlist or rolltable. If not set, then the default Token Says compendium will be use or the world, depending on the Token Says settings of the world.
-  * quote (optional) - the direct text said or the audio track in the playlist.
-  * likelihood (optional) - as integer. The % of the time this will actually result in a Token Says message. if not provided, the default is 100.
+* options - object that dictates the rolltable or playlist that will be sourced as well as any compendium or likelihood data.
+   * audio (optional) - object holding audio related data, used for generating the audio
+      * compendium - (optional) the compendium where the playlist is stored (e.g. 'token-says.token-says-macros'). Not required if playlist is in world
+      * source - (optional) the name of the playlist. Will generate a track randomly from the playlist unless quote is also provided. Either this or the quote needs to be provided in order to generate audio.
+      * quote - (optional) if source is filled in, then this is the name of the track in the playlist. If source is not filled in, then this is the file path to the audio file. Either this or the quote needs to be provided in order to generate audio.
+   * chat (optional) - object holding chat related data, used for generating chat message and chat bubble
+      * compendium - (optional) the compendium where the rollable table is stored (e.g. 'token-says.token-says-macros'). Not required if rollable table is in world
+      * source - (optional) the name of the rollable table. Will generate a saying randomly from the table. Either this or the quote needs to be provided in order to generate a chat message or bubble.
+      * quote - (optional) what is actually said. Either this or the quote needs to be provided in order to generate a chat message or bubble.
+   * likelihood (optional) - as integer. The % of the time this will actually result in a Token Says message. if not provided, the default is 100. Must be between 0 and 100
+   * delay (optional) - default 0. in ms, inserts a delay between the triggering of the api call and when the saying is played. 
+   * lang (optional) - the language to be used. Provide the code (e.g. 'common'). Requires Polyglot and token must actual be able to speak the language
+   * suppress (optional) - suppress certain elements that the saying generates
+      * bubble: default false. If set to true will not generate the chat bubble
+      * message: default false. If set to true will not generate the chat message
+      * quotes: default false. If set to true will not wrap the chat message in quotes
+    * volume (optional) - defaults to 0.50. sets the volume played for the audio file. Must be between 0.01 and 1.00
+
+```
+//Example options block
+const options = {
+    audio: {
+        compendium: '',
+        source: '',
+        quote: ''
+    },
+    chat: {
+        compendium: '',
+        source: '',
+        quote: 'Hello World!'
+    },
+    delay: 0,
+    lang: '',
+    likelihood: 100,
+    suppress: {
+        bubble: false,
+        message: false,
+        quotes: false
+    },
+    volume: 0.50
+}
+```
 
 ## System Compatibility
-This module has been tested in DND5e. Though my intent is to have it be system agnostic in terms of the basic features, there may be some incompatible systems that I am not aware of. The list of known compatible systems are:
+Though my intent is to have it be system agnostic in terms of the basic features, there may be some incompatible systems that I am not aware of. The list of known compatible systems are:
 * DND5e (developer confirmed)
 * PF1 (developer confirmed)
 * PF2e (developer confirmed)
-
-#### Not compatible with
-* L5R (this module does not include flavor in message data)
 
 ## Module Compatibility
 * Midi-Qol: Token Says supports Midi-Qol functionality (tested in DND5e only)
