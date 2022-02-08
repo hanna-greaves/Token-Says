@@ -119,6 +119,14 @@ export function parseSeparator(string){
     return string.split(sep).map(n => n.trim())
 }
 
+export function promptToWorkflowData(token, type){
+    return {
+        documentName: token.scene?.name,
+        documentType: type,
+        speaker: {scene: token.scene?.id, actor: token.actor?.id, token: token.id, alias: token.name}
+    }
+}
+
 function _ray(start, end){
     const orig = new PIXI.Point(...canvas.grid.getCenter(start.x, start.y));
     const dest = new PIXI.Point(...canvas.grid.getCenter(end.x, end.y));

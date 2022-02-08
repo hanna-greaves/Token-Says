@@ -22,6 +22,8 @@ export const UNIVERSALDOCUMENTTYPEOPS = {
     "macro":  "TOKENSAYS.document-type-options.macro.label",
     "move": "TOKENSAYS.document-type-options.move.label",
     "arrive": "TOKENSAYS.document-type-options.arrive.label",
+    "prompt": "TOKENSAYS.document-type-options.prompt.label",
+    "prompt-alt": "TOKENSAYS.document-type-options.prompt-alt.label",
     "reacts":  "TOKENSAYS.document-type-options.reacts.label",
     "say": "TOKENSAYS.document-type-options.say.label",
     "turn": "TOKENSAYS.document-type-options.turn.label"
@@ -141,6 +143,8 @@ export const DOCUMENTNAMELABELS = {
     "macro":  "TOKENSAYS.document-type-label.macro",
     "move": "TOKENSAYS.document-type-label.scene",
     "arrive": "TOKENSAYS.document-type-label.scene",
+    "prompt": "TOKENSAYS.document-type-label.scene",
+    "prompt-alt": "TOKENSAYS.document-type-label.scene",
     "reacts": "TOKENSAYS.document-type-label.action",
     "say": "TOKENSAYS.document-type-label.saying",
     "turn": "TOKENSAYS.document-type-label.action"

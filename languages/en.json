@@ -33,6 +33,8 @@
       "initiative.label": "Initiative Roll",
       "macro.label": "Macro (API)",
       "move.label": "Token Movement Start",
+      "prompt.label": "Prompt (P on Token)",
+      "prompt-alt.label": "Prompt Other (Shift+P on Token)",
       "reacts.label": "Responds to",
       "save.label": "Saving Throw",
       "say.label": "Saying",
