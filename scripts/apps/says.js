@@ -139,6 +139,7 @@ import {BYPASSNAMETYPES} from './constants.js';
         const sy = mergeObject(data.documentType==='reacts' ? new reacts(data.fileType) : new say(data.fileType), sys[id], {insertKeys: false, enforceTypes: true});
         mergeObject(sy, data, {insertKeys: insertKeys, enforceTypes: true});
         sys[id] = sy;
+        tokenSays.log(false, 'Update saying ', {says: sys, saying: sy, data: data})
         return await this.updateSays(sys);
     }
 
