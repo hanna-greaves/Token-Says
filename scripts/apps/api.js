@@ -1,4 +1,5 @@
 import {say} from './say.js';
+import {says} from './says.js';
 import {workflow} from './workflow.js';
 import {tokenSays} from '../token-says.js';
 import {outOfRangNum} from './helpers.js'
@@ -14,14 +15,59 @@ export class api {
 
     static set() {
         window[tokenSays.NAME] = {
+          deleteSaying : api._deleteSaying,
+          getSaying : api._getSaying,
+          getSayingName : api._getSayingName,
           says : api._says,
           saysDirect : api._saysDirect,
+          getSayings : api._getSayings
         }
 
         game.modules.get(tokenSays.ID).api = {
+            deleteSaying : api._deleteSaying,
+            getSaying : api._getSaying,
+            getSayingName : api._getSayingName,
+            getSayings : api._getSayings,
             says: api._says,
             saysDirect: api._saysDirect
         }
+    }
+
+    /**
+     * API call that intakes an id for a saying and deletes it
+     * @param {string} id - id of saying
+     * @returns the object of the deleted saying
+     */
+    static async _deleteSaying(id){
+        const del = await says.deleteSay(id)
+        del ? console.log('Saying deleted',{saying: del}) : console.log('No saying found with that id')
+        return del
+    }
+
+    /**
+     * Returns a saying for a given id
+     * @param {string} id - saying id
+     * @returns saying 
+     */
+    static _getSaying(id){
+        return says.getSay(id)
+    }
+
+    /**
+     * Returns a saying for a given name
+     * @param {string} name - saying name
+     * @returns saying 
+     */
+    static _getSayingName(name){
+        return says.says.find(s => s.label === name)
+    }
+
+    /**
+     * 
+     * @returns all of the sayings in an array
+     */
+    static _getSayings(){
+        return says.says
     }
 
     /**
