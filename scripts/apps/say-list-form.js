@@ -78,7 +78,7 @@ export class TokenSaysSettingsConfig extends FormApplication {
   
     getData(options){
       return {
-        says: Object.values(says.says).sort((a, b) => a.label.localeCompare(b.label)),
+        says: Object.values(says.says).sort((a, b) => a.label?.localeCompare(b.label)),
         search: lastSearch
       }
     }
