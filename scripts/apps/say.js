@@ -25,7 +25,7 @@ const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
  */
 
 export class say {
-    constructor(fileType) {
+    constructor(fileType = 'rollTable') {
         this.cap = false,
         this.compendiumName = '',
         this.delay = 0,
