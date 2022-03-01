@@ -96,7 +96,7 @@ export function chatMessageToWorkflowData(message){
 }
 
 export function midiToWorkflowData(midiWorkflow, rollType){
-    if(game.settings.get(tokenSays.ID,'suppressPrivateGMRoles') && !midiWorkflow.whisperAttackCard) {
+    if(!game.settings.get(tokenSays.ID,'suppressPrivateGMRoles') || !midiWorkflow.whisperAttackCard) {
         return {
             documentType: rollType, 
             itemId: midiWorkflow.itemId, 
