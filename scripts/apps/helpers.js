@@ -72,7 +72,7 @@ export function chatMessageToWorkflowData(message){
         if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId});
         if(f.roll?.itemId) return parsed({documentType: 'flavor', itemId: f.roll.itemId});        
     } else if(f=message.flags['midi-qol']) {
-        if(f.type === 0) return parsed({documentType: 'flavor', documentName: message.flavor});         
+        if(f.type === 0) return (f.itemId ? parsed({documentType: 'flavor', itemId: f.itemId}) : parsed({documentType: 'flavor', documentName: message.flavor}));
         if(f.type === 1) return parsed({documentType: 'hit', itemId: f.itemId});        
         if(f.type === 2) return parsed({documentType: 'save', itemId: f.itemId});         
         if(f.type === 3) return parsed({documentType: 'attack', itemId: f.itemId});         
@@ -90,9 +90,17 @@ export function chatMessageToWorkflowData(message){
         if(f.metadata?.item) return parsed({documentType: 'flavor', itemId: f.metadata.item});
         if(f.subject?.core === 'init') return parsed({documentType: 'initiative'});
     }
-    if(message.flags.core?.initiativeRoll) return parsed({documentType: 'initiative'});  
+    if(message.flags.core?.initiativeRoll) return parsed({documentType: 'initiative'});
+    const prs = message.content ? _parseChatMessageHTML(message) : false;
+    if(prs) return parsed({documentType: 'flavor', itemId: prs});  
     if(message.flavor) return parsed({documentType: 'flavor', documentName: message.flavor});
     if(message.document?.itemSource?.name) return parsed({documentType: 'flavor', documentName: message.document.itemSource.name})
+}
+
+function _parseChatMessageHTML(message){
+    const parser = new DOMParser()
+    const html = parser.parseFromString(message.content, 'text/html')
+    if(html) return html.querySelectorAll(`div[data-item-id]`)[0]?.getAttribute("data-item-id");
 }
 
 export function midiToWorkflowData(midiWorkflow, rollType){
