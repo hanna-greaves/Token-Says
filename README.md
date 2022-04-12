@@ -88,7 +88,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Volume:** Set the volume for this saying.
 * **Only While Moving:** This toggle is available for the Action Type of Token Movement Start for audio sayings. The sound will play from the time when the token begins movement up to the time when the token stops movement. Useful for things like audible footsteps.
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
-* **Limit:** Specify a number above 0. Tokens Says will count each time a token says this saying. Once that count meets this specified limit, that token will no longer say this saying. Counts towards limits live on each token on a scene and can be reset from within that token's token configuration form.
+* **Limit:** Specify a number above 0. Token Says will count each time a token says this saying. Once that count meets this specified limit, that token will no longer say this saying. Counts towards limits live on each token on a scene and can be reset from within that token's token configuration form.
 * **Responds To:** this section is made visible if the 'Responds to' Action Name is selected
   * **Action Type:** the type of action that this saying responds to. Has the same set of options as the 'Action Type' within this saying's 'Provoking action' section, accept 'Responds to' is not an option while 'Saying' is. 
   * **Action Name:** similar to 'Action Name' in the 'Provoking Action' section, but for the action this saying is responding to.
