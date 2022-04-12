@@ -29,18 +29,21 @@ export class TokenSaysTokenForm extends TokenConfig {
         openButton.insertAfter(titleElement);
       }
 
-      let countButton = $('<button>').attr('id', 'token-says-token-settings').text(game.i18n.localize("TOKENSAYS.token-form.counts-reset"));
-      countButton.click(event => {
-        event.preventDefault();
-        tokenSays.resetTokenSayingCount(app.token.id, app.token.parent.id);
-      });
-      let group = $('<div>').addClass('form-group')
-          .append($('<label>').html(game.i18n.localize("TOKENSAYS.token-form.history.label")))
-          .append(countButton);
-
-      $('div[data-tab="character"]', html).append(group);
-
-      app.setPosition({height: 'auto'});
+      if(app.token?.id && app.token?.parent?.id){
+        let countButton = $('<button>').attr('id', 'token-says-token-settings').text(game.i18n.localize("TOKENSAYS.token-form.counts-reset"));
+        countButton.click(event => {
+          event.preventDefault();
+          tokenSays.resetTokenSayingCount(app.token.id, app.token.parent.id);
+        });
+        let group = $('<div>').addClass('form-group')
+            .append($('<label>').html(game.i18n.localize("TOKENSAYS.token-form.history.label")))
+            .append(countButton);
+  
+        $('div[data-tab="character"]', html).append(group);
+  
+        app.setPosition({height: 'auto'});
+      }
+      
     }
   }
 }
