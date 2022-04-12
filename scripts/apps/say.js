@@ -49,7 +49,8 @@ export class say {
         this.suppressChatbubble = false,
         this.suppressChatMessage = false,
         this.suppressQuotes = false,
-        this.volume = 0.50
+        this.volume = 0.50,
+        this.limit = 0
     }
 
     get audioCompendiumName(){
@@ -96,6 +97,10 @@ export class say {
 
     get hasChat(){
         return (this.chatFileName || this.chatFileTitle) ? true : false
+    }
+
+    get hasLimit(){
+        return this.limit ? true : false;
     }
 
     get isAudio(){
@@ -184,6 +189,14 @@ export class tokenSay {
         return (this.documentType === 'arrive' || this.reacts.documentType === 'arrive' ) ? true : false
     }
 
+    get countToLimit(){
+        if (this._say.hasLimit){
+            const cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
+            return cnt ? cnt : 0;
+        }
+        return 0
+    }
+
     get delay(){
         return (this._say.delay + this.delayAdj)
     }
@@ -264,11 +277,23 @@ export class tokenSay {
     }
 
     get valid(){
-        return (!this.active || (this.lang && !this.speaksLang(this.token))) ? false : true
+        return (!this.active || (this.lang && !this.speaksLang(this.token)) || this.atLimit()) ? false : true
+    }
+
+    atLimit(){
+        if(this._say.hasLimit && this.countToLimit >= this._say.limit){
+            console.log(`Saying limit of ${this._say.limit} has been met by this token.`)
+            return true
+        } 
+        return false
     }
 
     _imageFormat(){
         return this.img ? `<img src="${this.img}" alt="${this.speaker.alias}">` : ''
+    }
+
+    async _incrementLimitCount(){
+        await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.LIMITCOUNT}.${this._say.id}`, this.countToLimit + 1)
     }
 
     _parameterizeMessage(){
@@ -323,6 +348,7 @@ export class tokenSay {
             if(!this.suppressAudio) this.sayAudio();
             if(!this.suppressChatMessage && this.message) this.sayChatMessage();
             if(!this.suppressChatBubble && this.message) this.sayChatBubble();
+            if(this._say.hasLimit) await this._incrementLimitCount();
             return true
         } else {
             return console.log(`Say canceled: likelihood threshold of ${this.likelihood.value} was not met with a roll of ${this.likelihood.result} (roll must be at or lower)`)

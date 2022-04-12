@@ -10,7 +10,9 @@ export class tokenSays {
     static NAME = 'tokenSays';
     
     static FLAGS = {
-      TOKENSAYS: 'token-says'
+      TOKENSAYS: 'token-says',
+      LIMITCOUNT: 'count',
+      SAYING: 'saying'
     }
 
     static TEMPLATES = {
@@ -89,5 +91,11 @@ export class tokenSays {
     static prompt(token, isShift = false){
       const data = promptToWorkflowData(token, isShift ? 'prompt-alt' : 'prompt');
       if(data) workflow.go(game.userId, data);
+    }
+
+    static async resetTokenSayingCount(tokenId, sceneId){
+      const tok = game.scenes.get(sceneId).tokens.get(tokenId);
+      await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.LIMITCOUNT}`)
+      ui.notifications?.info(game.i18n.localize("TOKENSAYS.alerts.counts-reset"))
     }
 }

@@ -5,13 +5,18 @@
     "cancel": "Cancel",
     "clear": "Delete Saying",
     "confirm": "Are you sure you want to delete this saying?",
+    "count": "count",
     "deleteRule": "delete",
     "editRule": "edit",
     "import": "Import",
+    "ms": "ms",
     "parameters": "Accepts paramter values:\n   [@alias]=token name\n   [@actor]=actor name\n   [@item]=item name.\n   Add r_ to the start of any of the above for response details e.g. [@r_alias].",
     "saveChanges": "Save Changes",
     "separator": "Accepts multiple entries delimited by your settings separator.",
     "yes": "Ok",
+    "alerts": {
+      "counts-reset": "Saying counts have been reset for this token."
+    },
     "document-type-label":{
       "ability": "Ability Name",
       "action": "Action Name",
@@ -88,6 +93,8 @@
         "language.label": "Language",
         "likelihood.label": "Likelihood",
         "likelihood.description": "The percent likelihood that the token will say this when the provoking action is triggered.",
+        "limit.label": "Limit",
+        "limit.description": "Set a limited amount of times a token instance will trigger this saying. Once reached, the saying will no longer invoke on that token instance.",
         "maxDistance.label": "Within Distance",
         "name.label": "Token Name",
         "reacts.description": "Identify the action and the other token, if applicable, that this token will respond to. Choose if other token must be in this token's sight (center-based) and at what distance. In terms of Distance, a value of 0 = infinite.",
@@ -152,6 +159,10 @@
       },
       "rule.none": "None",
       "rule.unselected": ""
+    },
+    "token-form":{
+      "counts-reset": "Reset token saying counts",
+      "history.label": "Token Saying History"
     },
     "warning":{
       "actor-not-found": "The follow actor names were not found in this world: ",
