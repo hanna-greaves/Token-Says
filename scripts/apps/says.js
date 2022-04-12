@@ -44,7 +44,6 @@ import {BYPASSNAMETYPES} from './constants.js';
 
     static _toClass(flag){
         if(!flag?.fileType){return {}}
-        //if(!flag.limit) flag.limit = 0;
         let sy = flag.documentType==='reacts' ? new reacts(flag.fileType) : new say(flag.fileType);
         return mergeObject(sy, flag, {insertKeys: false, enforceTypes: true})
     }
