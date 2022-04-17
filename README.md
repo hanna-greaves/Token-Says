@@ -34,6 +34,7 @@ The Token Says feature uses a set of Token Says sayings that you create for your
 Token Says sayings can be configured within the "Open Sayings" area of the Token Says game module settings. Here you can:
 * Add: add a new saying by select + Add in the subheader of that tab
 * Edit: update an existing saying by selecting the edit pencil icon for that saying
+* Copy: copy this saying and create a new saying from it
 * Delete: delete a saying by selecting the trash beside that saying's name
 
 
