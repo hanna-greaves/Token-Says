@@ -6,6 +6,7 @@
     "clear": "Delete Saying",
     "confirm": "Are you sure you want to delete this saying?",
     "count": "count",
+    "copyRule": "copy",
     "deleteRule": "delete",
     "editRule": "edit",
     "import": "Import",

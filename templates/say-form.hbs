@@ -94,8 +94,8 @@
             </label>
             <div class="rule-value form-fields">
                 <select name="{{#if isAudio}}paired.{{/if}}compendiumName" value="say.{{#if isAudio}}paired.{{/if}}compendiumName">  
-                    {{#if isAudio}}{{selectOptions compendiumList selected=say.paired.compendiumName localize=true}}{{/if}}
-                    {{#unless isAudio}}{{selectOptions compendiumList selected=say.compendiumName localize=true}}{{/unless}}
+                    {{#if isAudio}}{{selectOptions compendiumListRollTable selected=say.paired.compendiumName localize=true}}{{/if}}
+                    {{#unless isAudio}}{{selectOptions compendiumListRollTable selected=say.compendiumName localize=true}}{{/unless}}
                 </select>
             </div>
         </div>
@@ -149,8 +149,8 @@
             </label>
             <div class="rule-value form-fields">
                 <select name="{{#unless isAudio}}paired.{{/unless}}compendiumName" value="say.{{#unless isAudio}}paired.{{/unless}}compendiumName">  
-                    {{#if isAudio}}{{selectOptions compendiumList selected=say.compendiumName localize=true}}{{/if}}
-                    {{#unless isAudio}}{{selectOptions compendiumList selected=say.paired.compendiumName localize=true}}{{/unless}}
+                    {{#if isAudio}}{{selectOptions compendiumListAudio selected=say.compendiumName localize=true}}{{/if}}
+                    {{#unless isAudio}}{{selectOptions compendiumListAudio selected=say.paired.compendiumName localize=true}}{{/unless}}
                 </select>
             </div>
         </div>

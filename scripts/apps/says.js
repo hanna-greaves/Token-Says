@@ -134,6 +134,18 @@ import {BYPASSNAMETYPES} from './constants.js';
         )
     }
 
+    static async copySay(id) {
+        const sys = this._says;
+        const sy = says.getSay(id);
+        const newId = foundry.utils.randomID(16);
+        sy['id'] = newId;
+        sy['label'] = sy['label'] + ' (copy)';
+        sys[newId] = sy;
+        tokenSays.log(false, 'Copy saying ', {says: sys, new: sy})
+        await this.updateSays(sys);
+        return newId;
+    }
+
     static async updateSay(id, data, insertKeys = false) {
         const sys = this._says;
         const sy = mergeObject(data.documentType==='reacts' ? new reacts(data.fileType) : new say(data.fileType), sys[id], {insertKeys: false, enforceTypes: true});
