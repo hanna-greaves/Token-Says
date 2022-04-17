@@ -25,6 +25,12 @@ export class TokenSaysSettingsConfig extends FormApplication {
       const sayId = clickedElement.parents('[data-id]')?.data()?.id;
   
       switch (action) {
+        case 'copy': {
+          const copied = await says.copySay(sayId)
+          this.refresh();
+          new TokenSaysSayForm(copied).render(true);
+          break;
+        }
         case 'create': {
           const sy =  await says.newRollTableSay(); 
           this.refresh();
