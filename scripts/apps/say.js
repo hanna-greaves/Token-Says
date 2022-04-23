@@ -45,7 +45,10 @@ export class say {
             compendiumName:  '',
             fileName: '',
             fileTitle: '',
+            sequential: false
         },
+        this.reverse = false,
+        this.sequential = false,
         this.suppressChatbubble = false,
         this.suppressChatMessage = false,
         this.suppressQuotes = false,
@@ -55,6 +58,10 @@ export class say {
 
     get audioCompendiumName(){
         return this.isAudio ? this.compendiumName : this.paired.compendiumName
+    }
+
+    get audioIsSequential(){
+        return this.isAudio ? this.sequential : this.paired.sequential
     }
 
     get chatCompendiumName(){
@@ -77,6 +84,10 @@ export class say {
         return !this.isAudio ? this.fileTitle : this.paired.fileTitle
     }
 
+    get chatIsSequential(){
+        return !this.isAudio ? this.sequential : this.paired.sequential
+    }
+
     get _audioCompendium() {
         if (this.audioCompendiumName) return this.audioCompendiumName
         return game.settings.get(tokenSays.ID, 'defaultAudioCompendium')
@@ -97,6 +108,10 @@ export class say {
 
     get hasChat(){
         return (this.chatFileName || this.chatFileTitle) ? true : false
+    }
+
+    get hasSequence(){
+        return ((this.chatIsSequential && this.hasChat) || (this.audioIsSequential && this.hasAudio)) ? true : false
     }
 
     get hasLimit(){
@@ -167,6 +182,8 @@ export class tokenSay {
     constructor(say, options){
         this._say = say,
         this.actor = options.actor,
+        this._audioFile = !this._say.audioFileName ? this._say.audioFileTitle : '',
+        this.audioFile = '',
         this.diff = options.diff,
         this.item = options.item,
         this.likelihood ={
@@ -190,7 +207,7 @@ export class tokenSay {
     }
 
     get countToLimit(){
-        if (this._say.hasLimit){
+        if (this._say.hasLimit || this._say.hasSequence){
             const cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
             return cnt ? cnt : 0;
         }
@@ -310,9 +327,15 @@ export class tokenSay {
         if(!this.suppressChatBubble || !this.suppressChatMessage){
             if(!this.hasChat) {this.message = "............"}
             else {
-                if (!this._message) await this._rollMessage();    
+                if(!this._message) this._say.chatIsSequential ? await this._nextMessage() : await this._rollMessage(); 
                 this._parameterizeMessage()
             }
+        }
+    }
+
+    async _setSound(){
+        if(!this.suppressAudio){
+            if(!this._audioFile) this._say.audioIsSequential ? await this._nextSound() : await this._rollSound();   
         }
     }
 
@@ -327,6 +350,28 @@ export class tokenSay {
         } else {this.likelihood.result = 100}
     }
 
+    async _nextSound(){
+        this.playlist = await this._say.playlist();
+        if(this.playlist){
+            if(this.playlist.data.sounds.size <= this.countToLimit) return console.log(`Saying count of ${this.countToLimit} exceeds playlist size.`)
+            let i = 0; 
+            for (const key of this.playlist.data.sounds) {
+                if (i === this.countToLimit) {
+                    this._audioFile = key?.path;
+                    return
+                }
+                i++;  
+            }
+        }
+    }
+
+    async _nextMessage(){
+        const table = await this._say.rollableTable()
+        if(table) {
+            this._message = table.results.contents[this.countToLimit] ? table.results.contents[this.countToLimit].data.text : console.log(`Saying count of ${this.countToLimit} exceeds rolltable entry count.`)
+        }
+    }
+
     async _rollMessage(){
         const table = await this._say.rollableTable()
         if(table) {
@@ -335,20 +380,27 @@ export class tokenSay {
         }
     }
 
+    async _rollSound(){
+        this._audioFile = await this._say.sound()
+    }
+
     async ready(){
         if(this.valid) {
             await this.mightSay();
-            if(this.likelihoodMet) await this._setMessage() 
+            if(this.likelihoodMet) {
+                await this._setMessage() 
+                await this._setSound() 
+            }
         }       
     }
 
     async play(){
-        if(this.likelihoodMet){
+        if(this.likelihoodMet && (this._message || this._audioFile)){
             if(this.delay) await wait(this.delay);
-            if(!this.suppressAudio) this.sayAudio();
-            if(!this.suppressChatMessage && this.message) this.sayChatMessage();
-            if(!this.suppressChatBubble && this.message) this.sayChatBubble();
-            if(this._say.hasLimit) await this._incrementLimitCount();
+            if(!this.suppressAudio && this._audioFile) this.sayAudio();
+            if(!this.suppressChatMessage) this.sayChatMessage();
+            if(!this.suppressChatBubble) this.sayChatBubble();
+            if(this._say.hasLimit || this._say.hasSequence) await this._incrementLimitCount();
             return true
         } else {
             return console.log(`Say canceled: likelihood threshold of ${this.likelihood.value} was not met with a roll of ${this.likelihood.result} (roll must be at or lower)`)
@@ -359,9 +411,8 @@ export class tokenSay {
      * Method that performs the playlist find and execute then calls the final outputs to chat and audio
     */
      async sayAudio(){
-        const audioFile = await this._say.sound();
-        if(!audioFile) return tokenSays.log(false, 'No Audio File Path ', audioFile);
-        this.sound = await AudioHelper.play({src: audioFile, volume: this._say.volume, loop: false, autoplay: true}, true);
+        if(!this._audioFile) {return tokenSays.log(false, 'No Audio File Path ', this._audioFile);} else {this.audioFile = this._audioFile}
+        this.sound = await AudioHelper.play({src: this.audioFile, volume: this._say.volume, loop: false, autoplay: true}, true);
         await wait(this.maxDuration)
         game.socket.emit('module.token-says', {sound: this.sound.id})
         await this.sound.fade(0, {duration: 250})
@@ -414,7 +465,8 @@ export class reacts extends say {
             documentName:'',
             name: '',
             isActorName: true,
-            requireVision: false
+            requireVision: false,
+            reverse: false
         }
     }
 

@@ -164,7 +164,7 @@ export const WORKFLOWSTATES = {
     async _respondsWorkflow(responses){
         if(!canvas?.tokens?.placeables || !this.token){return}
         for (const rsp of responses){
-            let tokens = (!rsp.isActorName) ? canvas.tokens.placeables.filter(t => rsp.nameList.includes(t.name)) : canvas.tokens.placeables.filter(t => t.actor?.id && rsp.nameList.includes(game.actors.get(t.actor?.id)?.name));
+            let tokens = !rsp.isActorName ? canvas.tokens.placeables.filter(t => (rsp.reverse ? !rsp.nameList.includes(t.name) : rsp.nameList.includes(t.name))) : canvas.tokens.placeables.filter(t => t.actor?.id && (rsp.reverse ? !rsp.nameList.includes(game.actors.get(t.actor?.id)?.name) : rsp.nameList.includes(game.actors.get(t.actor?.id)?.name)));
             for(const token of tokens){
                 if(token.id === this.token.id) continue
                 if(this.conditionEscape(token, false)) continue

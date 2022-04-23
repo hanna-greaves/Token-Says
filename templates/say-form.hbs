@@ -50,6 +50,15 @@
                 <input id="token-says-name-is-actor" type="checkbox" name="isActorName" {{checked say.isActorName}} />
             </div>
         </div>
+        <div class="form-group">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.reverse.label'}}
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.reverse.description'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="checkbox" name="reverse" {{checked say.reverse}} />
+            </div>
+        </div>
         <div class="form-group {{#unless languageOptions}}hidden{{/unless}}">
             <label>
                 {{localize 'TOKENSAYS.setting.say.language.label'}}
@@ -87,7 +96,7 @@
         </div>        
     </div>
     <div class="tab" data-tab="chat">
-        <div class="form-group">
+        <div id="token-says-compendium-chat-label" class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.compendiumName.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
@@ -99,7 +108,7 @@
                 </select>
             </div>
         </div>
-        <div class="form-group">
+        <div id="token-says-fileName-chat-label" class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.fileName.label.rolltable'}}</span>
             </label>
@@ -113,7 +122,16 @@
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.fileTitle.description.rolltable'}}{{localize 'TOKENSAYS.parameters'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input type="text" name="{{#if isAudio}}paired.{{/if}}fileTitle" value="{{#unless isAudio}}{{say.fileTitle}}{{/unless}}{{#if isAudio}}{{say.paired.fileTitle}}{{/if}}"/>
+                <input id="token-says-fileTitle-chat-value" type="text" name="{{#if isAudio}}paired.{{/if}}fileTitle" value="{{#unless isAudio}}{{say.fileTitle}}{{/unless}}{{#if isAudio}}{{say.paired.fileTitle}}{{/if}}"/>
+            </div>
+        </div>
+        <div id="token-says-sequential-chat-label"  class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.sequential.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.sequential.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="checkbox" name="{{#if isAudio}}paired.{{/if}}sequential" {{#unless isAudio}}{{checked say.sequential}}{{/unless}}{{#if isAudio}}{{checked say.paired.sequential}}{{/if}}/>
             </div>
         </div>
         <h4>
@@ -170,7 +188,16 @@
             <div class="form-fields">
                 {{#if isAudio}}{{filePicker target="fileTitle" type="audio"}}{{/if}}
                 {{#unless isAudio}}{{filePicker target="paired.fileTitle" type="audio"}}{{/unless}}
-                <input type="text" name="{{#unless isAudio}}paired.{{/unless}}fileTitle" value="{{#unless isAudio}}{{say.paired.fileTitle}}{{/unless}}{{#if isAudio}}{{say.fileTitle}}{{/if}}"/>
+                <input id="token-says-fileTitle-audio-value" type="text" name="{{#unless isAudio}}paired.{{/unless}}fileTitle" value="{{#unless isAudio}}{{say.paired.fileTitle}}{{/unless}}{{#if isAudio}}{{say.fileTitle}}{{/if}}"/>
+            </div>
+        </div>
+        <div id="token-says-sequential-audio-label" class="form-group {{#if hasAudioFileTitle}} hidden{{/if}}">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.sequential.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.sequential.description.audio'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="checkbox" name="{{#unless isAudio}}paired.{{/unless}}sequential" {{#unless isAudio}}{{checked say.paired.sequential}}{{/unless}}{{#if isAudio}}{{checked say.sequential}}{{/if}}/>
             </div>
         </div>
         <div class="form-group">
@@ -244,6 +271,15 @@
             </label>
             <div class="form-fields">
                 <input id="token-says-to-name-is-actor" type="checkbox" name="to.isActorName" {{checked say.to.isActorName}} /> 
+            </div>
+        </div>
+        <div class="form-group">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.reverse.label'}}
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.reverse.description'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="checkbox" name="to.reverse" {{checked say.to.reverse}} />
             </div>
         </div>
         <div class="form-group">

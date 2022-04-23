@@ -56,7 +56,10 @@ import {BYPASSNAMETYPES} from './constants.js';
         const sys = isActive ? this.saysActive : this.says;
         return sys.filter(sy => 
             sy.documentType === documentType 
-            && sy.nameList.includes((sy.isActorName && actorName) ? actorName : tokenName)
+            && (
+                (!sy.reverse && sy.nameList.includes(((sy.isActorName && actorName) ? actorName : tokenName)))
+                || (sy.reverse && !sy.nameList.includes(((sy.isActorName && actorName) ? actorName : tokenName)))
+            )
             && (
                 !sy.documentName 
                 || BYPASSNAMETYPES.includes(documentType)
@@ -71,7 +74,8 @@ import {BYPASSNAMETYPES} from './constants.js';
             && sy.to.documentType === documentType 
             && (
                 !sy.to.name
-                || sy.toNameList.includes((sy.to.isActorName && actorName) ? actorName : tokenName)
+                || (!sy.to.reverse && sy.toNameList.includes((sy.to.isActorName && actorName) ? actorName : tokenName))
+                || (sy.to.reverse && !sy.toNameList.includes((sy.to.isActorName && actorName) ? actorName : tokenName))
             ) 
             && (
                 !sy.to.documentName 
