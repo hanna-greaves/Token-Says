@@ -97,6 +97,7 @@ export class api {
 
     /**
      * API call allow for call directly with in time rule
+     *  does not include sequential/limit handling, due to the need for these to make use of a saying id to track sequence
      * @param {string} tokenId - id of the token
      * @param {string} actorId - id of the actor
      * @param {string} sceneId - id of the scene
@@ -118,6 +119,7 @@ export class api {
         sy.compendiumName = (options.chat?.compendium ? options.chat.compendium : (options.type === 'rollTable' ? options.compendium : ''));
         sy.fileTitle = (options.chat?.quote ? options.chat.quote : (options.type === 'rollTable' ? options.quote : ''));
         if(options.lang) sy.lang = options.lang;
+        if(options.reverse) sy.reverse = true;
         if(options.suppress?.bubble) sy.suppressChatbubble = true;
         if(options.suppress?.message) sy.suppressChatMessage = true;
         if(options.suppress?.quotes) sy.suppressQuotes = true;
