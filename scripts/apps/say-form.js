@@ -1,4 +1,4 @@
-import {BYPASSNAMETYPES, DOCUMENTNAMELABELS, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
+import {BYPASSNAMETYPES, DOCUMENTNAMELABELS, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, PLAYTYPE, PF1DOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
@@ -54,6 +54,30 @@ export class TokenSaysSayForm extends FormApplication {
       document.getElementById(`token-says-documentname-reacts-label`).innerHTML = this.documentNameLabel(event.currentTarget.value);
       this._duplicateNameWarning();
     });
+    html.on('change', "#token-says-fileTitle-audio-value",(event) => {
+      let audioSeq = document.getElementById(`token-says-play-type-audio-label`);
+      if(event.currentTarget.value){
+        audioSeq.classList.add('hidden')
+      } else {
+        audioSeq.classList.remove('hidden')
+      }
+      this.setPosition();
+    });  
+    html.on('change', "#token-says-fileTitle-chat-value",(event) => {
+      let chatFName = document.getElementById(`token-says-fileName-chat-label`);
+      let chatCName = document.getElementById(`token-says-compendium-chat-label`);
+      let chatSeq = document.getElementById(`token-says-play-type-chat-label`);
+      if(event.currentTarget.value){
+        chatFName.classList.add('hidden')
+        chatCName.classList.add('hidden')
+        chatSeq.classList.add('hidden')
+      } else {
+        chatFName.classList.remove('hidden')
+        chatCName.classList.remove('hidden')
+        chatSeq.classList.remove('hidden')
+      }
+      this.setPosition();
+    });  
     html.on('change', '#token-says-documentname-reacts-value', this._duplicateNameWarning.bind(this));  
     html.on('input', '#token-says-name-value', this._duplicateNameWarning.bind(this));  
     html.on('input', '#token-says-name-value', this._existsCheck.bind(this, 'name')); 
@@ -107,10 +131,13 @@ export class TokenSaysSayForm extends FormApplication {
       documentNameLabel: this.documentNameLabel(sy.documentType),
       documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName, ''),
       documentNameReactsOptions: this._createNameOptionsHTML(sy.to?.documentType, sy.to?.documentName, 'to.'),
-      isAudio: sy.fileType === 'audio' ? true : false,
+      hasAudioFileTitle: sy.audioFileTitle ? true : false,
+      hasChatFileTitle: sy.chatFileTitle ? true : false,
+      isAudio: sy.isAudio,
       isMove: (sy.hasAudio && sy.documentType === 'move') ? true : false,
       isReact: sy.documentType === 'reacts' ? true : false,
       languageOptions: getPolyglotLanguages(),
+      playOptions: PLAYTYPE,
       responseDocumentNameLabel: this.documentNameLabel(sy.to?.documentType)
     } 
   }

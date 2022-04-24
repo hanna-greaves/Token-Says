@@ -67,7 +67,7 @@ export function chatMessageToWorkflowData(message){
     }
     if(f=message.flags.dnd5e){
         if(f.roll?.skillId) return parsed({documentType: 'skill', documentName: f.roll.skillId});          
-        if(f.roll?.abilityId) return parsed({documentType: f.roll.type, documentName: f.roll.abilityId});           
+        if(f.roll?.abilityId) return parsed({documentType: f.roll.type === 'check' ? 'ability' : f.roll.type, documentName: f.roll.abilityId});           
         if(f.roll?.type ==="attack" && f.roll?.itemId) return parsed({documentType: 'attack', itemId: f.roll.itemId});
         if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId});
         if(f.roll?.itemId) return parsed({documentType: 'flavor', itemId: f.roll.itemId});        

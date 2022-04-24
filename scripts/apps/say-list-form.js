@@ -113,6 +113,7 @@ export class TokenSaysSettingsConfig extends FormApplication {
           $(this).closest('.rule').hide();
         }
       });
+      this.setPosition();
     }
   
     _clearFilter(event){
@@ -120,6 +121,7 @@ export class TokenSaysSettingsConfig extends FormApplication {
         document.getElementById("token-says-search-input").value = '';
         this.setLastSearch('');
         this._filter();
+        this.setPosition();
     }
 
     setLastSearch(search){
