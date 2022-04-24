@@ -149,4 +149,10 @@ export const DOCUMENTNAMELABELS = {
     "say": "TOKENSAYS.document-type-label.saying",
     "turn": "TOKENSAYS.document-type-label.action"
 }
+
+export const PLAYTYPE = {
+    "": "TOKENSAYS.play-type.random",
+    "S": "TOKENSAYS.play-type.sequential-end",
+    "L": "TOKENSAYS.play-type.sequential-loop"
+}
   

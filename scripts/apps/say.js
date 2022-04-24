@@ -45,10 +45,10 @@ export class say {
             compendiumName:  '',
             fileName: '',
             fileTitle: '',
-            sequential: false
+            play: ''
         },
         this.reverse = false,
-        this.sequential = false,
+        this.play= '',
         this.suppressChatbubble = false,
         this.suppressChatMessage = false,
         this.suppressQuotes = false,
@@ -61,7 +61,7 @@ export class say {
     }
 
     get audioIsSequential(){
-        return this.isAudio ? this.sequential : this.paired.sequential
+        return ["S","L"].includes(this.audioPlay) 
     }
 
     get chatCompendiumName(){
@@ -80,12 +80,16 @@ export class say {
         return this.isAudio ? this.fileTitle : this.paired.fileTitle
     }
 
+    get audioPlay(){
+        return this.isAudio ? this.play : this.paired.play
+    }
+
     get chatFileTitle(){
         return !this.isAudio ? this.fileTitle : this.paired.fileTitle
     }
 
     get chatIsSequential(){
-        return !this.isAudio ? this.sequential : this.paired.sequential
+        return ["S","L"].includes(this.chatPlay) 
     }
 
     get _audioCompendium() {
@@ -96,6 +100,10 @@ export class say {
     get _chatCompendium() {
         if (this.chatCompendiumName) return this.chatCompendiumName
         return game.settings.get(tokenSays.ID, 'defaultRollableTableCompendium');
+    }
+
+    get chatPlay(){
+        return !this.isAudio ? this.play : this.paired.play
     }
 
     get documentNameList() {
@@ -110,8 +118,16 @@ export class say {
         return (this.chatFileName || this.chatFileTitle) ? true : false
     }
 
+    get hasAudioSequence(){
+        return (this.audioIsSequential && this.hasAudio) ? true : false
+    }
+
+    get hasChatSequence(){
+        return (this.chatIsSequential && this.hasChat) ? true : false
+    }
+
     get hasSequence(){
-        return ((this.chatIsSequential && this.hasChat) || (this.audioIsSequential && this.hasAudio)) ? true : false
+        return (this.hasAudioSequence || this.hasChatSequence) ? true : false
     }
 
     get hasLimit(){
@@ -206,8 +222,26 @@ export class tokenSay {
         return (this.documentType === 'arrive' || this.reacts.documentType === 'arrive' ) ? true : false
     }
 
+    get countAudioPlay(){
+        if (this._say.hasAudioSequence){
+            let cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
+            if(this._say.audioPlay === 'L' && this.playlist && this.playlist.data.sounds.size <= cnt) cnt = 0;
+            return cnt ? cnt : 0;
+        }
+        return 0
+    }
+
+    get countChatPlay(){
+        if (this._say.hasChatSequence){
+            let cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.CHATPLAYCOUNT]?.[this._say.id];
+            if(this._say.chatPlay === 'L' && this.table && this.table.results.size <= cnt) cnt = 0;
+            return cnt ? cnt : 0;
+        }
+        return 0
+    }
+
     get countToLimit(){
-        if (this._say.hasLimit || this._say.hasSequence){
+        if (this._say.hasLimit){
             const cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
             return cnt ? cnt : 0;
         }
@@ -309,6 +343,24 @@ export class tokenSay {
         return this.img ? `<img src="${this.img}" alt="${this.speaker.alias}">` : ''
     }
 
+    async _incrementAudioPlayCount(){
+        const inc = this.countAudioPlay + 1;
+        const cnt = ((this._say.audioPlay === 'L' && this.playlist.data.sounds.size <= inc) ? 0 : inc)
+        await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.AUDIOPLAYCOUNT}.${this._say.id}`, cnt)
+    }
+
+    async _incrementChatPlayCount(){
+        const inc = this.countChatPlay + 1;
+        const cnt = ((this._say.chatPlay === 'L' && this.table.results.size <= inc) ? 0 : inc)
+        await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.CHATPLAYCOUNT}.${this._say.id}`, cnt)
+    }
+
+    async _incrementCount(){
+        if(this._say.hasLimit) await this._incrementLimitCount();
+        if(this._say.hasAudioSequence) await this._incrementAudioPlayCount();
+        if(this._say.hasChatSequence) await this._incrementChatPlayCount();
+    }
+
     async _incrementLimitCount(){
         await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.LIMITCOUNT}.${this._say.id}`, this.countToLimit + 1)
     }
@@ -328,7 +380,7 @@ export class tokenSay {
             if(!this.hasChat) {this.message = "............"}
             else {
                 if(!this._message) this._say.chatIsSequential ? await this._nextMessage() : await this._rollMessage(); 
-                this._parameterizeMessage()
+                if(this._message) this._parameterizeMessage()
             }
         }
     }
@@ -353,10 +405,10 @@ export class tokenSay {
     async _nextSound(){
         this.playlist = await this._say.playlist();
         if(this.playlist){
-            if(this.playlist.data.sounds.size <= this.countToLimit) return console.log(`Saying count of ${this.countToLimit} exceeds playlist size.`)
+            if(this.playlist.data.sounds.size <= this.countAudioPlay) return console.log(`Saying count of ${this.countAudioPlay} exceeds playlist size.`)
             let i = 0; 
             for (const key of this.playlist.data.sounds) {
-                if (i === this.countToLimit) {
+                if (i === this.countAudioPlay) {
                     this._audioFile = key?.path;
                     return
                 }
@@ -366,16 +418,17 @@ export class tokenSay {
     }
 
     async _nextMessage(){
-        const table = await this._say.rollableTable()
-        if(table) {
-            this._message = table.results.contents[this.countToLimit] ? table.results.contents[this.countToLimit].data.text : console.log(`Saying count of ${this.countToLimit} exceeds rolltable entry count.`)
+        this.table = await this._say.rollableTable()
+        if(this.table) {
+            if(this.table.results.size <= this.countChatPlay) return console.log(`Saying count of ${this.countChatPlay} exceeds rolltable entry count.`)
+            this._message = this.table.results.contents[this.countChatPlay].data.text;
         }
     }
 
     async _rollMessage(){
-        const table = await this._say.rollableTable()
-        if(table) {
-            const rolledResult = await table.roll(); 
+        this.table = await this._say.rollableTable()
+        if(this.table) {
+            const rolledResult = await this.table.roll(); 
             this._message = rolledResult.results[0].data.text
         }
     }
@@ -395,15 +448,16 @@ export class tokenSay {
     }
 
     async play(){
-        if(this.likelihoodMet && (this._message || this._audioFile)){
+        if(!this.likelihoodMet) return console.log(`Say canceled: likelihood threshold of ${this.likelihood.value} was not met with a roll of ${this.likelihood.result} (roll must be at or lower)`);
+        if(this._message || this._audioFile){
             if(this.delay) await wait(this.delay);
             if(!this.suppressAudio && this._audioFile) this.sayAudio();
             if(!this.suppressChatMessage) this.sayChatMessage();
             if(!this.suppressChatBubble) this.sayChatBubble();
-            if(this._say.hasLimit || this._say.hasSequence) await this._incrementLimitCount();
+            if(this._say.hasLimit || this._say.hasSequence) await this._incrementCount();
             return true
         } else {
-            return console.log(`Say canceled: likelihood threshold of ${this.likelihood.value} was not met with a roll of ${this.likelihood.result} (roll must be at or lower)`)
+            return console.log('Say cancelled');
         }
     }
 

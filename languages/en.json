@@ -47,6 +47,11 @@
       "skill.label": "Skill",
       "turn.label": "Turn in Combat"
     },
+    "play-type": {
+      "random": "Random",
+      "sequential-end": "In Sequence - Once",
+      "sequential-loop": "In Sequence - Looped"
+    },
     "setting":{
       "audioDuration.label": "Audio Maximum Duration",
       "audioDuration.description": "Set a maximum duration (in seconds) for any audio tracks played by Token Says. Helps prevent long running audio.",
@@ -103,9 +108,9 @@
         "requireVision.label": "Only if in Sight",
         "reverse.label": "Not Listed Names",
         "reverse.description": "Saying will generate for any token except for those listed in 'Token Names'",
-        "sequential.label": "Play sequentially",
-        "sequential.description.audio": "Instead of randomly playing from the playlist, sayings will generate in sequential order down the playlist, one per trigger.",
-        "sequential.description.rolltable": "Instead of randomly rolling from the table, sayings will generate in sequential order down the table, one per trigger.",
+        "play-type.label": "Play",
+        "play-type.description.audio": "Determine how sounds on playlist are played:\n  Random: play a random sound from playlist each trigger.\n  In Sequence - Once: play sounds on playlist in sequential order, one per trigger, until end is reached and then no more.\n  In Sequence - Loop: play sounds on playlist in sequential order, one per trigger, until end is reached and then start over.",
+        "play-type.description.rolltable": "Determine how sayings on rolltable are played:\n  Random: roll a random saying from table each trigger.\n  In Sequence - Once: generate saying from table in sequential order, one per trigger, until end is reached and then no more.\n  In Sequence - Loop: generate saying from table in sequential order, one per trigger, until end is reached and then start over.",
         "source.label": "Source",
         "suppress.label": "Suppress",
         "token.label": "Token Speaking",

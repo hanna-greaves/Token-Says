@@ -12,7 +12,9 @@ export class tokenSays {
     static FLAGS = {
       TOKENSAYS: 'token-says',
       LIMITCOUNT: 'count',
-      SAYING: 'saying'
+      SAYING: 'saying',
+      AUDIOPLAYCOUNT: 'audio-play',
+      CHATPLAYCOUNT: 'chat-play'
     }
 
     static TEMPLATES = {
@@ -96,6 +98,8 @@ export class tokenSays {
     static async resetTokenSayingCount(tokenId, sceneId){
       const tok = game.scenes.get(sceneId).tokens.get(tokenId);
       await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.LIMITCOUNT}`)
+      await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.AUDIOPLAYCOUNT}`)
+      await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.CHATPLAYCOUNT}`)
       ui.notifications?.info(game.i18n.localize("TOKENSAYS.alerts.counts-reset"))
     }
 }

@@ -97,7 +97,7 @@ export class api {
 
     /**
      * API call allow for call directly with in time rule
-     *  does not include sequential/limit handling, due to the need for these to make use of a saying id to track sequence
+     *  does not include play type/limit handling, due to the need for these to make use of a saying id to track sequence
      * @param {string} tokenId - id of the token
      * @param {string} actorId - id of the actor
      * @param {string} sceneId - id of the scene

@@ -125,13 +125,16 @@
                 <input id="token-says-fileTitle-chat-value" type="text" name="{{#if isAudio}}paired.{{/if}}fileTitle" value="{{#unless isAudio}}{{say.fileTitle}}{{/unless}}{{#if isAudio}}{{say.paired.fileTitle}}{{/if}}"/>
             </div>
         </div>
-        <div id="token-says-sequential-chat-label"  class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
+        <div id="token-says-play-type-chat-label"  class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
             <label>
-                <span>{{localize 'TOKENSAYS.setting.say.sequential.label'}}</span>
-                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.sequential.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
+                <span>{{localize 'TOKENSAYS.setting.say.play-type.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.play-type.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input type="checkbox" name="{{#if isAudio}}paired.{{/if}}sequential" {{#unless isAudio}}{{checked say.sequential}}{{/unless}}{{#if isAudio}}{{checked say.paired.sequential}}{{/if}}/>
+                <select name="{{#if isAudio}}paired.{{/if}}play" value="say.{{#if isAudio}}paired.{{/if}}play">  
+                    {{#unless isAudio}}{{selectOptions playOptions selected=say.play localize=true}}{{/unless}}
+                    {{#if isAudio}}{{selectOptions playOptions selected=say.paired.play localize=true}}{{/if}}
+                </select>
             </div>
         </div>
         <h4>
@@ -191,13 +194,16 @@
                 <input id="token-says-fileTitle-audio-value" type="text" name="{{#unless isAudio}}paired.{{/unless}}fileTitle" value="{{#unless isAudio}}{{say.paired.fileTitle}}{{/unless}}{{#if isAudio}}{{say.fileTitle}}{{/if}}"/>
             </div>
         </div>
-        <div id="token-says-sequential-audio-label" class="form-group {{#if hasAudioFileTitle}} hidden{{/if}}">
+        <div id="token-says-play-type-audio-label" class="form-group {{#if hasAudioFileTitle}} hidden{{/if}}">
             <label>
-                <span>{{localize 'TOKENSAYS.setting.say.sequential.label'}}</span>
-                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.sequential.description.audio'}}"><i class="fas fa-info-circle"></i></span>
+                <span>{{localize 'TOKENSAYS.setting.say.play-type.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.play-type.description.audio'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input type="checkbox" name="{{#unless isAudio}}paired.{{/unless}}sequential" {{#unless isAudio}}{{checked say.paired.sequential}}{{/unless}}{{#if isAudio}}{{checked say.sequential}}{{/if}}/>
+                <select name="{{#unless isAudio}}paired.{{/unless}}play" value="say.{{#unless isAudio}}paired.{{/unless}}play">  
+                    {{#if isAudio}}{{selectOptions playOptions selected=say.play localize=true}}{{/if}}
+                    {{#unless isAudio}}{{selectOptions playOptions selected=say.paired.play localize=true}}{{/unless}}
+                </select>
             </div>
         </div>
         <div class="form-group">

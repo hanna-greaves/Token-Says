@@ -1,4 +1,4 @@
-import {BYPASSNAMETYPES, DOCUMENTNAMELABELS, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, getPF1DocumentNameOps, PF1DOCUMENTTYPEOPS} from './constants.js';
+import {BYPASSNAMETYPES, DOCUMENTNAMELABELS, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, PLAYTYPE, PF1DOCUMENTTYPEOPS} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
@@ -55,7 +55,7 @@ export class TokenSaysSayForm extends FormApplication {
       this._duplicateNameWarning();
     });
     html.on('change', "#token-says-fileTitle-audio-value",(event) => {
-      let audioSeq = document.getElementById(`token-says-sequential-audio-label`);
+      let audioSeq = document.getElementById(`token-says-play-type-audio-label`);
       if(event.currentTarget.value){
         audioSeq.classList.add('hidden')
       } else {
@@ -66,7 +66,7 @@ export class TokenSaysSayForm extends FormApplication {
     html.on('change', "#token-says-fileTitle-chat-value",(event) => {
       let chatFName = document.getElementById(`token-says-fileName-chat-label`);
       let chatCName = document.getElementById(`token-says-compendium-chat-label`);
-      let chatSeq = document.getElementById(`token-says-sequential-chat-label`);
+      let chatSeq = document.getElementById(`token-says-play-type-chat-label`);
       if(event.currentTarget.value){
         chatFName.classList.add('hidden')
         chatCName.classList.add('hidden')
@@ -137,6 +137,7 @@ export class TokenSaysSayForm extends FormApplication {
       isMove: (sy.hasAudio && sy.documentType === 'move') ? true : false,
       isReact: sy.documentType === 'reacts' ? true : false,
       languageOptions: getPolyglotLanguages(),
+      playOptions: PLAYTYPE,
       responseDocumentNameLabel: this.documentNameLabel(sy.to?.documentType)
     } 
   }
