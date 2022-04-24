@@ -47,6 +47,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
 * **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
+* **Not Listed Names:** flip the 'Token Names' so that saying generates for any token except those in the token names list.
 * **Language:** (only available if Polyglot module is installed). Choose a language to output the chat text and bubble in. If the token does not speak this language then the saying will not generate.
 * **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. Some types are system-specific. 
   * Ability Check: triggers on ability check roll by the token.
@@ -85,6 +86,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist or, if no playlist is included, this is the actual path to the audio file.
 * **Playlist Name/Rollable Table Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
+* **Play:** when playlist or rollable table are involved, define whether entries are played in sequential order, one entry per trigger, or randomly. If sequentially, set whether list/table loops after the final entry has played or if sayings no longer generate.
 * **Delay:** add a time, in milliseconds, to wait between the generating action and the saying. Note that delays due to accessing compendium content and rolling on compendiums may add to this delay.
 * **Volume:** Set the volume for this saying.
 * **Only While Moving:** This toggle is available for the Action Type of Token Movement Start for audio sayings. The sound will play from the time when the token begins movement up to the time when the token stops movement. Useful for things like audible footsteps.
@@ -93,8 +95,9 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Responds To:** this section is made visible if the 'Responds to' Action Name is selected
   * **Action Type:** the type of action that this saying responds to. Has the same set of options as the 'Action Type' within this saying's 'Provoking action' section, accept 'Responds to' is not an option while 'Saying' is. 
   * **Action Name:** similar to 'Action Name' in the 'Provoking Action' section, but for the action this saying is responding to.
-  * **Token Name:** the name of the token that this saying is responding to. **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
+  * **Token Names:** the name of the tokens that this saying is responding to. **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
+  * **Not Listed Names:** flip the 'Token Names' so that saying is responding to any token except those in the token names list.
   * **Only If In Sight:** requires the token to be able to see the token that they are responding to. Based on center-point calculation. Walls block.
   * **Distance:** token must be within this distance from the token that they are responding to. Consider this comparable to the distance within which they can hear the other token.
     * If responding to movement, distance is calculated from start of token position for 'Token Movement Start' and ending token position for 'Token Movement End'. Both are useful - in the former you may want to insult people who are retreating. In the latter you may want to let a person sneaking by know that you can see them.
