@@ -1,7 +1,8 @@
-import {BYPASSNAMETYPES, DOCUMENTNAMELABELS, UNIVERSALDOCUMENTTYPEOPS, DND5EDOCUMENTTYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PF2EDOCUMENTTYPEOPS, PLAYTYPE, PF1DOCUMENTTYPEOPS} from './constants.js';
+import {BYPASSNAMETYPES, determineMacroList, DOCUMENTNAMELABELS, GAMETYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PLAYTYPE} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
+import { tokenSaysHasMQ } from '../index.js';
 /**
  * form extension supporting the form used to add or update an individual rules
 */
@@ -29,12 +30,7 @@ export class TokenSaysSayForm extends FormApplication {
   }
 
   _determineWorldOptions(reacts) {
-    let allOps = UNIVERSALDOCUMENTTYPEOPS;
-    if (game.world.data.system === "dnd5e"){ allOps = {...DND5EDOCUMENTTYPEOPS, ...allOps}} 
-    else if (game.world.data.system === "pf2e"){ allOps = {...PF2EDOCUMENTTYPEOPS, ...allOps}} 
-    else if (game.world.data.system === "pf1"){ allOps = {...PF1DOCUMENTTYPEOPS, ...allOps}} 
-    if (reacts){delete allOps['reacts']} else {delete allOps['say']}
-    return allOps;
+    return reacts ? (({ reacts, ...o }) => o)(GAMETYPEOPS) : (({ say, ...o }) => o)(GAMETYPEOPS)
   }
 
   activateListeners(html) {
@@ -137,6 +133,7 @@ export class TokenSaysSayForm extends FormApplication {
       isMove: (sy.hasAudio && sy.documentType === 'move') ? true : false,
       isReact: sy.documentType === 'reacts' ? true : false,
       languageOptions: getPolyglotLanguages(),
+      macroOps: determineMacroList(),
       playOptions: PLAYTYPE,
       responseDocumentNameLabel: this.documentNameLabel(sy.to?.documentType)
     } 

@@ -25,6 +25,8 @@ export const WORKFLOWSTATES = {
         this.documentName = (options.documentName === undefined) ? '' : options.documentName,
         this.documentType = (options.documentType === undefined) ? '' : options.documentType,
         this.id = foundry.utils.randomID(16),
+        this.isCritical = options.isCritical,
+        this.isFumble = options.isFumble,
         this.itemId = options.itemId ? options.itemId : '',
         this.responses = [],
         this.responsesAwaited = [],
@@ -46,6 +48,14 @@ export const WORKFLOWSTATES = {
 
     get isResponse(){
         return this.responseOptions ? true : false
+    }
+
+    get saysSorted(){
+        return this.says.sort((a,b) => a.lang ? (b.lang ? a.lang.localeCompare(b.lang) : -1) : 1)
+        .sort((a,b) => !a.reverse ? (!b.reverse ? 0 : -1) : 1)
+        .sort((a,b) => a.documentName ? (b.documentName ? a.documentName.localeCompare(b.documentName) : -1) : 1)
+        .sort((a,b) => a.documentType==='fumble' ? (b.documentType==='fumble' ? 0 : -1) : 1) 
+        .sort((a,b) => a.documentType==='critical' ? (b.documentType==='critical' ? 0 : -1) : 1)                                          
     }
 
     get scene() {
@@ -98,11 +108,15 @@ export const WORKFLOWSTATES = {
                 this._findItemName();
                 return this.next(WORKFLOWSTATES.GETSAY);
             case WORKFLOWSTATES.GETSAY:
-                if(!this.says.length) this.says = says.findSays(this.alias, this.actor?.name, this.documentType, this.documentName)
+                if(!this.says.length) {
+                    this.says = says.findSays(this.alias, this.actor?.name, this.documentType, this.documentName)
+                    if(this.documentType === 'damage' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'critical', this.documentName))
+                    if(this.documentType === 'attack' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'fumble', this.documentName))
+                }
                 return this.next(WORKFLOWSTATES.SAY);
             case WORKFLOWSTATES.SAY: 
                 if(this.says.length) {
-                    for(const s of this.says.sort((a,b) => a.lang ? b.lang ? a.lang.localeCompare(b.lang) : -1 : 1).sort((a,b) => a.documentName ? b.documentName ? a.documentName.localeCompare(b.documentName) : -1 : 1)){
+                    for(const s of this.saysSorted){
                         this.say = s;
                         this.tokenSay = new tokenSay(this.say, this._tokenSayData)
                         if(this.tokenSay.valid) {

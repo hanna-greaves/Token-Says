@@ -2,7 +2,7 @@ import {tokenSays} from "./token-says.js";
 import {workflow} from "./apps/workflow.js";
 import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
-import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps} from './apps/constants.js';
+import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps, _determineWorldOptions} from './apps/constants.js';
 import {api} from "./apps/api.js";
 import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
 import { says } from "./apps/says.js";
@@ -180,14 +180,12 @@ Hooks.once('init', async function() {
         const data = combatTurnToWorkflowData(document)
         if(data) workflow.go(id, data);
     });
-
     
     Hooks.on("preUpdateToken", async (token, update, options, id) => {
         if (("x" in update || "y" in update || "elevation" in update) && token?.data) {
             options[`${tokenSays.FLAGS.TOKENSAYS}`] = {start: {x: token.data.x, y: token.data.y}, end: {x: (update.x ? update.x : token.data.x), y: (update.y ? update.y : token.data.y)}}
         }
     });
-        
     
     Hooks.on("updateToken", async (token, update, options, id) => {
         if (("x" in update || "y" in update || "elevation" in update) && options[`${tokenSays.FLAGS.TOKENSAYS}`]) {
@@ -287,8 +285,8 @@ Hooks.once('init', async function() {
       });
 
     tokenSays.initialize();
-
     setModsAvailable();
+    _determineWorldOptions();
 
     if( game.settings.get(tokenSays.ID, 'cacheAudio')){
         Hooks.on("canvasReady", async (canvas, options)=>{

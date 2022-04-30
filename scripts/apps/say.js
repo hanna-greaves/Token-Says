@@ -40,6 +40,7 @@ export class say {
         this.label = '',
         this.lang = '',
         this.likelihood = 100,
+        this.macroId = '',
         this.name = '',
         this.paired = {
             compendiumName:  '',
@@ -136,6 +137,10 @@ export class say {
 
     get isAudio(){
         return this.fileType === 'audio' ? true : false
+    }
+
+    get macro(){
+        return this.macroId ? game.macros.get(this.macroId) : ''
     }
 
     get nameList() {
@@ -288,6 +293,10 @@ export class tokenSay {
         return (this.likelihood.result > this.likelihood.value) ? false : true
     }
 
+    get macro(){
+        return this._say.macro
+    }
+
     get maxDuration(){
         return (this._say.cap && this.hasAudio && this.documentType === 'move') ? this.movementTime : (game.settings.get(tokenSays.ID, 'audioDuration') * 1000)
     }
@@ -425,6 +434,10 @@ export class tokenSay {
         }
     }
 
+    async playMacro(){
+        this.macro.execute(this);
+    }
+
     async _rollMessage(){
         this.table = await this._say.rollableTable()
         if(this.table) {
@@ -449,12 +462,13 @@ export class tokenSay {
 
     async play(){
         if(!this.likelihoodMet) return console.log(`Say canceled: likelihood threshold of ${this.likelihood.value} was not met with a roll of ${this.likelihood.result} (roll must be at or lower)`);
-        if(this._message || this._audioFile){
+        if(this._message || this._audioFile || this.macro){
             if(this.delay) await wait(this.delay);
             if(!this.suppressAudio && this._audioFile) this.sayAudio();
-            if(!this.suppressChatMessage) this.sayChatMessage();
-            if(!this.suppressChatBubble) this.sayChatBubble();
+            if(!this.suppressChatMessage && (this._message || this._audioFile)) this.sayChatMessage();
+            if(!this.suppressChatBubble && (this._message || this._audioFile)) this.sayChatBubble();
             if(this._say.hasLimit || this._say.hasSequence) await this._incrementCount();
+            if(this.macro) this.playMacro();
             return true
         } else {
             return console.log('Say cancelled');

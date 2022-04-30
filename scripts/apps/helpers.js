@@ -79,8 +79,8 @@ export function chatMessageToWorkflowData(message){
         if(f.type === 4) return parsed({documentType: 'damage', itemId: f.itemId});    
     } else if(f = message.flags['pf2e']) {
         if(f.context?.type === 'skill-check') return parsed({documentType: 'skill', documentName: f.modifierName.substring(f.modifierName.lastIndexOf(':')+2)});
-        if(['attack-roll','spell-attack-roll'].includes(f.context?.type)) return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''});
-        if(f.damageRoll) return  parsed({documentType: 'damage',  itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : ''})
+        if(['attack-roll','spell-attack-roll'].includes(f.context?.type)) return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : '', isFumble: f.context?.outcome === "criticalFailure" ? true : false});
+        if(f.damageRoll) return  parsed({documentType: 'damage',  itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : '', isCritical: f.damageRoll?.outcome === "criticalSuccess" ? true : false})
         if(f.origin?.uuid) return  parsed({documentType: 'flavor', itemId: f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)});
     } else if(f = message.flags['pf1']) {
         if(f.subject?.skill) return parsed({documentType: 'skill', documentName: f.subject.skill});
@@ -108,7 +108,9 @@ export function midiToWorkflowData(midiWorkflow, rollType){
         return {
             documentType: rollType, 
             itemId: midiWorkflow.itemId, 
-            speaker: midiWorkflow.speaker
+            speaker: midiWorkflow.speaker,
+            isCritical: midiWorkflow.isCritical,
+            isFumble: midiWorkflow.isFumble
         }
     }
 }
