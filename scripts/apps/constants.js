@@ -1,5 +1,5 @@
 import {says} from './says.js';
-import {tokenSaysHasPolyglot} from '../index.js';
+import {tokenSaysHasPolyglot, tokenSaysHasMQ} from '../index.js';
 
 export const FILETYPEENTITYTYPE = {
     rollTable: "RollTable",
@@ -14,7 +14,7 @@ export const SEPARATOROPTIONS = {
     ",": ", (comma)"
 }
   
-export const UNIVERSALDOCUMENTTYPEOPS = {
+const UNIVERSALDOCUMENTTYPEOPS = {
     "effectAdd": "TOKENSAYS.document-type-options.effectAdd.label",
     "effectDelete": "TOKENSAYS.document-type-options.effectDelete.label",
     "initiative":  "TOKENSAYS.document-type-options.initiative.label",
@@ -29,6 +29,61 @@ export const UNIVERSALDOCUMENTTYPEOPS = {
     "turn": "TOKENSAYS.document-type-options.turn.label"
 }
 
+const DND5EDOCUMENTTYPEOPS  = {
+    "ability":  "TOKENSAYS.document-type-options.ability.label",
+    "attack":  "TOKENSAYS.document-type-options.attack.label",
+    "damage":  "TOKENSAYS.document-type-options.damage.label",
+    "save": "TOKENSAYS.document-type-options.save.label",
+    "skill":  "TOKENSAYS.document-type-options.skill.label"
+}
+
+const PF1DOCUMENTTYPEOPS  = {
+    "ability":  "TOKENSAYS.document-type-options.ability.label",
+    "attack":  "TOKENSAYS.document-type-options.attack.label",
+    //"damage":  "TOKENSAYS.document-type-options.damage.label",
+    "save": "TOKENSAYS.document-type-options.save.label",
+    "skill":  "TOKENSAYS.document-type-options.skill.label"
+}
+
+const PF2EDOCUMENTTYPEOPS  = {
+    "attack":  "TOKENSAYS.document-type-options.attack.label",
+    "critical":  "TOKENSAYS.document-type-options.critical.label",
+    "damage":  "TOKENSAYS.document-type-options.damage.label",
+    "skill":  "TOKENSAYS.document-type-options.skill.label",
+    "fumble":  "TOKENSAYS.document-type-options.fumble.label"
+}
+
+const MIDIQOLTYPEOPS = {
+    "critical":  "TOKENSAYS.document-type-options.critical.label",
+    "fumble":  "TOKENSAYS.document-type-options.fumble.label"
+}
+
+export const GAMETYPEOPS = {};
+
+export function _determineWorldOptions(){
+    const temp = {};
+    Object.assign(temp, UNIVERSALDOCUMENTTYPEOPS);
+    switch(game.world.data.system){
+        case "dnd5e": 
+            Object.assign(temp, DND5EDOCUMENTTYPEOPS); 
+            if(tokenSaysHasMQ) Object.assign(temp, MIDIQOLTYPEOPS);
+        break;
+        case "pf2e":
+           Object.assign(temp, PF2EDOCUMENTTYPEOPS)
+           break;
+        case "pf1":
+            Object.assign(temp, PF1DOCUMENTTYPEOPS)
+            break;
+    }
+    Object.assign(GAMETYPEOPS, 
+        Object.entries(temp)
+            .sort(([,a],[,b]) => game.i18n.localize(a).localeCompare(game.i18n.localize(b)))
+            .reduce((r, [k, v]) => ({ ...r, [k]: v }), {})
+        );
+    Object.freeze(GAMETYPEOPS)
+};
+
+
 export const BYPASSNAMETYPES = ['initiative', 'turn'];
 
 export function getUniversalDocumentNameOps(documentType) {
@@ -39,14 +94,6 @@ export function getUniversalDocumentNameOps(documentType) {
             return false
     }
 };
-
-export const DND5EDOCUMENTTYPEOPS  = {
-    "ability":  "TOKENSAYS.document-type-options.ability.label",
-    "attack":  "TOKENSAYS.document-type-options.attack.label",
-    "damage":  "TOKENSAYS.document-type-options.damage.label",
-    "save": "TOKENSAYS.document-type-options.save.label",
-    "skill":  "TOKENSAYS.document-type-options.skill.label"
-}
 
 export function getWorldDocumentNameOptions(documentType) {
     switch(game.world.data.system){
@@ -73,14 +120,6 @@ export function getPolyglotLanguages() {
     return  tokenSaysHasPolyglot ? game.polyglot?.languages : false
 }
 
-export const PF1DOCUMENTTYPEOPS  = {
-    "ability":  "TOKENSAYS.document-type-options.ability.label",
-    "attack":  "TOKENSAYS.document-type-options.attack.label",
-    //"damage":  "TOKENSAYS.document-type-options.damage.label",
-    "save": "TOKENSAYS.document-type-options.save.label",
-    "skill":  "TOKENSAYS.document-type-options.skill.label"
-}
-
 export function getPF1DocumentNameOps(documentType){
     switch (documentType) {
         case "ability": 
@@ -92,12 +131,6 @@ export function getPF1DocumentNameOps(documentType){
         default:
             return getUniversalDocumentNameOps(documentType)
         }
-}
-
-export const PF2EDOCUMENTTYPEOPS  = {
-    "attack":  "TOKENSAYS.document-type-options.attack.label",
-    "damage":  "TOKENSAYS.document-type-options.damage.label",
-    "skill":  "TOKENSAYS.document-type-options.skill.label"
 }
 
 export const P52EDOCUMENTNAMEOPS  = {
@@ -124,10 +157,17 @@ export const SUPPRESSOPTIONS = {
     'X': 'TOKENSAYS.setting.suppressOptions.all'
 };
 
+export function determineMacroList() {
+    let list = {};
+    for (let macro of game.macros.contents.sort((a, b) => { return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0)})) {
+      list[macro.id] = macro.name;
+    }
+    return list;
+  }  
+
 export function getCompendiumOps(fileType){
     return game.packs.filter((x) => x.documentName == FILETYPEENTITYTYPE[fileType]).reduce((obj, p) => {obj['']=''; obj[p.collection] = p.title; return obj;}, {})
 }
-
   
 export const DOCUMENTNAMELABELS = {
     "":"TOKENSAYS.document-type-label.action",
@@ -147,7 +187,9 @@ export const DOCUMENTNAMELABELS = {
     "prompt-alt": "TOKENSAYS.document-type-label.scene",
     "reacts": "TOKENSAYS.document-type-label.action",
     "say": "TOKENSAYS.document-type-label.saying",
-    "turn": "TOKENSAYS.document-type-label.action"
+    "turn": "TOKENSAYS.document-type-label.action",
+    "critical":  "TOKENSAYS.document-type-label.item",
+    "fumble":  "TOKENSAYS.document-type-label.item"
 }
 
 export const PLAYTYPE = {
