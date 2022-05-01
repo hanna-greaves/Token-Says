@@ -25,7 +25,12 @@ The Token Says feature uses a set of Token Says sayings that you create for your
 * Sayings can be specific to a certain action (e.g. token performs an attack roll with a warhammer) or generic (e.g. token performs an ability check).
 * Sayings can be any text or sound - it doesn't have to be actual talking. Explosions on attack or footsteps on movement are valid uses.
 * Likelihood can be set so that the token doesn't always say something. For example, with a likelihood of 10 set for a token's initiative check, they will only say something on 10% of their initiative sayings.
-
+* If multiple sayings qualify for a given token and action type combination, only one will generate. Priority is given in the following order (top being highest priority):
+   * Critical hit has priority over damage action type
+   * Critical miss/fumble has priority over attack action type
+   * Sayings with an action name have priority over those that do not
+   * Sayings that specify a specific token by name have priority over those where token qualifies by not having the specified name
+   * Sayings with a specified language have priority over those that have no language specified (required Polyglot module)
 
 ## Token Says Sayings
 
@@ -92,6 +97,8 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Only While Moving:** This toggle is available for the Action Type of Token Movement Start for audio sayings. The sound will play from the time when the token begins movement up to the time when the token stops movement. Useful for things like audible footsteps.
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
 * **Limit:** Specify a number above 0. Token Says will count each time a token says this saying. Once that count meets this specified limit, that token will no longer say this saying. Counts towards limits live on each token on a scene and can be reset from within that token's token configuration form.
+* **Macro:** select a macro within the world to run when the saying triggers
+  * If 'Advanced Macros' module is installed, an `args` object is passed in to the macro which includes data on saying, token, actor and scene.
 * **Responds To:** this section is made visible if the 'Responds to' Action Name is selected
   * **Action Type:** the type of action that this saying responds to. Has the same set of options as the 'Action Type' within this saying's 'Provoking action' section, accept 'Responds to' is not an option while 'Saying' is. 
   * **Action Name:** similar to 'Action Name' in the 'Provoking Action' section, but for the action this saying is responding to.
