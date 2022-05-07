@@ -46,12 +46,20 @@ const PF1DOCUMENTTYPEOPS  = {
 }
 
 const PF2EDOCUMENTTYPEOPS  = {
+    "ability":  "TOKENSAYS.document-type-options.ability.label",
     "attack":  "TOKENSAYS.document-type-options.attack.label",
     "critical":  "TOKENSAYS.document-type-options.critical.label",
     "damage":  "TOKENSAYS.document-type-options.damage.label",
     "skill":  "TOKENSAYS.document-type-options.skill.label",
-    "fumble":  "TOKENSAYS.document-type-options.fumble.label"
+    "fumble":  "TOKENSAYS.document-type-options.fumble.label",
+    "save": "TOKENSAYS.document-type-options.save.label",
+    "skill-crit":  "TOKENSAYS.document-type-options.skill-crit.label",
+    "skill-fumble":  "TOKENSAYS.document-type-options.skill-fumble.label"
 }
+
+export const PF2ESKILLOPS = {};
+export const PF2ESAVEOPS = {};
+export const PF2EABILITYOPS = {};
 
 const MIDIQOLTYPEOPS = {
     "critical":  "TOKENSAYS.document-type-options.critical.label",
@@ -70,6 +78,9 @@ export function _determineWorldOptions(){
         break;
         case "pf2e":
            Object.assign(temp, PF2EDOCUMENTTYPEOPS)
+           Object.assign(PF2ESKILLOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(k=> [`data.data.skills.${k[0]}`,game.i18n.localize(k[1])])));
+           Object.assign(PF2ESAVEOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(k=> [k[0],game.i18n.localize(k[1])])));
+           Object.assign(PF2EABILITYOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(k=> [k[0],game.i18n.localize(k[1])])));
            break;
         case "pf1":
             Object.assign(temp, PF1DOCUMENTTYPEOPS)
@@ -99,6 +110,7 @@ export function getWorldDocumentNameOptions(documentType) {
     switch(game.world.data.system){
       case "dnd5e": return getDnd5eDocumentNameOps(documentType)
       case "pf1":  return getPF1DocumentNameOps(documentType)
+      case "pf2e":  return getPF2EDocumentNameOps(documentType)
       default: return getUniversalDocumentNameOps(documentType)
     }
 }
@@ -133,15 +145,19 @@ export function getPF1DocumentNameOps(documentType){
         }
 }
 
-export const P52EDOCUMENTNAMEOPS  = {
-    "ability":  {
-        'Strength Check': 'Strength Check', 
-        'Dexterity Check': 'Dexterity Check', 
-        'Constitution Check': 'Constitution Check', 
-        'Intelligence Check': 'Intelligence Check', 
-        'Wisdom Check': 'Wisdom Check', 
-        'Charisma Check': 'Charisma Check'
-    }
+export function getPF2EDocumentNameOps(documentType){
+    switch (documentType) {
+        case "ability": 
+        return Object.fromEntries(Object.entries(PF2EABILITYOPS).map(k=> [k[1],k[1]]))
+        case "save":
+            return Object.fromEntries(Object.entries(PF2ESAVEOPS).map(k=> [k[1],k[1]]))
+        case "skill":
+        case "skill-crit":
+        case "skill-fumble":
+            return Object.fromEntries(Object.entries(PF2ESKILLOPS).map(k=> [k[1],k[1]]))
+        default:
+            return getUniversalDocumentNameOps(documentType)
+        }
 }
 
 export const TOKENFORMICONDISPLAYOPTIONS = {
@@ -177,6 +193,8 @@ export const DOCUMENTNAMELABELS = {
     "initiative": "TOKENSAYS.document-type-label.action",
     "save": "TOKENSAYS.document-type-label.ability",
     "skill":  "TOKENSAYS.document-type-label.skill",
+    "skill-crit":  "TOKENSAYS.document-type-label.skill",
+    "skill-fumble":  "TOKENSAYS.document-type-label.skill",
     "effectAdd": "TOKENSAYS.document-type-label.effect",
     "effectDelete": "TOKENSAYS.document-type-label.effect",
     "flavor":  "TOKENSAYS.document-type-label.item",
