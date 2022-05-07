@@ -1,4 +1,5 @@
 import {tokenSays} from '../token-says.js';
+import {PF2ESKILLOPS, PF2ESAVEOPS, PF2EABILITYOPS} from './constants.js';
 
 export function outOfRangNum(inNumber, min, max, returnIfOut){
     if(inNumber === null || isNaN(inNumber) || inNumber < min || inNumber > max) {return returnIfOut} else {return inNumber}
@@ -78,10 +79,15 @@ export function chatMessageToWorkflowData(message){
         if(f.type === 3) return parsed({documentType: 'attack', itemId: f.itemId});         
         if(f.type === 4) return parsed({documentType: 'damage', itemId: f.itemId});    
     } else if(f = message.flags['pf2e']) {
-        if(f.context?.type === 'skill-check') return parsed({documentType: 'skill', documentName: f.modifierName.substring(f.modifierName.lastIndexOf(':')+2)});
+        if(f.context?.type === 'skill-check') {
+            let pf2esksel = f.context?.notes?.find(n => n.selector && PF2ESKILLOPS[n.selector])?.selector;
+            return parsed({documentType: 'skill', documentName: pf2esksel ? PF2ESKILLOPS[pf2esksel] : f.modifierName.substring(f.modifierName.lastIndexOf(':')+2), isFumble: f.context?.outcome === "criticalFailure" ? true : false, isCritical: f.context?.outcome === "criticalSuccess" ? true : false});
+        }
+        if(f.context?.type === 'saving-throw') return parsed({documentType: 'save', documentName: Object.values(PF2ESAVEOPS).find(s => f.modifierName?.includes(s))});
         if(['attack-roll','spell-attack-roll'].includes(f.context?.type)) return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : '', isFumble: f.context?.outcome === "criticalFailure" ? true : false});
         if(f.damageRoll) return  parsed({documentType: 'damage',  itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : '', isCritical: f.damageRoll?.outcome === "criticalSuccess" ? true : false})
         if(f.origin?.uuid) return  parsed({documentType: 'flavor', itemId: f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)});
+        if(f.context?.type === "" && Object.values(PF2EABILITYOPS).find(s => message.flavor?.includes(s))) return parsed({documentType: 'ability', documentName: Object.values(PF2EABILITYOPS).find(s => message.flavor?.includes(s))});
     } else if(f = message.flags['pf1']) {
         if(f.subject?.skill) return parsed({documentType: 'skill', documentName: f.subject.skill});
         if(f.subject?.ability) return parsed({documentType: 'ability', documentName: f.subject.ability});

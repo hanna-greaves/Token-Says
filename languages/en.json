@@ -47,6 +47,8 @@
       "save.label": "Saving Throw",
       "say.label": "Saying",
       "skill.label": "Skill",
+      "skill-crit.label": "Skill - Critical Success",
+      "skill-fumble.label": "Skill - Critical Failure",
       "turn.label": "Turn in Combat"
     },
     "play-type": {

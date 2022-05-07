@@ -54,8 +54,8 @@ export const WORKFLOWSTATES = {
         return this.says.sort((a,b) => a.lang ? (b.lang ? a.lang.localeCompare(b.lang) : -1) : 1)
         .sort((a,b) => !a.reverse ? (!b.reverse ? 0 : -1) : 1)
         .sort((a,b) => a.documentName ? (b.documentName ? a.documentName.localeCompare(b.documentName) : -1) : 1)
-        .sort((a,b) => a.documentType==='fumble' ? (b.documentType==='fumble' ? 0 : -1) : 1) 
-        .sort((a,b) => a.documentType==='critical' ? (b.documentType==='critical' ? 0 : -1) : 1)                                          
+        .sort((a,b) => ['fumble','skill-fumble'].includes(a.documentType) ? (['fumble','skill-fumble'].includes(b.documentType) ? 0 : -1) : 1) 
+        .sort((a,b) => ['critical','skill-crit'].includes(a.documentType) ? (['critical','skill-crit'].includes(b.documentType) ? 0 : -1) : 1)                                          
     }
 
     get scene() {
@@ -112,6 +112,8 @@ export const WORKFLOWSTATES = {
                     this.says = says.findSays(this.alias, this.actor?.name, this.documentType, this.documentName)
                     if(this.documentType === 'damage' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'critical', this.documentName))
                     if(this.documentType === 'attack' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'fumble', this.documentName))
+                    if(this.documentType === 'skill' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'skill-crit', this.documentName))
+                    if(this.documentType === 'skill' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'skill-fumble', this.documentName))
                 }
                 return this.next(WORKFLOWSTATES.SAY);
             case WORKFLOWSTATES.SAY: 

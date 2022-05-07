@@ -2,7 +2,6 @@ import {BYPASSNAMETYPES, determineMacroList, DOCUMENTNAMELABELS, GAMETYPEOPS, ge
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
-import { tokenSaysHasMQ } from '../index.js';
 /**
  * form extension supporting the form used to add or update an individual rules
 */
