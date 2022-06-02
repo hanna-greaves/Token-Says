@@ -62,7 +62,7 @@ export class say {
     }
 
     get audioIsSequential(){
-        return ["S","L"].includes(this.audioPlay) 
+        return ["S","L"].includes(this.audioPlay) && !this.audioFileTitle
     }
 
     get chatCompendiumName(){
@@ -90,7 +90,7 @@ export class say {
     }
 
     get chatIsSequential(){
-        return ["S","L"].includes(this.chatPlay) 
+        return ["S","L"].includes(this.chatPlay) && !this.chatFileTitle
     }
 
     get _audioCompendium() {
