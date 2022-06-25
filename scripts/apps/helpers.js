@@ -7,7 +7,7 @@ export function outOfRangNum(inNumber, min, max, returnIfOut){
 
 export function activeEffectToWorkflowData(document, isDelete = false){
     return {
-        documentName: document.data.label,
+        documentName: document.label,
         documentType: isDelete ? "effectDelete" : "effectAdd",
         speaker: {
             scene: document.parent.token ? document.parent.token.parent.id : canvas.scene.id, 
@@ -46,11 +46,11 @@ export function getDistance(start, end, gridSpaces = true){
 }
 
 export function inDistance(provokingToken, respondingToken, distance){
-    return (getDistance(provokingToken.data, respondingToken.data) <= distance) ? true : false
+    return (getDistance(provokingToken, respondingToken) <= distance) ? true : false
 }
 
 export function inView(provokingToken, respondingToken){
-    return (canvas.walls?.checkCollision(_ray(provokingToken.data, respondingToken.data)) || !respondingToken.hasSight) ? false : true
+    return (canvas.walls?.checkCollision(_ray(provokingToken, respondingToken)) || !respondingToken.hasSight) ? false : true
 }
 
 export function chatMessageToWorkflowData(message){

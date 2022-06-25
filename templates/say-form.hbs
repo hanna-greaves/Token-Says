@@ -132,8 +132,8 @@
             </label>
             <div class="form-fields">
                 <select name="{{#if isAudio}}paired.{{/if}}play" value="say.{{#if isAudio}}paired.{{/if}}play">  
-                    {{#unless isAudio}}{{selectOptions playOptions selected=say.play localize=true}}{{/unless}}
-                    {{#if isAudio}}{{selectOptions playOptions selected=say.paired.play localize=true}}{{/if}}
+                    {{#unless isAudio}}{{selectOptions rollTablePlayOptions selected=say.play localize=true}}{{/unless}}
+                    {{#if isAudio}}{{selectOptions rollTablePlayOptions selected=say.paired.play localize=true}}{{/if}}
                 </select>
             </div>
         </div>
@@ -315,6 +315,15 @@
                 <input type="number" name="delay" value="{{say.delay}}" min="0" step="1" placeholder="{{localize 'TOKENSAYS.ms'}}"/>
             </div>
         </div>
+        <div class="form-group">
+            <label>
+                <span>{{localize 'TOKENSAYS.setting.say.condition.label'}}</span>
+                <span class="toolt" title="{{localize 'TOKENSAYS.separator'}} {{localize 'TOKENSAYS.setting.say.condition.description'}}"><i class="fas fa-info-circle"></i></span>
+            </label>
+            <div class="form-fields">
+                <input type="text" name="condition" value="{{say.condition}}" />
+            </div>
+        </div>  
         <div class="form-group">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.likelihood.label'}}</span>

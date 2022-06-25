@@ -157,9 +157,9 @@ export const WORKFLOWSTATES = {
                 if(i !== -1){conditions.splice(i,1)}
             }
             if(conditions.length && token.actor.effects.find(
-                    e => !e.data.disabled && (
-                        conditions.includes(e.data.label) 
-                        || (game.world.data.system === 'pf1' && e.data.flags?.core?.statusId && conditions.includes(game.pf1.config.conditions[e.data.flags.core.statusId]))
+                    e => !e.disabled && (
+                        conditions.includes(e.label) 
+                        || (game.world.system === 'pf1' && e.flags?.core?.statusId && conditions.includes(game.pf1.config.conditions[e.flags.core.statusId]))
                         )
                     )
                 ) return true
@@ -186,7 +186,7 @@ export const WORKFLOWSTATES = {
                 if(this.conditionEscape(token, false)) continue
                 if(rsp.to.requireVision && canvas.grid && canvas.dimensions && !inView(this.documentType === 'move' ? {data: this.diff.start} : this.token, token)) continue
                 if(rsp.to.distance && canvas.grid && canvas.dimensions && !inDistance(this.documentType === 'move' ? {data: this.diff.start} : this.token, token, rsp.to.distance)) continue
-                workflow.go(this.user, {say: rsp, speaker: {scene: this.scene.id, actor: token.data.actorId, token: token.id, alias: token.name}, responseOptions: {diff: this.diff, token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}});
+                workflow.go(this.user, {say: rsp, speaker: {scene: this.scene.id, actor: token.actor.id, token: token.id, alias: token.name}, responseOptions: {diff: this.diff, token: this.token, actor: this.actor, speaker: this.speaker, item: this.documentName}});
             }
         }
     }

@@ -71,14 +71,14 @@ export const GAMETYPEOPS = {};
 export function _determineWorldOptions(){
     const temp = {};
     Object.assign(temp, UNIVERSALDOCUMENTTYPEOPS);
-    switch(game.world.data.system){
+    switch(game.world.system){
         case "dnd5e": 
             Object.assign(temp, DND5EDOCUMENTTYPEOPS); 
             if(tokenSaysHasMQ) Object.assign(temp, MIDIQOLTYPEOPS);
         break;
         case "pf2e":
            Object.assign(temp, PF2EDOCUMENTTYPEOPS)
-           Object.assign(PF2ESKILLOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(k=> [`data.data.skills.${k[0]}`,game.i18n.localize(k[1])])));
+           Object.assign(PF2ESKILLOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(k=> [`system.skills.${k[0]}`,game.i18n.localize(k[1])])));
            Object.assign(PF2ESAVEOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(k=> [k[0],game.i18n.localize(k[1])])));
            Object.assign(PF2EABILITYOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(k=> [k[0],game.i18n.localize(k[1])])));
            break;
@@ -107,7 +107,7 @@ export function getUniversalDocumentNameOps(documentType) {
 };
 
 export function getWorldDocumentNameOptions(documentType) {
-    switch(game.world.data.system){
+    switch(game.world.system){
       case "dnd5e": return getDnd5eDocumentNameOps(documentType)
       case "pf1":  return getPF1DocumentNameOps(documentType)
       case "pf2e":  return getPF2EDocumentNameOps(documentType)
@@ -212,6 +212,13 @@ export const DOCUMENTNAMELABELS = {
 
 export const PLAYTYPE = {
     "": "TOKENSAYS.play-type.random",
+    "S": "TOKENSAYS.play-type.sequential-end",
+    "L": "TOKENSAYS.play-type.sequential-loop"
+}
+
+export const PLAYTYPEROLLTABLE = {
+    "": "TOKENSAYS.play-type.random",
+    "D": "TOKENSAYS.play-type.draw",
     "S": "TOKENSAYS.play-type.sequential-end",
     "L": "TOKENSAYS.play-type.sequential-loop"
 }
