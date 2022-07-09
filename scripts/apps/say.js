@@ -375,13 +375,13 @@ export class tokenSay {
     async _incrementAudioPlayCount(){
         const inc = this.countAudioPlay + 1;
         const cnt = ((this._say.audioPlay === 'L' && this.playlist.sounds.size <= inc) ? 0 : inc)
-        await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.AUDIOPLAYCOUNT}.${this._say.id}`, cnt)
+        await this._setTokenFlag(tokenSays.FLAGS.AUDIOPLAYCOUNT, cnt);
     }
 
     async _incrementChatPlayCount(){
         const inc = this.countChatPlay + 1;
         const cnt = ((this._say.chatPlay === 'L' && this.table.results.size <= inc) ? 0 : inc)
-        await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.CHATPLAYCOUNT}.${this._say.id}`, cnt)
+        await this._setTokenFlag(tokenSays.FLAGS.CHATPLAYCOUNT, cnt);
     }
 
     async _incrementCount(){
@@ -391,7 +391,7 @@ export class tokenSay {
     }
 
     async _incrementLimitCount(){
-        await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.LIMITCOUNT}.${this._say.id}`, this.countToLimit + 1)
+        await this._setTokenFlag(tokenSays.FLAGS.LIMITCOUNT, this.countToLimit + 1);
     }
 
     _parameterizeMessage(){
@@ -417,6 +417,14 @@ export class tokenSay {
     async _setSound(){
         if(!this.suppressAudio){
             if(!this._audioFile) this._say.audioIsSequential ? await this._nextSound() : await this._rollSound();   
+        }
+    }
+
+    async _setTokenFlag(flag, amt){
+        if(game.user.isGM) {
+            await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${flag}.${this._say.id}`, amt)
+        } else {
+            await game.socket.emit('module.token-says', {tokenUpdate: {scene: this.scene.id, tokenId: this.token.id, sayId: this._say.id, flag: flag, amt:amt}});
         }
     }
 
