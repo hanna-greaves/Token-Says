@@ -279,6 +279,9 @@ Hooks.once('init', async function() {
             AudioHelper.preloadSound(inSays.load);
             return
         }
+        if(inSays.tokenUpdate){
+            await this.scene.tokens.get(inSays.tokenUpdate.tokenId).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${inSays.tokenUpdate.flag}.${inSays.tokenUpdate.sayId}`, inSays.tokenUpdate.amt)
+        }
         let saysToken = canvas.tokens.get(inSays.token);
         tokenSays.log(false,'Socket Call... ', {inSays: inSays, foundToken: saysToken});
         await canvas.hud.bubbles.say(saysToken, inSays.says, inSays.emote);
