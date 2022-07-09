@@ -280,7 +280,9 @@ Hooks.once('init', async function() {
             return
         }
         if(inSays.tokenUpdate){
-            await this.scene.tokens.get(inSays.tokenUpdate.tokenId).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${inSays.tokenUpdate.flag}.${inSays.tokenUpdate.sayId}`, inSays.tokenUpdate.amt)
+            tokenSays.log(false,'Socket Call... ', {tokenUpdate: inSays.tokenUpdate});
+            await game.scenes.get(inSays.tokenUpdate.scene).tokens.get(inSays.tokenUpdate.tokenId).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${inSays.tokenUpdate.flag}.${inSays.tokenUpdate.sayId}`, inSays.tokenUpdate.amt)
+            return
         }
         let saysToken = canvas.tokens.get(inSays.token);
         tokenSays.log(false,'Socket Call... ', {inSays: inSays, foundToken: saysToken});

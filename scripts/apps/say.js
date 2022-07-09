@@ -404,7 +404,7 @@ export class tokenSay {
         if(game.user.isGM) {
             await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${flag}.${this._say.id}`, amt)
         } else {
-            await game.socket.emit('module.token-says', {tokenUpdate: {tokenId: this.token.id, sayId: this._say.id, flag: flag, amt:amt}});
+            await game.socket.emit('module.token-says', {tokenUpdate: {scene: this.scene.id, tokenId: this.token.id, sayId: this._say.id, flag: flag, amt:amt}});
         }
     }
 
