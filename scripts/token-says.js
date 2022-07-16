@@ -84,7 +84,7 @@ export class tokenSays {
       if (canvas.ready) {
         const layer = canvas.activeLayer;
         if ((layer instanceof TokenLayer)) {
-          const token = layer.placeables.find(t => t._hover);
+          const token = layer.hover;
           if(token) tokenSays.prompt(token, context.isShift)
         }
       }

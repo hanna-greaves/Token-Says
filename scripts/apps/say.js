@@ -234,7 +234,7 @@ export class tokenSay {
 
     get countAudioPlay(){
         if (this._say.hasAudioSequence){
-            let cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
+            let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
             if(this._say.audioPlay === 'L' && this.playlist && this.playlist.sounds.size <= cnt) cnt = 0;
             return cnt ? cnt : 0;
         }
@@ -243,7 +243,7 @@ export class tokenSay {
 
     get countChatPlay(){
         if (this._say.hasChatSequence){
-            let cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.CHATPLAYCOUNT]?.[this._say.id];
+            let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.CHATPLAYCOUNT]?.[this._say.id];
             if(this._say.chatPlay === 'L' && this.table && this.table.results.size <= cnt) cnt = 0;
             return cnt ? cnt : 0;
         }
@@ -252,7 +252,7 @@ export class tokenSay {
 
     get countToLimit(){
         if (this._say.hasLimit){
-            const cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
+            const cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
             return cnt ? cnt : 0;
         }
         return 0
@@ -273,7 +273,7 @@ export class tokenSay {
     get img(){
         if(!game.settings.get(tokenSays.ID, 'suppressImage')){
             if(this.isActorName && this.actor?.img) return this.actor.img
-            if(this.token?.data?.texture?.src) return this.token.data.texture.src
+            if(this.token?.texture?.src) return this.token.texture.src
         } 
         return ''
     }
@@ -458,7 +458,7 @@ export class tokenSay {
         this.table = await this._say.rollableTable()
         if(this.table) {
             if(this.table.results.size <= this.countChatPlay) return console.log(`Saying count of ${this.countChatPlay} exceeds rolltable entry count.`)
-            this._message = this.table.results.contents[this.countChatPlay].data.text;
+            this._message = this.table.results.contents[this.countChatPlay].text;
         }
     }
 
@@ -479,7 +479,7 @@ export class tokenSay {
             } else {
                 rolledResult = await this.table.roll();
             }
-            this._message = rolledResult?.results[0]?.data?.text
+            this._message = rolledResult?.results[0]?.text
         }
     }
 
