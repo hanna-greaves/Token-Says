@@ -28,6 +28,7 @@ export class say {
     constructor(fileType = 'rollTable') {
         this.cap = false,
         this.compendiumName = '',
+        this.condition = '',
         this.delay = 0,
         this.documentName = '',
         this.documentType = '',
@@ -105,6 +106,10 @@ export class say {
 
     get chatPlay(){
         return !this.isAudio ? this.play : this.paired.play
+    }
+
+    get conditionActivationList() {
+        return parseSeparator(this.condition)
     }
 
     get documentNameList() {
@@ -187,10 +192,10 @@ export class say {
         const playlist = await this.playlist();
         if(!playlist) return {}
         if(!this.audioFileTitle){
-            const roll = await new Roll(`1d`+ playlist.data.sounds.size).roll();
+            const roll = await new Roll(`1d`+ playlist.sounds.size).roll();
             const rolledResult = roll.result;
             let i = 1; 
-            for (let key of playlist.data.sounds) {
+            for (let key of playlist.sounds) {
                 if (i++ == rolledResult) return key?.path;  
             }
         } else {
@@ -229,8 +234,8 @@ export class tokenSay {
 
     get countAudioPlay(){
         if (this._say.hasAudioSequence){
-            let cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
-            if(this._say.audioPlay === 'L' && this.playlist && this.playlist.data.sounds.size <= cnt) cnt = 0;
+            let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
+            if(this._say.audioPlay === 'L' && this.playlist && this.playlist.sounds.size <= cnt) cnt = 0;
             return cnt ? cnt : 0;
         }
         return 0
@@ -238,7 +243,7 @@ export class tokenSay {
 
     get countChatPlay(){
         if (this._say.hasChatSequence){
-            let cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.CHATPLAYCOUNT]?.[this._say.id];
+            let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.CHATPLAYCOUNT]?.[this._say.id];
             if(this._say.chatPlay === 'L' && this.table && this.table.results.size <= cnt) cnt = 0;
             return cnt ? cnt : 0;
         }
@@ -247,7 +252,7 @@ export class tokenSay {
 
     get countToLimit(){
         if (this._say.hasLimit){
-            const cnt = this.token.data.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
+            const cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
             return cnt ? cnt : 0;
         }
         return 0
@@ -267,14 +272,18 @@ export class tokenSay {
 
     get img(){
         if(!game.settings.get(tokenSays.ID, 'suppressImage')){
-            if(this.isActorName && this.actor?.data.img) return this.actor.data.img
-            if(this.token?.data.img) return this.token.data.img
+            if(this.isActorName && this.actor?.img) return this.actor.img
+            if(this.token?.texture?.src) return this.token.texture.src
         } 
         return ''
     }
 
     get hasAudio(){
         return this._say.hasAudio
+    }
+
+    get hasConditionActivation(){
+        return this._say.condition ? true : false
     }
 
     get hasChat(){
@@ -302,7 +311,7 @@ export class tokenSay {
     }
 
     get movementTime(){
-        return (getDistance(this.diff.start, this.diff.end, false)/this.scene.data.grid) * 100
+        return (getDistance(this.diff.start, this.diff.end, false)/this.scene.grid.size) * 165
     }
 
     get quotes(){
@@ -337,7 +346,7 @@ export class tokenSay {
     }
 
     get valid(){
-        return (!this.active || (this.lang && !this.speaksLang(this.token)) || this.atLimit()) ? false : true
+        return (!this.active || (this.lang && !this.speaksLang(this.token)) || this.atLimit() || !this.conditionActivation(this.token)) ? false : true
     }
 
     atLimit(){
@@ -348,13 +357,25 @@ export class tokenSay {
         return false
     }
 
+    conditionActivation(token){
+        if(!this.hasConditionActivation) return true 
+        if(token.actor?.effects && token.actor.effects.find(
+                e => !e.disabled && (
+                    this._say.conditionActivationList.includes(e.label) 
+                    || (game.world.system === 'pf1' && e.flags?.core?.statusId && this._say.conditionActivationList.includes(game.pf1.config.conditions[e.flags.core.statusId]))
+                    )
+                )) return true
+        return false
+    }
+
     _imageFormat(){
         return this.img ? `<img src="${this.img}" alt="${this.speaker.alias}">` : ''
     }
 
     async _incrementAudioPlayCount(){
         const inc = this.countAudioPlay + 1;
-        const cnt = ((this._say.audioPlay === 'L' && this.playlist.data.sounds.size <= inc) ? 0 : inc)
+        const cnt = ((this._say.audioPlay === 'L' && this.playlist.sounds.size <= inc) ? 0 : inc)
+
         await this._setTokenFlag(tokenSays.FLAGS.AUDIOPLAYCOUNT, cnt);
     }
 
@@ -422,9 +443,9 @@ export class tokenSay {
     async _nextSound(){
         this.playlist = await this._say.playlist();
         if(this.playlist){
-            if(this.playlist.data.sounds.size <= this.countAudioPlay) return console.log(`Saying count of ${this.countAudioPlay} exceeds playlist size.`)
+            if(this.playlist.sounds.size <= this.countAudioPlay) return console.log(`Saying count of ${this.countAudioPlay} exceeds playlist size.`)
             let i = 0; 
-            for (const key of this.playlist.data.sounds) {
+            for (const key of this.playlist.sounds) {
                 if (i === this.countAudioPlay) {
                     this._audioFile = key?.path;
                     return
@@ -438,7 +459,7 @@ export class tokenSay {
         this.table = await this._say.rollableTable()
         if(this.table) {
             if(this.table.results.size <= this.countChatPlay) return console.log(`Saying count of ${this.countChatPlay} exceeds rolltable entry count.`)
-            this._message = this.table.results.contents[this.countChatPlay].data.text;
+            this._message = this.table.results.contents[this.countChatPlay].text;
         }
     }
 
@@ -449,8 +470,17 @@ export class tokenSay {
     async _rollMessage(){
         this.table = await this._say.rollableTable()
         if(this.table) {
-            const rolledResult = await this.table.roll(); 
-            this._message = rolledResult.results[0].data.text
+            let rolledResult;
+            if(this._say.play === 'D'){
+                if(this.table.results?.find(r => !r.drawn)) {
+                    rolledResult = await this.table.draw({displayChat: false})
+                } else {
+                    console.log(`Rollable table ${this.table.name} has all results drawn.`);
+                }
+            } else {
+                rolledResult = await this.table.roll();
+            }
+            this._message = rolledResult?.results[0]?.text
         }
     }
 
@@ -527,7 +557,7 @@ export class tokenSay {
     }
 
     speaksLang(){
-        return (!tokenSaysHasPolyglot || (this.token?.actor && this.token.actor.data.data.traits.languages.value.includes(this.lang))) ? true : false
+        return (!tokenSaysHasPolyglot || (this.token?.actor && this.token.actor.system.traits.languages.value.includes(this.lang))) ? true : false
     }
 
 }

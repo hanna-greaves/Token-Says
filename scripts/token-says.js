@@ -59,7 +59,7 @@ export class tokenSays {
      * @param {object} message 
      */
     static _insertHTMLToPolyglotMessage(chatMessage, html, message) {
-        let img = chatMessage.data.flags.TOKENSAYS.img;
+        let img = chatMessage.flags.TOKENSAYS.img;
         if(img){
             let content = html.find(".message-content");
             let translatedContent = html.find(".polyglot-original-text");
@@ -67,7 +67,7 @@ export class tokenSays {
             let contentText = '';
             if(!translatedContent.length) {
                 common = 1;
-                contentText = '<span>' + chatMessage.data.content + '</span>';
+                contentText = '<span>' + chatMessage.content + '</span>';
             }
             let newContent='<div class="token-says chat-window" style="margin-bottom:6px;">'+ img + '<div class="what-is-said">' + contentText + '</div></div>';
             if(common) {
@@ -84,7 +84,7 @@ export class tokenSays {
       if (canvas.ready) {
         const layer = canvas.activeLayer;
         if ((layer instanceof TokenLayer)) {
-          const token = layer.placeables.find(t => t._hover);
+          const token = layer.hover;
           if(token) tokenSays.prompt(token, context.isShift)
         }
       }

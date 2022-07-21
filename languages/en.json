@@ -52,6 +52,7 @@
       "turn.label": "Turn in Combat"
     },
     "play-type": {
+      "draw": "Random Draw From Table (Honoring Replacement Setting)",
       "random": "Random",
       "sequential-end": "In Sequence - Once",
       "sequential-loop": "In Sequence - Looped"
@@ -85,6 +86,8 @@
         "compendiumName.label": "Compendium",
         "compendiumName.description.audio": "The compendium that holds the playlist. Leave blank to use your default (compendium or world). Note that audio played from a compendium may be slow to load.",
         "compendiumName.description.rolltable": "The compendium that holds the rollable table. Leave blank to use your default (compendium or world). Note that tables rolled from a compendium may be slow to return a result.",
+        "condition.label": "Activation Conditions",
+        "condition.description": "List active effect or condition titles that token must have active in order for this saying to trigger. Some systems manage condition data differently than active effects and conditions for those systems likely will not work here.",
         "delay.label": "Delay (ms)",
         "documentName.label": "Action Name",
         "documentName.description": "If left blank, the saying will generate for any action of this type.",

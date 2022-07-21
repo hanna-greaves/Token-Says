@@ -151,7 +151,7 @@ Hooks.once('init', async function() {
     });
     
     Hooks.on("createChatMessage", (message, options, userId) => {
-        const data = chatMessageToWorkflowData(message.data)
+        const data = chatMessageToWorkflowData(message)
         if(data) workflow.go(userId, data);
     });
 
@@ -170,7 +170,7 @@ Hooks.once('init', async function() {
     });
     
     Hooks.on("updateActiveEffect", (document, change, options, userId) => {
-        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ("disabled" in change || ("label" in change && !document.data.disabled))){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ("disabled" in change || ("label" in change && !document.disabled))){
             const data = activeEffectToWorkflowData(document, change.disabled)
             if(data) workflow.go(userId, data);
         }
@@ -182,8 +182,8 @@ Hooks.once('init', async function() {
     });
     
     Hooks.on("preUpdateToken", async (token, update, options, id) => {
-        if (("x" in update || "y" in update || "elevation" in update) && token?.data) {
-            options[`${tokenSays.FLAGS.TOKENSAYS}`] = {start: {x: token.data.x, y: token.data.y}, end: {x: (update.x ? update.x : token.data.x), y: (update.y ? update.y : token.data.y)}}
+        if (("x" in update || "y" in update || "elevation" in update) && token) {
+            options[`${tokenSays.FLAGS.TOKENSAYS}`] = {start: {x: token.x, y: token.y}, end: {x: (update.x ? update.x : token.x), y: (update.y ? update.y : token.y)}}
         }
     });
     
@@ -305,23 +305,6 @@ Hooks.once('init', async function() {
             }
         });
     }
-    /*
-    if(game.world.data.system === "dnd5e"){
-        Hooks.on("Actor5e.rollSkill", async (actor, roll, ability, options)  => {
-            const data = checkToWorkflowData(actor, 'skill', ability, options)
-            if(data) workflow.go(game.userId, data);
-        });
-
-        Hooks.on("Actor5e.rollAbilitySave", async (actor, roll, ability, options) => {
-            const data = checkToWorkflowData(actor, 'save', ability, options)
-            if(data) workflow.go(game.userId, data);
-        });
-
-        Hooks.on("Actor5e.rollAbilityTest", async (actor, roll, ability, options) => {
-            const data = checkToWorkflowData(actor, 'ability', ability, options)
-            if(data) workflow.go(game.userId, data);
-        });
-    }*/
     if (tokenSaysHasMQ){
         Hooks.on("midi-qol.AttackRollComplete", (midiWorkflow) => {     
             const data = midiToWorkflowData(midiWorkflow, 'attack');
@@ -335,7 +318,7 @@ Hooks.once('init', async function() {
     }
     if (tokenSaysHasPolyglot){
         Hooks.on("renderChatMessage", (chatMessage, html, message) => {
-            if(chatMessage.data.flags?.TOKENSAYS?.img && chatMessage.data.flags?.polyglot){
+            if(chatMessage.flags?.TOKENSAYS?.img && chatMessage.flags?.polyglot){
                 tokenSays._insertHTMLToPolyglotMessage(chatMessage, html, message);
             }
         });
