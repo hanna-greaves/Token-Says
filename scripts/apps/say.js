@@ -375,6 +375,7 @@ export class tokenSay {
     async _incrementAudioPlayCount(){
         const inc = this.countAudioPlay + 1;
         const cnt = ((this._say.audioPlay === 'L' && this.playlist.sounds.size <= inc) ? 0 : inc)
+
         await this._setTokenFlag(tokenSays.FLAGS.AUDIOPLAYCOUNT, cnt);
     }
 
