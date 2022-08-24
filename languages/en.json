@@ -78,6 +78,7 @@
       "separator.description": "When used in text inputs, allows for multiple entries within the same form field. Use this as the separator between each entry (e.g. goblin|hobgoblin|bugbear). Currently supported in Token Name input box on the saying form.",
       "say":{
         "actions.label": "Provoking Action",
+        "actorType.label": "Actor Type",
         "audio.label": "Audio",
         "basic.label": "Basics",
         "cap.description": "Plays the sound for the length of time that the token is moving.",

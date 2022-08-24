@@ -1,4 +1,4 @@
-import {BYPASSNAMETYPES, determineMacroList, DOCUMENTNAMELABELS, GAMETYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PLAYTYPE, PLAYTYPEROLLTABLE} from './constants.js';
+import {ACTORTYPES, BYPASSNAMETYPES, determineMacroList, DOCUMENTNAMELABELS, GAMETYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PLAYTYPE, PLAYTYPEROLLTABLE} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
 import {parseSeparator} from './helpers.js';
@@ -119,6 +119,7 @@ export class TokenSaysSayForm extends FormApplication {
     const sy = says.getSay(this.sayId);
     return {
       say: sy,
+      actorTypeOps: ACTORTYPES,
       documentTypeOptions: this._determineWorldOptions(false),
       documentTypeReactsOptions: this._determineWorldOptions(true),
       compendiumListRollTable: getCompendiumOps('rollTable'),

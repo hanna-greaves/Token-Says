@@ -109,11 +109,11 @@ export const WORKFLOWSTATES = {
                 return this.next(WORKFLOWSTATES.GETSAY);
             case WORKFLOWSTATES.GETSAY:
                 if(!this.says.length) {
-                    this.says = says.findSays(this.alias, this.actor?.name, this.documentType, this.documentName)
-                    if(this.documentType === 'damage' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'critical', this.documentName))
-                    if(this.documentType === 'attack' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'fumble', this.documentName))
-                    if(this.documentType === 'skill' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'skill-crit', this.documentName))
-                    if(this.documentType === 'skill' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor?.name, 'skill-fumble', this.documentName))
+                    this.says = says.findSays(this.alias, this.actor, this.documentType, this.documentName)
+                    if(this.documentType === 'damage' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor, 'critical', this.documentName))
+                    if(this.documentType === 'attack' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor, 'fumble', this.documentName))
+                    if(this.documentType === 'skill' && this.isCritical) this.says = this.says.concat(says.findSays(this.alias, this.actor, 'skill-crit', this.documentName))
+                    if(this.documentType === 'skill' && this.isFumble) this.says = this.says.concat(says.findSays(this.alias, this.actor, 'skill-fumble', this.documentName))
                 }
                 return this.next(WORKFLOWSTATES.SAY);
             case WORKFLOWSTATES.SAY: 

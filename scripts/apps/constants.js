@@ -60,6 +60,7 @@ const PF2EDOCUMENTTYPEOPS  = {
 export const PF2ESKILLOPS = {};
 export const PF2ESAVEOPS = {};
 export const PF2EABILITYOPS = {};
+export const ACTORTYPES = {}; 
 
 const MIDIQOLTYPEOPS = {
     "critical":  "TOKENSAYS.document-type-options.critical.label",
@@ -92,6 +93,8 @@ export function _determineWorldOptions(){
             .reduce((r, [k, v]) => ({ ...r, [k]: v }), {})
         );
     Object.freeze(GAMETYPEOPS)
+    Object.assign(ACTORTYPES, Object.fromEntries(Object.entries(Actor.TYPES).map(k=> [k[1],k[1]])))
+    Object.freeze(ACTORTYPES)
 };
 
 
