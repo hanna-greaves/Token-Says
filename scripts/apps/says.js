@@ -52,19 +52,20 @@ import {BYPASSNAMETYPES} from './constants.js';
         return this._toClass(this._says[id]);
     }
 
-    static findSays(tokenName, actorName, documentType, documentName, isActive = true){
+    static findSays(tokenName, actor ={}, documentType, documentName, isActive = true){
         const sys = isActive ? this.saysActive : this.says;
         return sys.filter(sy => 
             sy.documentType === documentType 
             && (
-                (!sy.reverse && sy.nameList.includes(((sy.isActorName && actorName) ? actorName : tokenName)))
-                || (sy.reverse && !sy.nameList.includes(((sy.isActorName && actorName) ? actorName : tokenName)))
+                (!sy.reverse && sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
+                || (sy.reverse && !sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
             )
             && (
                 !sy.documentName 
                 || BYPASSNAMETYPES.includes(documentType)
                 || sy.documentNameList.includes(documentName) 
             )
+            && (!sy.actorType || sy.actorType === actor.type)
         )
     }
 

@@ -114,6 +114,7 @@ export class api {
         const alias = token ? token.name : actor.name
         const sy = new say('rollTable');
         sy.documentName = 'direct';
+        if(options.actorType) sy.actorType = options.actorType;
         if(options.delay) sy.delay = options.delay;
         sy.fileName = (options.chat?.source ? options.chat.source : (options.type === 'rollTable' ? options.source : ''));
         sy.compendiumName = (options.chat?.compendium ? options.chat.compendium : (options.type === 'rollTable' ? options.compendium : ''));
