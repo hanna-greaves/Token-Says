@@ -52,6 +52,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
 * **Not Listed Names:** flip the 'Token Names' so that saying generates for any token except those in the token names list.
+* **Actor Type:** Select the actor type that token must be in order for saying to trigger (optional).
 * **Language:** (only available if Polyglot module is installed). Choose a language to output the chat text and bubble in. If the token does not speak this language then the saying will not generate.
 * **Action Type:** Select from a list of available options for triggering actions that may invoke a saying. Some types are system-specific. 
   * Ability Check: triggers on ability check roll by the token.
@@ -94,6 +95,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Delay:** add a time, in milliseconds, to wait between the generating action and the saying. Note that delays due to accessing compendium content and rolling on compendiums may add to this delay.
 * **Volume:** Set the volume for this saying.
 * **Only While Moving:** This toggle is available for the Action Type of Token Movement Start for audio sayings. The sound will play from the time when the token begins movement up to the time when the token stops movement. Useful for things like audible footsteps.
+* **Activation Conditions:** A list of active effect labels, separated using your settings separator, that token must have one of in order for saying to trigger. Also supports condition labels for systems that utilize the effects data structure for conditions.
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
 * **Limit:** Specify a number above 0. Token Says will count each time a token says this saying. Once that count meets this specified limit, that token will no longer say this saying. Counts towards limits live on each token on a scene and can be reset from within that token's token configuration form.
 * **Macro:** select a macro within the world to run when the saying triggers
