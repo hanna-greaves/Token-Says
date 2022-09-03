@@ -43,6 +43,7 @@ export class TokenSaysSayForm extends FormApplication {
       let capDiv = document.getElementById(`token-says-cap`);
       if(capDiv) event.currentTarget.value === 'move' ? capDiv.classList.remove('hidden') : capDiv.classList.add('hidden');
       document.getElementById(`token-says-documentname-label`).innerHTML = this.documentNameLabel(event.currentTarget.value);
+      this.setPosition();
     });
     html.on('change', "#token-says-documenttype-reacts-value",(event) => {
       this._refreshDocumentNameOptions(event.currentTarget.value, 'to.');

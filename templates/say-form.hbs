@@ -226,13 +226,35 @@
                 <span class="range-value">{{#unless say.volume}}0.50{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}</span>
             </div>
         </div>
-        <div id="token-says-cap" class="form-group {{#unless isMove}} hidden{{/unless}}">
-            <label>
-                <span>{{localize 'TOKENSAYS.setting.say.cap.label'}}</span>
-                <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.cap.description'}}"><i class="fas fa-info-circle"></i></span>
-            </label>
-            <div class="form-fields">
-                <input type="checkbox" name="cap" {{checked say.cap}} />
+        <div id="token-says-cap" class="{{#unless isMove}} hidden{{/unless}}">
+            <hr>
+            <div class="form-group">
+                <label>
+                    <span>{{localize 'TOKENSAYS.setting.say.cap.label'}}</span>
+                    <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.cap.description'}}"><i class="fas fa-info-circle"></i></span>
+                </label>
+                <div class="form-fields">
+                    <input type="checkbox" name="cap" {{checked say.cap}} />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <span>{{localize 'TOKENSAYS.setting.say.cap.min.label'}}</span>
+                    <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.cap.min.description'}}"><i class="fas fa-info-circle"></i></span>
+                </label>
+                <div class="form-fields">
+                    <input type="number" name="capOptions.min" value="{{#unless say.capOptions.min}}0{{/unless}}{{#if say.capOptions.min}}{{say.capOptions.min}}{{/if}}" min="0" step="1" placeholder="{{localize 'TOKENSAYS.ms'}}" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <span>{{localize 'TOKENSAYS.setting.say.cap.fileName.label'}}</span>
+                    <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.cap.fileName.description'}}"><i class="fas fa-info-circle"></i></span>
+                </label>
+                <div class="form-fields">
+                     {{filePicker target="capOptions.fileName" type="audio"}}
+                    <input type="text" name="capOptions.fileName" value="{{say.capOptions.fileName}}"/>
+                </div>
             </div>
         </div>
     </div>
@@ -312,8 +334,7 @@
                 {{localize 'TOKENSAYS.setting.say.maxDistance.label'}}
             </label>
             <div class="form-fields">
-                <input type="range" name="to.distance" min="0" max="200" step="1" value="{{#unless say.to.distance}}0{{/unless}}{{#if say.to.distance}}{{say.to.distance}}{{/if}}"/>
-                <span class="range-value">{{#unless say.to.distance}}0{{/unless}}{{#if say.to.distance}}{{say.to.distance}}{{/if}}</span>
+                <input type="number" name="to.distance" value="{{#unless say.to.distance}}0{{/unless}}{{#if say.to.distance}}{{say.to.distance}}{{/if}}" min="0" step="1" placeholder="{{localize 'TOKENSAYS.gridUnits'}}" required/>
             </div>
         </div>
     </div>

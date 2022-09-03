@@ -28,6 +28,10 @@ export class say {
     constructor(fileType = 'rollTable') {
         this.actorType = '',
         this.cap = false,
+        this.capOptions = {
+            min: 0,
+            fileName: ''
+        },
         this.compendiumName = '',
         this.condition = '',
         this.delay = 0,
@@ -233,6 +237,10 @@ export class tokenSay {
         return (this.documentType === 'arrive' || this.reacts.documentType === 'arrive' ) ? true : false
     }
 
+    get capBypass(){
+        return this._say.cap && this.documentType === 'move' && this._say.capOptions?.min && this._say.capOptions.min > this.movementTime ? true : false
+    }
+
     get countAudioPlay(){
         if (this._say.hasAudioSequence){
             let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
@@ -308,7 +316,7 @@ export class tokenSay {
     }
 
     get maxDuration(){
-        return (this._say.cap && this.hasAudio && this.documentType === 'move') ? this.movementTime : (game.settings.get(tokenSays.ID, 'audioDuration') * 1000)
+        return (this._say.cap && this.hasAudio && this.documentType === 'move' && !this.capBypass) ? this.movementTime : (game.settings.get(tokenSays.ID, 'audioDuration') * 1000)
     }
 
     get movementTime(){
@@ -418,7 +426,10 @@ export class tokenSay {
 
     async _setSound(){
         if(!this.suppressAudio){
-            if(!this._audioFile) this._say.audioIsSequential ? await this._nextSound() : await this._rollSound();   
+            if(this.capBypass) {
+                if(this._say.capOptions?.fileName) this._audioFile = this._say.capOptions.fileName
+            }
+            else if(!this._audioFile) this._say.audioIsSequential ? await this._nextSound() : await this._rollSound();   
         }
     }
 
