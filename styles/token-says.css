@@ -135,8 +135,8 @@ form.token-says .content {
     padding: 1px 6px;
 }
 
-.token-says-rule .reacts select {
-    max-width: 287px;
+.token-says-rule select {
+    max-width: 231px;
 }
 
 .token-says-rule .reacts {
