@@ -22,13 +22,13 @@
         "verified": "10",
         "maximum": "10"
     },
-    "name": "token-says",
+    "id": "token-says",
     "packs": [
       {
         "name": "token-says-macros",
         "label": "Token Says Macros",
         "path": "packs/macros.db",
-        "entity": "Macro",
+        "type": "Macro",
         "package": "Token Says",
         "module": "token-says"
       }
@@ -38,8 +38,8 @@
         "styles/token-says.css"
     ],
     "title": "Token Says",
-    "version": "1.10.2.1",
+    "version": "1.10.2.2",
     "url": "https://github.com/napolitanod/Token-Says",
     "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.10.2.1/module.zip"
+    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.10.2.2/module.zip"
 }
