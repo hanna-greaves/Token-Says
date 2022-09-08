@@ -79,8 +79,8 @@ export function chatMessageToWorkflowData(message){
         if(f.type === 3) return parsed({documentType: 'attack', itemId: f.itemId});         
         if(f.type === 4) return parsed({documentType: 'damage', itemId: f.itemId});    
     } else if(f = message.flags['pf2e']) {
-        if(f.context?.type === 'skill-check') {
-            let pf2esksel = f.context?.notes?.find(n => n.selector && PF2ESKILLOPS[n.selector])?.selector;
+        if(['skill-check', 'perception-check'].includes(f.context?.type)) {
+            let pf2esksel = f.context?.type === 'perception-check' ? 'system.skills.per' : f.context?.notes?.find(n => n.selector && PF2ESKILLOPS[n.selector])?.selector;
             return parsed({documentType: 'skill', documentName: pf2esksel ? PF2ESKILLOPS[pf2esksel] : f.modifierName.substring(f.modifierName.lastIndexOf(':')+2), isFumble: f.context?.outcome === "criticalFailure" ? true : false, isCritical: f.context?.outcome === "criticalSuccess" ? true : false});
         }
         if(f.context?.type === 'saving-throw') return parsed({documentType: 'save', documentName: Object.values(PF2ESAVEOPS).find(s => f.modifierName?.includes(s))});

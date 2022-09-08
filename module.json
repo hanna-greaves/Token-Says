@@ -38,8 +38,8 @@
         "styles/token-says.css"
     ],
     "title": "Token Says",
-    "version": "1.10.2.3",
+    "version": "1.10.2.4",
     "url": "https://github.com/napolitanod/Token-Says",
     "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.10.2.3/module.zip"
+    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.10.2.4/module.zip"
 }
