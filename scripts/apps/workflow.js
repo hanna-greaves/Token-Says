@@ -63,7 +63,7 @@ export const WORKFLOWSTATES = {
     }
 
     get token() {
-        const token = canvas?.tokens?.get(this.speaker.token)
+        const token = canvas?.scene?.tokens?.get(this.speaker.token)
         if (token) {return token}
         return this.scene?.tokens?.get(this.speaker.token);
     }

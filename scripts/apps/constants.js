@@ -125,7 +125,7 @@ export function getDnd5eDocumentNameOps(documentType){
         case "save":
             return game.dnd5e?.config.abilities
         case "skill":
-            return game.dnd5e?.config.skills
+            return Object.fromEntries(Object.entries(game.dnd5e?.config.skills).map(k=> [k[0],k[1].label]))
         default:
             return getUniversalDocumentNameOps(documentType)
         }
