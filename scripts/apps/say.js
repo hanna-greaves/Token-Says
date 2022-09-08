@@ -384,7 +384,6 @@ export class tokenSay {
     async _incrementAudioPlayCount(){
         const inc = this.countAudioPlay + 1;
         const cnt = ((this._say.audioPlay === 'L' && this.playlist.sounds.size <= inc) ? 0 : inc)
-
         await this._setTokenFlag(tokenSays.FLAGS.AUDIOPLAYCOUNT, cnt);
     }
 
@@ -436,6 +435,7 @@ export class tokenSay {
     async _setTokenFlag(flag, amt){
         if(game.user.isGM) {
             await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${flag}.${this._say.id}`, amt)
+            console.log(`${tokenSays.FLAGS.SAYING}.${flag}.${this._say.id}`, this.scene.tokens.get(this.token.id))
         } else {
             await game.socket.emit('module.token-says', {tokenUpdate: {scene: this.scene.id, tokenId: this.token.id, sayId: this._say.id, flag: flag, amt:amt}});
         }
