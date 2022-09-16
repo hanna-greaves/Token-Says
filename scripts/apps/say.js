@@ -542,12 +542,7 @@ export class tokenSay {
     async sayChatBubble() {
         const emote = this.language ? {emote: {language: this.language}} : false
         if(this.token){ 
-            canvas.hud.bubbles.say(this.token, this.message, emote);
-            game.socket.emit("module.token-says", {
-                token: this.token.id,
-                says: this.message,
-                emote: emote
-            });
+            canvas.hud.bubbles.broadcast(this.token, this.message, emote);
         }
     }
 
