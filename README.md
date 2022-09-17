@@ -115,6 +115,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
 * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
 * **Suppress Quotes:** check this to prevent the chat message from being wrapped in quotes "".
+* **Suppress Pan:** will not pan to speaker when chat bubble is displayed.
 
 ## Game Module Settings
 See wiki https://github.com/napolitanod/Token-Says/wiki/Game-Module-Settings
