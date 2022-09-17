@@ -176,6 +176,11 @@ export const SUPPRESSOPTIONS = {
     'X': 'TOKENSAYS.setting.suppressOptions.all'
 };
 
+export const PANOPTIONS = {
+    '': 'TOKENSAYS.setting.pan.none',
+    'N': 'TOKENSAYS.setting.pan.no'
+}
+
 export function determineMacroList() {
     let list = {};
     for (let macro of game.macros.contents.sort((a, b) => { return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0)})) {

@@ -72,6 +72,13 @@
       "defaultRollableTableCompendium.description": "This is the compendium that will be accessed by default when determining where the saying's rolltable is stored. Individual sayings may override this default.",
       "isActive.label": "Activate Token Says",
       "isActive.description": "Activates all of the active token says sayings for this world.",
+      "pan": {
+        "description": "Configure whether to automatically pan to speaking token when it displays a Token Says chat bubble.",
+        "label": "Pan to Token Speaker",
+        "none": "Use Foundry 'Pan to Token Speaker' Setting",
+        "no": "Do Not Pan to Speaker",
+        "yes": "Pan to Speaker"
+      },
       "rollableTableRules": "Rollable Table Sayings",
       "rules.label": "Sayings",
       "rules.description": "A list of all sayings entered for this world.",
@@ -131,6 +138,7 @@
         "token.label": "Token Speaking",
         "suppressChatbubble.label": "Chat Bubble",
         "suppressChatMessage.label": "Chat Message",
+        "suppressPan.label": "Pan",
         "suppressQuotes.label": "Quotes",
         "trigger.label": "Trigger",
         "volume.label": "Volume",

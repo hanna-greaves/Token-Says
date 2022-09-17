@@ -122,6 +122,7 @@ export class api {
         if(options.lang) sy.lang = options.lang;
         if(options.reverse) sy.reverse = true;
         if(options.suppress?.bubble) sy.suppressChatbubble = true;
+        if(options.suppress?.pan) sy.suppressPan = true;
         if(options.suppress?.message) sy.suppressChatMessage = true;
         if(options.suppress?.quotes) sy.suppressQuotes = true;
         sy['paired'] = {

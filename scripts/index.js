@@ -2,7 +2,7 @@ import {tokenSays} from "./token-says.js";
 import {workflow} from "./apps/workflow.js";
 import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
-import {TOKENFORMICONDISPLAYOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps, _determineWorldOptions} from './apps/constants.js';
+import {TOKENFORMICONDISPLAYOPTIONS, PANOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps, _determineWorldOptions} from './apps/constants.js';
 import {api} from "./apps/api.js";
 import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
 import { says } from "./apps/says.js";
@@ -11,9 +11,6 @@ export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
 Hooks.once('init', async function() { 
     const module = 'token-says';
-    const debouncedReload = foundry.utils.debounce(() => {
-        window.location.reload();
-      }, 100);
     
     game.settings.registerMenu(module, "tokenSaysRules", {
         name: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
@@ -59,7 +56,7 @@ Hooks.once('init', async function() {
         config: true,
         default: true,
         type: Boolean,
-        onChange: debouncedReload
+		requiresReload: true
     });
     
     game.settings.register(module, 'suppressPrivateGMRoles', {
@@ -79,6 +76,16 @@ Hooks.once('init', async function() {
         default: '',
         type: String,
         choices: SUPPRESSOPTIONS
+    });  
+
+    game.settings.register(module, 'pan', {
+        name: game.i18n.localize('TOKENSAYS.setting.pan.label'),
+        hint: game.i18n.localize('TOKENSAYS.setting.pan.description'),
+        scope: 'world',
+        config: true,
+        default: '',
+        type: String,
+        choices: PANOPTIONS
     });  
 
     game.settings.register(module, 'suppressChatMessage', {
@@ -284,9 +291,6 @@ Hooks.once('init', async function() {
             await game.scenes.get(inSays.tokenUpdate.scene).tokens.get(inSays.tokenUpdate.tokenId).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${inSays.tokenUpdate.flag}.${inSays.tokenUpdate.sayId}`, inSays.tokenUpdate.amt)
             return
         }
-        let saysToken = canvas.tokens.get(inSays.token);
-        tokenSays.log(false,'Socket Call... ', {inSays: inSays, foundToken: saysToken});
-        await canvas.hud.bubbles.say(saysToken, inSays.says, inSays.emote);
       });
 
     tokenSays.initialize();

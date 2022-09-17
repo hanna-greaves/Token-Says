@@ -58,6 +58,7 @@ export class say {
         this.play= '',
         this.suppressChatbubble = false,
         this.suppressChatMessage = false,
+        this.suppressPan = false,
         this.suppressQuotes = false,
         this.volume = 0.50,
         this.limit = 0
@@ -346,6 +347,10 @@ export class tokenSay {
     get suppressChatMessage(){
         return (this._say.suppressChatMessage || this._suppressCodes.includes(game.settings.get(tokenSays.ID, 'suppressChatMessage'))) ? true : false 
     }
+    
+    get suppressPan(){
+        return (this._say.suppressPan || game.settings.get(tokenSays.ID, 'pan')) ? true : false
+    }
 
     get _suppressCodes(){
         const ar = ['X']
@@ -540,9 +545,11 @@ export class tokenSay {
      * Method that executes the chat bubble 
     */
     async sayChatBubble() {
-        const emote = this.language ? {emote: {language: this.language}} : false
         if(this.token){ 
-            canvas.hud.bubbles.broadcast(this.token, this.message, emote);
+            const options = {}
+            if(this.suppressPan) options.pan = false 
+            if(this.language) options.language = this.language;
+            canvas.hud.bubbles.broadcast(this.token, this.message, options);
         }
     }
 
