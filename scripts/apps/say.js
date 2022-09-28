@@ -198,7 +198,7 @@ export class say {
         const playlist = await this.playlist();
         if(!playlist) return {}
         if(!this.audioFileTitle){
-            const roll = await new Roll(`1d`+ playlist.sounds.size).roll();
+            const roll = await new Roll(`1d`+ playlist.sounds.size).evaluate({async: true});
             const rolledResult = roll.result;
             let i = 1; 
             for (let key of playlist.sounds) {
@@ -451,7 +451,7 @@ export class tokenSay {
     */
     async mightSay() {
         if(this.likelihood.value < 100){
-            const roll = await new Roll(`1d100`).roll();
+            const roll = await new Roll(`1d100`).evaluate({async: true});
             this.likelihood.result = roll.result;
         } else {this.likelihood.result = 100}
     }
