@@ -220,6 +220,10 @@ Hooks.once('init', async function() {
     });
 
 
+    Hooks.on(`${tokenSays.ID}.sayingComplete`, (saying) => {
+        workflow.continuesWorkflow(saying);
+    });
+
  });
 
  Hooks.once('setup', async function() {

@@ -56,6 +56,7 @@ export class say {
         },
         this.reverse = false,
         this.play= '',
+        this.priority = 0,
         this.suppressChatbubble = false,
         this.suppressChatMessage = false,
         this.suppressPan = false,
@@ -227,7 +228,8 @@ export class tokenSay {
         this.response = options.response,
         this.sound = '',
         this.speaker = options.speaker,
-        this.token = options.token
+        this.token = options.token,
+        this.user = options.user
     }
 
     get active(){
@@ -246,7 +248,7 @@ export class tokenSay {
         if (this._say.hasAudioSequence){
             let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.AUDIOPLAYCOUNT]?.[this._say.id];
             if(this._say.audioPlay === 'L' && this.playlist && this.playlist.sounds.size <= cnt) cnt = 0;
-            return cnt ? cnt : 0;
+            return cnt ?? 0;
         }
         return 0
     }
@@ -255,7 +257,7 @@ export class tokenSay {
         if (this._say.hasChatSequence){
             let cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.CHATPLAYCOUNT]?.[this._say.id];
             if(this._say.chatPlay === 'L' && this.table && this.table.results.size <= cnt) cnt = 0;
-            return cnt ? cnt : 0;
+            return cnt ?? 0;
         }
         return 0
     }
@@ -263,7 +265,7 @@ export class tokenSay {
     get countToLimit(){
         if (this._say.hasLimit){
             const cnt = this.token.flags?.[tokenSays.ID]?.[tokenSays.FLAGS.SAYING]?.[tokenSays.FLAGS.LIMITCOUNT]?.[this._say.id];
-            return cnt ? cnt : 0;
+            return cnt ?? 0;
         }
         return 0
     }
@@ -523,6 +525,7 @@ export class tokenSay {
             if(!this.suppressChatBubble && (this._message || this._audioFile)) this.sayChatBubble();
             if(this._say.hasLimit || this._say.hasSequence) await this._incrementCount();
             if(this.macro) this.playMacro();
+            Hooks.call(`${tokenSays.ID}.sayingComplete`, this)
             return true
         } else {
             return console.log('Say cancelled');

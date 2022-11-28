@@ -30,7 +30,7 @@
         <li class="rule flexrow" data-id="{{id}}" data-container="rules" draggable="true">
             <div class="rule-name">
                 <div class="label">{{label}}</div>
-                <div class="name">{{name}}</div>
+                <div class="name">{{#if this.reverse}}not: {{/if}}{{name}}</div>
             </div>
             <div>
                 {{#if this.hasAudio}}<i class="fas fa-music"></i>{{/if}}

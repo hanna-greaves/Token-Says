@@ -29,6 +29,10 @@ import {BYPASSNAMETYPES} from './constants.js';
         return this.says.filter(s => s.isActive);
     }
 
+    static get sayContinues() {
+        return this.says.filter(s => s.isActive && s.documentType === 'continues')
+    }
+
     static get responses() {
         return this.says.filter(s => s.isActive && s.documentType === 'reacts')
     }
@@ -39,7 +43,8 @@ import {BYPASSNAMETYPES} from './constants.js';
             && s.audioFileTitle 
             && s.isActive 
             && (!s.documentName || !['arrive', 'move'].includes(s.documentType) || s.documentNameList.includes(canvas.scene.name)) 
-            && canvas.scene.tokens.find(t=> (!s.isActorName && s.nameList.includes(t.name)) || s.nameList.includes(t.actor?.name)))
+            && (!s.name || canvas.scene.tokens?.find(t=> s.nameList.includes(s.isActorName ? t.actor?.name : t.name) !== s.reverse))
+        )
     }
 
     static _toClass(flag){
@@ -57,7 +62,8 @@ import {BYPASSNAMETYPES} from './constants.js';
         return sys.filter(sy => 
             sy.documentType === documentType 
             && (
-                (!sy.reverse && sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
+                !sy.name 
+                || (!sy.reverse && sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
                 || (sy.reverse && !sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
             )
             && (
@@ -84,6 +90,10 @@ import {BYPASSNAMETYPES} from './constants.js';
                 || sy.toDocumentNameList.includes(documentName)
             ) 
         )
+    }
+
+    static findSayContinues(sayTrigger){
+        return this.sayContinues.filter(sy => sy.documentName === sayTrigger?.id)
     }
 
     static findSayResponses(sayTrigger){
@@ -135,7 +145,8 @@ import {BYPASSNAMETYPES} from './constants.js';
             && s.audioFileTitle 
             && s.isActive 
             && (!s.documentName || !['arrive', 'move'].includes(s.documentType) || s.documentNameList.includes(canvas.scene.name))  
-            && ((!s.isActorName && s.nameList.includes(token.name)) || s.nameList.includes(token.actor?.name))
+            && s.name
+            && s.nameList.includes(s.isActorName ? token.actor?.name : token.name) !== s.reverse
         )
     }
 

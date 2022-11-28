@@ -20,6 +20,8 @@ export const WORKFLOWSTATES = {
  export class workflow {
 
     constructor(user, options) {
+        this.continues = options.continues ?? false,
+        this.continuesAwaited = [],
         this.currentState = WORKFLOWSTATES.INIT,
         this.diff = options.diff,
         this.documentName = (options.documentName === undefined) ? '' : options.documentName,
@@ -51,11 +53,17 @@ export const WORKFLOWSTATES = {
     }
 
     get saysSorted(){
-        return this.says.sort((a,b) => a.lang ? (b.lang ? a.lang.localeCompare(b.lang) : -1) : 1)
-        .sort((a,b) => !a.reverse ? (!b.reverse ? 0 : -1) : 1)
-        .sort((a,b) => a.documentName ? (b.documentName ? a.documentName.localeCompare(b.documentName) : -1) : 1)
-        .sort((a,b) => ['fumble','skill-fumble'].includes(a.documentType) ? (['fumble','skill-fumble'].includes(b.documentType) ? 0 : -1) : 1) 
-        .sort((a,b) => ['critical','skill-crit'].includes(a.documentType) ? (['critical','skill-crit'].includes(b.documentType) ? 0 : -1) : 1)                                          
+        return this.says.sort((a,b) => 
+             b.priority - a.priority 
+             || (((b.name && !b.reverse) ? 1 : 0) - ((a.name && !a.reverse)) ? 1: 0)
+             || (['critical','skill-crit'].includes(b.documentType) ? 1 : 0) - (['critical','skill-crit'].includes(a.documentType) ? 1 : 0) 
+             || (['fumble','skill-fumble'].includes(b.documentType) ? 1 : 0) - (['fumble','skill-fumble'].includes(a.documentType) ? 1 : 0) 
+             || (b.documentName ? 1 : 0) - (a.documentName ? 1: 0)
+             || a.documentName.localeCompare(b.documentName)
+             || (!b.reverse ? 1 : 0) - (!a.reverse ? 1 : 0)
+             || (b.lang ? 1 : 0) - (a.lang ? 1: 0)
+             || a.lang.localeCompare(b.lang)
+        )                                   
     }
 
     get scene() {
@@ -75,7 +83,8 @@ export const WORKFLOWSTATES = {
             actor: this.actor, 
             speaker: this.speaker, 
             item: this.documentName, 
-            response: this.responseOptions
+            response: this.responseOptions,
+            user: this.user
         }
     }
 
@@ -166,6 +175,16 @@ export const WORKFLOWSTATES = {
         }
         return false
     }
+    
+    static async continuesWorkflow(saying){ 
+        if(!canvas?.tokens?.placeables || !saying.token) return
+        const continues = says.findSayContinues(saying._say)
+        for (const cont of continues){
+            const token =  canvas.tokens.placeables.find(t => t.id === saying.token.id && (!cont.nameList || cont.nameList.includes(cont.isActorName ? game.actors.get(t.actor?.id)?.name : t.name) !== cont.reverse));
+            //const token = !cont.isActorName ? canvas.tokens.placeables.find(t => t.id === saying.token.id && (cont.reverse ? !cont.nameList.includes(t.name) : cont.nameList.includes(t.name))) : canvas.tokens.placeables.find(t => t.actor?.id && t.id === saying.token.id && (cont.reverse ? !cont.nameList.includes(game.actors.get(t.actor?.id)?.name) : cont.nameList.includes(game.actors.get(t.actor?.id)?.name)));
+            if(token) workflow.go(saying.user, {say: cont, speaker: saying.speaker, continues: true});
+        }
+    }
 
     /**
      * Method that determines how best to find the item name, based on incoming data that has different structures
@@ -180,7 +199,8 @@ export const WORKFLOWSTATES = {
     async _respondsWorkflow(responses){
         if(!canvas?.tokens?.placeables || !this.token){return}
         for (const rsp of responses){
-            let tokens = !rsp.isActorName ? canvas.tokens.placeables.filter(t => (rsp.reverse ? !rsp.nameList.includes(t.name) : rsp.nameList.includes(t.name))) : canvas.tokens.placeables.filter(t => t.actor?.id && (rsp.reverse ? !rsp.nameList.includes(game.actors.get(t.actor?.id)?.name) : rsp.nameList.includes(game.actors.get(t.actor?.id)?.name)));
+            const tokens = canvas.tokens.placeables.filter(t => !rsp.nameList || rsp.nameList.includes(rsp.isActorName ? game.actors.get(t.actor?.id)?.name : t.name) !== rsp.reverse);
+            //let tokens = !rsp.isActorName ? canvas.tokens.placeables.filter(t => (rsp.reverse ? !rsp.nameList.includes(t.name) : rsp.nameList.includes(t.name))) : canvas.tokens.placeables.filter(t => t.actor?.id && (rsp.reverse ? !rsp.nameList.includes(game.actors.get(t.actor?.id)?.name) : rsp.nameList.includes(game.actors.get(t.actor?.id)?.name)));
             for(const token of tokens){
                 if(token.id === this.token.id) continue
                 if(this.conditionEscape(token, false)) continue
