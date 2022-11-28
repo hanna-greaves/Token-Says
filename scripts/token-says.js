@@ -96,10 +96,8 @@ export class tokenSays {
     }
 
     static async resetTokenSayingCount(tokenId, sceneId){
-      const tok = game.scenes.get(sceneId).tokens.get(tokenId);
-      await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.LIMITCOUNT}`)
-      await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.AUDIOPLAYCOUNT}`)
-      await tok.unsetFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${tokenSays.FLAGS.CHATPLAYCOUNT}`)
+      const scene = game.scenes.get(sceneId)
+      await scene.updateEmbeddedDocuments("Token", [{_id: tokenId, [`flags.${tokenSays.ID}.-=${tokenSays.FLAGS.SAYING}`]: null}])
       ui.notifications?.info(game.i18n.localize("TOKENSAYS.alerts.counts-reset"))
     }
 }

@@ -15,6 +15,7 @@ export const SEPARATOROPTIONS = {
 }
   
 const UNIVERSALDOCUMENTTYPEOPS = {
+    "continues": "TOKENSAYS.document-type-options.continues.label",
     "effectAdd": "TOKENSAYS.document-type-options.effectAdd.label",
     "effectDelete": "TOKENSAYS.document-type-options.effectDelete.label",
     "initiative":  "TOKENSAYS.document-type-options.initiative.label",
@@ -103,6 +104,7 @@ export const BYPASSNAMETYPES = ['initiative', 'turn'];
 export function getUniversalDocumentNameOps(documentType) {
     switch (documentType) {
         case "say":
+        case "continues":
             return says.saysList
         default:
             return false
@@ -197,6 +199,7 @@ export const DOCUMENTNAMELABELS = {
     "":"TOKENSAYS.document-type-label.action",
     "ability":  "TOKENSAYS.document-type-label.ability",
     "attack":  "TOKENSAYS.document-type-label.item",
+    "continues":  "TOKENSAYS.document-type-label.saying",
     "damage":  "TOKENSAYS.document-type-label.item",
     "initiative": "TOKENSAYS.document-type-label.action",
     "save": "TOKENSAYS.document-type-label.ability",
