@@ -20,7 +20,8 @@ export class api {
           getSayingName : api._getSayingName,
           says : api._says,
           saysDirect : api._saysDirect,
-          getSayings : api._getSayings
+          getSayings : api._getSayings,
+          toggleActivate: api._toggleActivate
         }
 
         game.modules.get(tokenSays.ID).api = {
@@ -29,7 +30,8 @@ export class api {
             getSayingName : api._getSayingName,
             getSayings : api._getSayings,
             says: api._says,
-            saysDirect: api._saysDirect
+            saysDirect: api._saysDirect,
+            toggleActivate: api._toggleActivate
         }
     }
 
@@ -68,6 +70,11 @@ export class api {
      */
     static _getSayings(){
         return says.says
+    }
+
+    //tokenSays.toggleActivate()
+    static async _toggleActivate() {
+        await game.settings.set(tokenSays.ID, 'isActive', !game.settings.get(tokenSays.ID, 'isActive'));
     }
 
     /**
