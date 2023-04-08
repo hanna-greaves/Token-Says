@@ -573,7 +573,7 @@ export class tokenSay {
     }
 
     speaksLang(){
-        return (!tokenSaysHasPolyglot || (this.token?.actor && this.token.actor.system.traits.languages.value.has(this.lang))) ? true : false
+        return (!tokenSaysHasPolyglot || (this.token?.actor && game.polyglot.getUserLanguages([this.token.actor])?.[0].has(this.lang))) ? true : false
     }
 
 }
