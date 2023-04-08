@@ -18,6 +18,20 @@ export function activeEffectToWorkflowData(document, isDelete = false){
     }
 }
 
+export function pathfinderItemToWorkflowData(document, documentType, isDelete = false) {
+    if(document?.type !== documentType) return null;
+    return {
+        documentName: document.name,
+        documentType: isDelete ? "effectDelete" : "effectAdd",
+        speaker: {
+            scene: document.parent.token ? document.parent.token.parent.id : canvas.scene.id, 
+            actor: document.parent.id,
+            token: document.parent.token ? document.parent.token.id : canvas.scene.tokens.find(t => t.actor && t.actor?.id === document.parent.id)?.id, 
+            alias: document.parent.token ? document.parent.token.name : document.parent.name
+        }
+    }
+}
+
 export function checkToWorkflowData(actor, type, check, options){
     if(options?.messageData) return //kicked out because these will be handled in chat message parsing 
     return {

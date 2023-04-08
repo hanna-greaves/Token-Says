@@ -4,7 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, PANOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps, _determineWorldOptions} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData, pathfinderItemToWorkflowData} from "./apps/helpers.js";
 import { says } from "./apps/says.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
@@ -160,6 +160,20 @@ Hooks.once('init', async function() {
     Hooks.on("createChatMessage", (message, options, userId) => {
         const data = chatMessageToWorkflowData(message)
         if(data) workflow.go(userId, data);
+    });
+
+    Hooks.on("createItem", (document, options, userId) => {
+        if(game.system.id === "pf2e" && document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
+            const data = pathfinderItemToWorkflowData(document, "effect")
+            if(data) workflow.go(userId, data);
+        }
+    });
+
+    Hooks.on("deleteItem", (document, options, userId) => {
+        if(game.system.id === "pf2e" && document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
+            const data = pathfinderItemToWorkflowData(document, "effect", true)
+            if(data) workflow.go(userId, data);
+        }
     });
 
     Hooks.on("createActiveEffect", (document, options, userId) => {
