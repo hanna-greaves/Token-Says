@@ -335,14 +335,14 @@ Hooks.once('init', async function() {
     if(game.system.id === "pf2e"){
         Hooks.on("createItem", (document, options, userId) => {
             if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
-                const data = pf2eItemToWorkflowData(document, "effect")
+                const data = pf2eItemToWorkflowData(document, "effect") || pf2eItemToWorkflowData(document, "condition")
                 if(data) workflow.go(userId, data);
             }
         });
     
         Hooks.on("deleteItem", (document, options, userId) => {
             if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
-                const data = pf2eItemToWorkflowData(document, "effect", true)
+                const data = pf2eItemToWorkflowData(document, "effect", true) || pf2eItemToWorkflowData(document, "condition", true)
                 if(data) workflow.go(userId, data);
             }
         });

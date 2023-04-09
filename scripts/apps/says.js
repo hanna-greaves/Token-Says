@@ -1,6 +1,7 @@
 import { tokenSays } from '../token-says.js';
 import {say, reacts} from './say.js';
 import {BYPASSNAMETYPES} from './constants.js';
+import { compilePossibilities, nameMatches } from './helpers.js';
 
  export class says {
    static get _says() {
@@ -59,20 +60,15 @@ import {BYPASSNAMETYPES} from './constants.js';
 
     static findSays(tokenName, actor ={}, documentType, documentName, isActive = true){
         const sys = isActive ? this.saysActive : this.says;
-        return sys.filter(sy => 
-            sy.documentType === documentType 
-            && (
-                !sy.name 
-                || (!sy.reverse && sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
-                || (sy.reverse && !sy.nameList.includes(((sy.isActorName && actor.name) ? actor.name : tokenName)))
-            )
-            && (
-                !sy.documentName 
-                || BYPASSNAMETYPES.includes(documentType)
-                || sy.documentNameList.includes(documentName) 
-            )
+        return sys.filter(sy => {
+            const ownerName = (sy.isActorName && actor.name) ? actor.name : tokenName;
+            const ownerMatch = nameMatches(ownerName, compilePossibilities(sy.name));
+            const documentMatch = nameMatches(documentName, compilePossibilities(sy.documentName))
+            return sy.documentType === documentType 
+            && ownerMatch 
+            && documentMatch
             && (!sy.actorType || sy.actorType === actor.type)
-        )
+        })
     }
 
     static findEventResponses(tokenName, actorName, documentType, documentName){

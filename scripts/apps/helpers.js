@@ -135,6 +135,29 @@ export function parseSeparator(string){
     return string.split(sep).map(n => n.trim())
 }
 
+// Helper method to turn a search string into one or more regular expressions.
+export function compilePossibilities(string) {
+    if (string === "") {
+        return [new RegExp(".*")];
+    }
+    let items = parseSeparator(string);
+    return items.map(item => new RegExp("^" + item + "$"));
+}
+
+/* Checks a name against one or more possibilities, returning if it matches any.
+*  possibilities can be null, a string, a list of strings or a list of RegExp.
+*/
+export function nameMatches(name, possibilities, invert = false) {
+    const found = !invert;
+    if (!possibilities || (typeof(possibilities) === 'string' && name === possibilities)) {
+        return found;
+    }
+    return possibilities.map((possibility) => 
+        (typeof(possibility) === 'string' && name === possibility) 
+        || possibility.test(name)
+    ).reduce((isTrue, value) => isTrue || value);
+}
+
 export function pf2eItemToWorkflowData(document, documentType, isDelete = false) {
     if(document?.type !== documentType) return null;
     return {
