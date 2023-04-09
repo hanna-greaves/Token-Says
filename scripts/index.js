@@ -4,7 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, PANOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps, _determineWorldOptions} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData, pf2eItemToWorkflowData} from "./apps/helpers.js";
 import { says } from "./apps/says.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
@@ -328,6 +328,22 @@ Hooks.once('init', async function() {
         Hooks.on("renderChatMessage", (chatMessage, html, message) => {
             if(chatMessage.flags?.TOKENSAYS?.img && chatMessage.flags?.polyglot){
                 tokenSays._insertHTMLToPolyglotMessage(chatMessage, html, message);
+            }
+        });
+    }
+    
+    if(game.system.id === "pf2e"){
+        Hooks.on("createItem", (document, options, userId) => {
+            if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
+                const data = pf2eItemToWorkflowData(document, "effect")
+                if(data) workflow.go(userId, data);
+            }
+        });
+    
+        Hooks.on("deleteItem", (document, options, userId) => {
+            if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
+                const data = pf2eItemToWorkflowData(document, "effect", true)
+                if(data) workflow.go(userId, data);
             }
         });
     }
