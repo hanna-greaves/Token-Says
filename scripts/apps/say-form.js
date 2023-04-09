@@ -181,12 +181,14 @@ export class TokenSaysSayForm extends FormApplication {
         if(isActor){
           warnId = 'actor';
           for (const actor of nameList){
-            if(!game.actors.getName(actor)){fails.push(actor)}
+            const nameRegex = new RegExp("^" + actor + "$");
+            if(!game.actors.find( e => nameRegex.test(e.name))){fails.push(actor)}
           }
         } else {
           warnId = 'token';
           for (const token of nameList){
-            if(!game.scenes.find(s => s.tokens.find(t => t.name===token))){fails.push(token)}
+            const nameRegex = new RegExp("^" + actor + "$");
+            if(!game.scenes.find(s => s.tokens.find(t => nameRegex.test(t.name)))){fails.push(token)}
           }
         }
       }
