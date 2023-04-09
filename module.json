@@ -3,7 +3,10 @@
     "authors": [
         {
             "name": "napolitanod"
-        }
+        },
+        {
+            "name": "DianeOfTheMoon"
+         }
     ],
     "description": "Tokens invoke chat bubbles, chat messages and audio based on in game actions.",
     "esmodules": [
