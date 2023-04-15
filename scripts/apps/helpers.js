@@ -135,8 +135,7 @@ export function parseSeparator(string){
     return string.split(sep).map(n => n.trim())
 }
 
-export function pf2eItemToWorkflowData(document, documentType, isDelete = false) {
-    if(document?.type !== documentType) return null;
+export function pf2eItemToWorkflowData(document,  isDelete = false) {
     return {
         documentName: document.name,
         documentType: isDelete ? "effectDelete" : "effectAdd",
