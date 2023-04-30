@@ -116,6 +116,7 @@
         "isActive.label": "Active",
         "isActorName.label": "Use Actor Name",
         "isActorName.description": "Matches on the 'Token Name' using the triggering token's actor name instead of it's token name.",
+        "isWildcard.label": "Wildcard (*) Search",
         "label.label": "Title",
         "language.label": "Language",
         "likelihood.label": "Likelihood",

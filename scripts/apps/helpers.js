@@ -161,3 +161,16 @@ function _ray(start, end){
     const dest = new PIXI.Point(...canvas.grid.getCenter(end.x, end.y));
     return new Ray(orig, dest);
 }
+
+export function wildcardName(ObjArr, names, isNameArray = false){
+    const pool = isNameArray ? ObjArr : [...new Set(ObjArr.filter(o => o.name).map(obj => obj.name))]
+    const wc = str => pool.filter(
+        p => new RegExp('^' + str.replace(/\*/g, '.*') + '$').test(p)
+    );
+    let arr = []
+    for(const name of names) {
+        const res = wc(name)
+        arr = arr.concat(res.filter(r => !arr.includes(r)))
+    }
+    return arr
+}
