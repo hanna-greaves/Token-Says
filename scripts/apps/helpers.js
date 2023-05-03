@@ -70,7 +70,7 @@ export function chatMessageToWorkflowData(message){
         if(f.roll?.skillId) return parsed({documentType: 'skill', documentName: f.roll.skillId});          
         if(f.roll?.abilityId) return parsed({documentType: f.roll.type === 'check' ? 'ability' : f.roll.type, documentName: f.roll.abilityId});           
         if(f.roll?.type ==="attack" && f.roll?.itemId) return parsed({documentType: 'attack', itemId: f.roll.itemId});
-        if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId});
+        if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId, isCritical: message?.rolls[0]?.isCritical ?? false});
         if(f.roll?.itemId) return parsed({documentType: 'flavor', itemId: f.roll.itemId});        
     } else if(f=message.flags['midi-qol']) {
         if(f.type === 0) return (f.itemId ? parsed({documentType: 'flavor', itemId: f.itemId}) : parsed({documentType: 'flavor', documentName: message.flavor}));

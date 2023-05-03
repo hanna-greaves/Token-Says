@@ -106,8 +106,9 @@ export class TokenSaysSettingsConfig extends FormApplication {
         searchBox.classList.remove('outline');
       }
   
-      $("form.token-says").find(".rule .rule-name").each(function() {
-        if(!lastSearch || parseSeparator(lastSearch).find(s => this.innerText.toLowerCase().search(s.toLowerCase()) > -1)) {
+      $("form.token-says").find(".rule .rule-name .ts-search-name").each(function() {
+        console.log(this.innerText, this.innerText.startsWith('not:'))
+        if(!lastSearch || parseSeparator(lastSearch).find(s => (!this.innerText.startsWith('not:') && this.innerText.toLowerCase().search(s.toLowerCase()) > -1) ||  (this.innerText.startsWith('not:') && this.innerText.toLowerCase().search(s.toLowerCase()) === -1))) {
           $(this).closest('.rule').show();
         } else {
           $(this).closest('.rule').hide();
