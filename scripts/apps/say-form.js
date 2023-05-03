@@ -1,7 +1,7 @@
 import {ACTORTYPES, BYPASSNAMETYPES, determineMacroList, DOCUMENTNAMELABELS, GAMETYPEOPS, getWorldDocumentNameOptions, getCompendiumOps, getPolyglotLanguages, PLAYTYPE, PLAYTYPEROLLTABLE} from './constants.js';
 import {tokenSays} from '../token-says.js';
 import {says} from './says.js';
-import {parseSeparator} from './helpers.js';
+import {parseSeparator, wildcardName} from './helpers.js';
 /**
  * form extension supporting the form used to add or update an individual rules
 */
@@ -78,8 +78,10 @@ export class TokenSaysSayForm extends FormApplication {
     html.on('input', '#token-says-name-value', this._duplicateNameWarning.bind(this));  
     html.on('input', '#token-says-name-value', this._existsCheck.bind(this, 'name')); 
     html.on('change', '#token-says-name-is-actor', this._existsCheck.bind(this, 'name'));  
+    html.on('change', '#token-says-name-is-wildcard', this._existsCheck.bind(this, 'name'));  
     html.on('input', '#token-says-to-name-value', this._existsCheck.bind(this, 'to-name')); 
     html.on('change', '#token-says-to-name-is-actor', this._existsCheck.bind(this, 'to-name')); 
+    html.on('change', '#token-says-to-name-is-wildcard', this._existsCheck.bind(this, 'to-name')); 
   }
   
   async _refreshDocumentNameOptions(documentType, reacts){
@@ -164,7 +166,7 @@ export class TokenSaysSayForm extends FormApplication {
       document.getElementById(`token-says-to-name-is-actor`).disabled=false
     }
     this.setPosition()
-  }
+  }  
 
   _notExistsWarning(){
     this._existsCheck('name'); 
@@ -172,35 +174,40 @@ export class TokenSaysSayForm extends FormApplication {
   }   
 
   _existsCheck(id){
-    const fails = []; let warnId = '';
     if (id ===`name` || id ===`to-name`){
+      const fails = []; 
+      const isWildcard = document.getElementById(`token-says-${id}-is-wildcard`).checked
+      const isActor = document.getElementById(`token-says-${id}-is-actor`).checked;
+      const warnId = isActor ? 'actor' : 'token'
+
+      document.getElementById(`token-says-${id}-token-warning-container`).classList.add('hidden')
+      document.getElementById(`token-says-${id}-actor-warning-container`).classList.add('hidden')
+
       const nameConcat = document.getElementById(`token-says-${id}-value`).value;
       if(nameConcat){
-        const nameList = parseSeparator(nameConcat);
-        const isActor = document.getElementById(`token-says-${id}-is-actor`).checked ;
-        if(isActor){
-          warnId = 'actor';
-          for (const actor of nameList){
-            if(!game.actors.getName(actor)){fails.push(actor)}
+        const namesParsed = parseSeparator(nameConcat)
+        const nameList = (!isWildcard ? namesParsed : wildcardName(isActor ? game.actors : [... new Set(game.scenes.map(s => s.tokens.map(t => t.name)).flat())], namesParsed, isActor ? false : true)) ;
+        
+        if(namesParsed.length > 0 && !nameList.length){
+          fails.push(nameConcat)
+        } else if(isActor){
+          for (const actorName of nameList){
+            if(!game.actors.getName(actorName)){fails.push(actorName)}
           }
         } else {
-          warnId = 'token';
-          for (const token of nameList){
-            if(!game.scenes.find(s => s.tokens.find(t => t.name===token))){fails.push(token)}
+          for (const tokenName of nameList){
+            if(!game.scenes.find(s => s.tokens.find(t => t.name===tokenName))){fails.push(tokenName)}
           }
         }
       }
+      const warning = document.getElementById(`token-says-${id}-${warnId}-warning`);
+      if(fails.length) {
+        warning.innerHTML = fails.join(', ');
+        document.getElementById(`token-says-${id}-${warnId}-warning-container`).classList.remove('hidden');
+      } else {
+        warning.innerHTML = '';
+      }
+      this.setPosition()
     }
-    const container = document.getElementById(`token-says-${id}-${warnId}-warning-container`);
-    if(!container)return
-    const warning = document.getElementById(`token-says-${id}-${warnId}-warning`);
-    if(fails.length) {
-      warning.innerHTML = fails.join(', ');
-      container.classList.remove('hidden');
-    } else {
-      container.classList.add('hidden');
-      warning.innerHTML = '';
-    }
-    this.setPosition()
   }
 }

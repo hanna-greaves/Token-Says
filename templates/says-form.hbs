@@ -29,8 +29,8 @@
         {{#each says}}
         <li class="rule flexrow" data-id="{{id}}" data-container="rules" draggable="true">
             <div class="rule-name">
-                <div class="label">{{label}}</div>
-                <div class="name">{{#if this.reverse}}not: {{/if}}{{name}}</div>
+                <div class="label ts-search-name">{{label}}</div>
+                <div class="name ts-search-name">{{#if this.reverse}}not: {{/if}}{{name}}</div>
             </div>
             <div>
                 {{#if this.hasAudio}}<i class="fas fa-music"></i>{{/if}}

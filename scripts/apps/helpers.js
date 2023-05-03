@@ -70,7 +70,7 @@ export function chatMessageToWorkflowData(message){
         if(f.roll?.skillId) return parsed({documentType: 'skill', documentName: f.roll.skillId});          
         if(f.roll?.abilityId) return parsed({documentType: f.roll.type === 'check' ? 'ability' : f.roll.type, documentName: f.roll.abilityId});           
         if(f.roll?.type ==="attack" && f.roll?.itemId) return parsed({documentType: 'attack', itemId: f.roll.itemId});
-        if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId});
+        if(f.roll?.type ==="damage" && f.roll?.itemId) return parsed({documentType: 'damage', itemId: f.roll.itemId, isCritical: message?.rolls[0]?.isCritical ?? false});
         if(f.roll?.itemId) return parsed({documentType: 'flavor', itemId: f.roll.itemId});        
     } else if(f=message.flags['midi-qol']) {
         if(f.type === 0) return (f.itemId ? parsed({documentType: 'flavor', itemId: f.itemId}) : parsed({documentType: 'flavor', documentName: message.flavor}));
@@ -160,4 +160,17 @@ function _ray(start, end){
     const orig = new PIXI.Point(...canvas.grid.getCenter(start.x, start.y));
     const dest = new PIXI.Point(...canvas.grid.getCenter(end.x, end.y));
     return new Ray(orig, dest);
+}
+
+export function wildcardName(ObjArr, names, isNameArray = false){
+    const pool = isNameArray ? ObjArr : [...new Set(ObjArr.filter(o => o.name).map(obj => obj.name))]
+    const wc = str => pool.filter(
+        p => new RegExp('^' + str.replace(/\*/g, '.*') + '$').test(p)
+    );
+    let arr = []
+    for(const name of names) {
+        const res = wc(name)
+        arr = arr.concat(res.filter(r => !arr.includes(r)))
+    }
+    return arr
 }

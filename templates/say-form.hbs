@@ -43,6 +43,14 @@
         </div>
         <div class="form-group">
             <label>
+                {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
+            </label>
+            <div class="form-fields">
+                <input id="token-says-name-is-wildcard" type="checkbox" name="isWildcard" {{checked say.isWildcard}} />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>
                 {{localize 'TOKENSAYS.setting.say.isActorName.label'}}
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.isActorName.description'}} {{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
             </label>
@@ -309,6 +317,14 @@
                     {{localize 'TOKENSAYS.warning.token-not-found'}}
                 <span id="token-says-to-name-token-warning"></span>
             </p>
+        </div>
+        <div class="form-group">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
+            </label>
+            <div class="form-fields">
+                <input id="token-says-to-name-is-wildcard" type="checkbox" name="to.isWildcard" {{checked say.to.isWildcard}} />
+            </div>
         </div>
         <div class="form-group">
             <label>

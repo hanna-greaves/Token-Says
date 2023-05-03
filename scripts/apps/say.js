@@ -1,6 +1,6 @@
 import {tokenSays} from '../token-says.js';
 import {tokenSaysHasPolyglot} from '../index.js';
-import {parseSeparator,getDistance} from './helpers.js';
+import {parseSeparator,getDistance,wildcardName} from './helpers.js';
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -40,6 +40,7 @@ export class say {
         this.id = foundry.utils.randomID(16),
         this.isActive = true,
         this.isActorName = true,
+        this.isWildcard = false,
         this.fileName = '',
         this.fileTitle = '',
         this.fileType = fileType,
@@ -156,7 +157,7 @@ export class say {
     }
 
     get nameList() {
-        return parseSeparator(this.name)
+        return (!this.isWildcard ? parseSeparator(this.name) : wildcardName((this.isActorName ? game.actors : canvas.scene.tokens), parseSeparator(this.name)))
     }
 
     async compendium(isAudio = true){
@@ -587,6 +588,7 @@ export class reacts extends say {
             documentName:'',
             name: '',
             isActorName: true,
+            isWildcard: false,
             requireVision: false,
             reverse: false
         }
@@ -597,6 +599,6 @@ export class reacts extends say {
     }
 
     get toNameList() {
-        return parseSeparator(this.to.name)
+        return (!this.to.isWildcard ? parseSeparator(this.to.name) : wildcardName((this.to.isActorName ? game.actors : canvas.scene.tokens), parseSeparator(this.to.name)))
     }
 }
