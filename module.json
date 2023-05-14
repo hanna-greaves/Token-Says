@@ -28,8 +28,8 @@
     "id": "token-says",
     "packs": [
       {
-        "name": "token-says-macros-package",
-        "label": "Token Says Macros",
+        "name": "token-says",
+        "label": "Token Says",
         "path": "packs/macros.db",
         "type": "Macro"
       }
