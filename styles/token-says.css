@@ -145,6 +145,10 @@ form.token-says .content {
     margin-bottom: 6px;
 }
 
+.tab[data-tab].reacts.active {
+    display: block;
+}
+
 .token-says-rule h4 {
     padding: 3px 6px;
     margin-bottom: 4px;
