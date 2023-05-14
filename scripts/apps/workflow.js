@@ -160,19 +160,31 @@ export const WORKFLOWSTATES = {
 
     conditionEscape(token, escapeThisCondition = true){
         const conditions = tokenSays.conditionEscape
-        if(token.actor?.effects && conditions.length) {
-            if(escapeThisCondition && this.documentType !== 'reacts') {
-                const i = conditions.indexOf(this.documentName); 
-                if(i !== -1){conditions.splice(i,1)}
-            }
-            if(conditions.length && token.actor.effects.find(
-                    e => !e.disabled && (
-                        conditions.includes(e.label) 
-                        || (game.world.system === 'pf1' && e.flags?.core?.statusId && conditions.includes(game.pf1.config.conditions[e.flags.core.statusId]))
-                        )
-                    )
-                ) return true
+        if(conditions.length & escapeThisCondition && this.documentType !== 'reacts'){
+            const i = conditions.indexOf(this.documentName); 
+            if(i !== -1){conditions.splice(i,1)}
         }
+        if(!conditions.length) return false
+
+        if(game.system.id !== "pf2e"){
+            if (token.actor?.effects?.find(
+                e => !e.disabled && (
+                    conditions.includes(e.label) 
+                    || (game.world.system === 'pf1' && e.flags?.core?.statusId && conditions.includes(game.pf1.config.conditions[e.flags.core.statusId]))
+                    )
+                )
+            ) return true
+        }
+
+        if(game.system.id === "pf2e"){
+            if (token.actor?.items?.find(
+                i => ["condition", "effect"].includes(i.type)
+                    && conditions.includes(i.name) 
+                )
+                || (conditions.includes("Dead") && token.actor?.isDead)
+            ) return true
+        }
+        
         return false
     }
     
