@@ -47,7 +47,6 @@ export function getDistance(start, end, gridSpaces = true){
 
 export function inDistance(provokingToken, respondingToken, distance){
     const d = getDistance(provokingToken, respondingToken)
-    console.log(d, distance)
     return (d <= distance) ? true : false
 }
 
