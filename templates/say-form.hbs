@@ -112,6 +112,14 @@
             <div id="token-says-documentname" class="form-fields">
                 {{{documentNameOptions}}}
             </div>
+        </div>
+        <div  id="token-says-documentname-is-wildcard-formgroup" class="form-group {{#if documentNameWildCardSuppress}}hidden{{/if}}">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
+            </label>
+            <div class="form-fields">
+                <input id="token-says-documentname-is-wildcard" type="checkbox" name="dnwc" {{checked say.dnwc}} />
+            </div>
         </div>        
     </div>
     <div class="tab" data-tab="chat">
@@ -299,6 +307,15 @@
             </div>
             <p id="token-says-rule-dup-name-warning" class="notes alert hidden">{{localize 'TOKENSAYS.setting.say.warning.dupNames.label'}}</p>
         </div>
+        <div id="token-says-documentname-reacts-is-wildcard-formgroup" class="form-group {{#if documentNameReactsWildCardSuppress}}hidden{{/if}}">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
+            </label>
+            <div class="form-fields">
+                <input id="token-says-documentname-reacts-is-wildcard" type="checkbox" name="to.dnwc" {{checked say.to.dnwc}} />
+            </div>
+        </div>  
+        <hr>
         <div id="token-says-to-name" class="form-group">
             <label>
                 {{localize 'TOKENSAYS.setting.say.name.label'}}
@@ -343,6 +360,7 @@
                 <input type="checkbox" name="to.reverse" {{checked say.to.reverse}} />
             </div>
         </div>
+        <hr>
         <div class="form-group">
             <label>
                 {{localize 'TOKENSAYS.setting.say.requireVision.label'}}
@@ -368,7 +386,8 @@
             <div class="form-fields">
                 <input type="number" name="delay" value="{{say.delay}}" min="0" step="1" placeholder="{{localize 'TOKENSAYS.ms'}}"/>
             </div>
-        </div>
+        </div>   
+        <hr>
         <div class="form-group">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.condition.label'}}</span>
@@ -378,6 +397,15 @@
                 <input type="text" name="condition" value="{{say.condition}}" />
             </div>
         </div>  
+        <div class="form-group">
+            <label>
+                {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
+            </label>
+            <div class="form-fields">
+                <input id="token-says-condition-is-wildcard" type="checkbox" name="cwc" {{checked say.cwc}} />
+            </div>
+        </div>    
+        <hr>  
         <div class="form-group">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.likelihood.label'}}</span>

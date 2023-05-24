@@ -1,6 +1,7 @@
 import { tokenSays } from '../token-says.js';
 import {say, reacts} from './say.js';
 import {BYPASSNAMETYPES} from './constants.js';
+import {regTestTermList} from './helpers.js';
 
  export class says {
    static get _says() {
@@ -70,6 +71,7 @@ import {BYPASSNAMETYPES} from './constants.js';
                 !sy.documentName 
                 || BYPASSNAMETYPES.includes(documentType)
                 || sy.documentNameList.includes(documentName) 
+                || (sy.dnwc && regTestTermList(sy.documentNameList, documentName))
             )
             && (!sy.actorType || sy.actorType === actor.type)
         )
@@ -88,6 +90,7 @@ import {BYPASSNAMETYPES} from './constants.js';
                 !sy.to.documentName 
                 || BYPASSNAMETYPES.includes(documentType)
                 || sy.toDocumentNameList.includes(documentName)
+                || (sy.to.dnwc && regTestTermList(sy.toDocumentNameList, documentName))
             ) 
         )
     }
