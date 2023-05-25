@@ -1,6 +1,6 @@
 import {tokenSays} from '../token-says.js';
 import {tokenSaysHasPolyglot} from '../index.js';
-import {parseSeparator,getDistance,wildcardName} from './helpers.js';
+import {parseSeparator,getDistance,regTestTermList,wildcardName} from './helpers.js';
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -34,7 +34,9 @@ export class say {
         },
         this.compendiumName = '',
         this.condition = '',
+        this.cwc = false,
         this.delay = 0,
+        this.dnwc = false,
         this.documentName = '',
         this.documentType = '',
         this.id = foundry.utils.randomID(16),
@@ -378,8 +380,8 @@ export class tokenSay {
         if(!this.hasConditionActivation) return true 
         if(token.actor?.effects && token.actor.effects.find(
                 e => !e.disabled && (
-                    this._say.conditionActivationList.includes(e.label) 
-                    || (game.world.system === 'pf1' && e.flags?.core?.statusId && this._say.conditionActivationList.includes(game.pf1.config.conditions[e.flags.core.statusId]))
+                    (this._say.conditionActivationList.includes(e.label) || (this._say.cwc && regTestTermList(this._say.conditionActivationList, e.label)) )
+                    || (game.world.system === 'pf1' && e.flags?.core?.statusId && (this._say.conditionActivationList.includes(game.pf1.config.conditions[e.flags.core.statusId]) || (this._say.cwc && regTestTermList(this._say.conditionActivationList, game.pf1.config.conditions[e.flags.core.statusId])) ))
                     )
                 )) return true
         return false
@@ -584,6 +586,7 @@ export class reacts extends say {
         super(fileType);
         this.to = {
             distance: 0,
+            dnwc: false,
             documentType:'',
             documentName:'',
             name: '',

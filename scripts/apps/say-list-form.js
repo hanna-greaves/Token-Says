@@ -105,14 +105,11 @@ export class TokenSaysSettingsConfig extends FormApplication {
         clear.classList.add('hidden');
         searchBox.classList.remove('outline');
       }
-  
+      $("form.token-says").find(".rule").each(function() {$(this).hide()})
       $("form.token-says").find(".rule .rule-name .ts-search-name").each(function() {
-        console.log(this.innerText, this.innerText.startsWith('not:'))
         if(!lastSearch || parseSeparator(lastSearch).find(s => (!this.innerText.startsWith('not:') && this.innerText.toLowerCase().search(s.toLowerCase()) > -1) ||  (this.innerText.startsWith('not:') && this.innerText.toLowerCase().search(s.toLowerCase()) === -1))) {
           $(this).closest('.rule').show();
-        } else {
-          $(this).closest('.rule').hide();
-        }
+        } 
       });
       this.setPosition();
     }

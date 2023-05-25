@@ -21,9 +21,9 @@
         }
     ],
     "compatibility": {
-        "minimum": "10",
-        "verified": "10",
-        "maximum": "10"
+        "minimum": "11",
+        "verified": "11",
+        "maximum": "11"
     },
     "id": "token-says",
     "packs": [
@@ -39,8 +39,8 @@
         "styles/token-says.css"
     ],
     "title": "Token Says",
-    "version": "1.11.8",
+    "version": "1.12.0",
     "url": "https://github.com/napolitanod/Token-Says",
     "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.11.8/module.zip"
+    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.12.0/module.zip"
 }

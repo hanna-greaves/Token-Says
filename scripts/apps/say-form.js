@@ -89,10 +89,28 @@ export class TokenSaysSayForm extends FormApplication {
     const documentName = document.getElementById(`token-says-documentname${reactsHTML}-value`).value
     let documentNameSelectHTML = document.getElementById(`token-says-documentname${reactsHTML}`);
     documentNameSelectHTML.innerHTML = this._createNameOptionsHTML(documentType, documentName, reacts);
+    this._documentNameWildcardHTML(documentType,reactsHTML)
+  }
+
+  _documentNameWildcardHTML(documentType, reacts){
+    const suppress = this._suppressDocumentNameWildcard(documentType)
+    const wc = document.getElementById(`token-says-documentname${reacts}-is-wildcard`)
+    const formGroup = document.getElementById(`token-says-documentname${reacts}-is-wildcard-formgroup`)
+    if(!wc) return 
+    if(suppress) {
+      wc.checked = false
+      formGroup.classList.add('hidden')
+    } else {
+      formGroup.classList.remove('hidden')
+    }
+  }
+
+  _suppressDocumentNameWildcard(documentType) {
+    return (BYPASSNAMETYPES.includes(documentType) || documentType ==='reacts' || getWorldDocumentNameOptions(documentType)) ? true : false
   }
 
   _createNameOptionsHTML(documentType, documentName, reacts) {
-    let finalHTML = ''; let reactsHTML = reacts ? '-reacts' : '';
+    let finalHTML = '', reactsHTML = reacts ? '-reacts' : '', disabled = '';
     documentName = documentName ? documentName : '';
     const optionListOptions  = getWorldDocumentNameOptions(documentType);
     if(optionListOptions) {
@@ -107,7 +125,6 @@ export class TokenSaysSayForm extends FormApplication {
       }
       finalHTML = `<select id="token-says-documentname${reactsHTML}-value" name="${reacts}documentName" value="` + documentName + '">'+ optionList + '</select>'  
     } else {
-      let disabled = ''
       if(BYPASSNAMETYPES.includes(documentType) || documentType ==='reacts'){disabled = ' disabled '}
       finalHTML = `<input id="token-says-documentname${reactsHTML}-value" type="text" name="${reacts}documentName" value="` + documentName + '" ' + disabled + '/>'
     }
@@ -129,7 +146,9 @@ export class TokenSaysSayForm extends FormApplication {
       compendiumListAudio: getCompendiumOps('audio'),
       documentNameLabel: this.documentNameLabel(sy.documentType),
       documentNameOptions: this._createNameOptionsHTML(sy.documentType, sy.documentName, ''),
+      documentNameWildCardSuppress: this._suppressDocumentNameWildcard(sy.documentType),
       documentNameReactsOptions: this._createNameOptionsHTML(sy.to?.documentType, sy.to?.documentName, 'to.'),
+      documentNameReactsWildCardSuppress: this._suppressDocumentNameWildcard(sy.to?.documentType),
       hasAudioFileTitle: sy.audioFileTitle ? true : false,
       hasChatFileTitle: sy.chatFileTitle ? true : false,
       isAudio: sy.isAudio,

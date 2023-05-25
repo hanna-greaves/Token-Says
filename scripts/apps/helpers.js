@@ -46,12 +46,15 @@ export function getDistance(start, end, gridSpaces = true){
 }
 
 export function inDistance(provokingToken, respondingToken, distance){
-    return (getDistance(provokingToken, respondingToken) <= distance) ? true : false
+    const d = getDistance(provokingToken, respondingToken)
+    return (d <= distance) ? true : false
 }
 
 export function inView(provokingToken, respondingToken){
-    return (canvas.walls?.checkCollision(_ray(provokingToken, respondingToken)) || !respondingToken.hasSight) ? false : true
+    const r = new Ray(provokingToken?.object?.center ?? provokingToken, respondingToken.center), options = {type:"sight" }
+    return (CONFIG.Canvas.polygonBackends.sight.testCollision(r.A, r.B, options).length || !respondingToken.hasSight) ? false : true
 }
+
 
 export function chatMessageToWorkflowData(message){
     if(message.flags?.TOKENSAYS?.cancel || (game.settings.get(tokenSays.ID,'suppressPrivateGMRoles') && message.whisper?.length)) return
@@ -173,4 +176,10 @@ export function wildcardName(ObjArr, names, isNameArray = false){
         arr = arr.concat(res.filter(r => !arr.includes(r)))
     }
     return arr
+}
+
+export function regTestTermList(wildcardTerms, test){
+    return wildcardTerms.find(
+        t => new RegExp('^' + t.replace(/\*/g, '.*') + '$').test(test)
+    );
 }
