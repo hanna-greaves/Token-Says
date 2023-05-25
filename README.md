@@ -49,7 +49,7 @@ Token Says sayings can be configured within the "Open Sayings" area of the Token
 
 Each saying is configured on a specific token or actor, based on name, for a given action and the saying is only hit when that token or actor performs the action. 
 * **Title:** Name each saying . The name is what displays in the Configure Token Sayings list.
-* **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ).
+* **Token Name:** Name the token for which this saying applies. This is case sensitive and mind the spelling! **Accepts multiple token names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Goblin|Witch|Werewolf ). Check the **Wildcard** box to search using '\*' wildcard within name.
 * **Use Actor Name:** Checking this will determine if the saying triggers based on the name of the actor associated to the token (as opposed to using the token name). This is useful in situations where your tokens may have different names than the source actor.
 * **Not Listed Names:** flip the 'Token Names' so that saying generates for any token except those in the token names list.
 * **Actor Type:** Select the actor type that token must be in order for saying to trigger (optional).
@@ -71,7 +71,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Token Movement Start: triggered at the start of a token's move. The chat bubble will display at the token's start position. Audio will play at movement start.
   * Token Movement End: triggered at the end of a token's move. The chat bubble will display at the token's arrival position. Audio will play at movement end.
   * Turn in Combat: triggered at start of the token's turn in combat.
-* **Action Name:** Type in the name of the action associated to the action type. **Accepts multiple action names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ).
+* **Action Name:** Type in the name of the action associated to the action type. **Accepts multiple action names.** These must be delimited using the delimiter that you have chosen in your Token Says settings (e.g. Sword|Staff|Wand ). Check the **Wildcard** box to search using '\*' wildcard within name (available on action names that are text entry).
   * Ability Check (dnd5e): select ability
   * Attack Roll (dnd5e, pf2e): use the item name making the attack (e.g. Longbow)
   * Condition/Effect Added: use the name of the condition or effect that triggers the saying when it is added or toggled on for the token.
@@ -110,7 +110,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * **Use Actor Name:** similar to the setting in the 'Provoking Action' section, but for the token that this saying is responding to.
   * **Not Listed Names:** flip the 'Token Names' so that saying is responding to any token except those in the token names list.
   * **Only If In Sight:** requires the token to be able to see the token that they are responding to. Based on center-point calculation. Walls block.
-  * **Distance:** token must be within this distance from the token that they are responding to. Consider this comparable to the distance within which they can hear the other token.
+  * **Distance:** token must be within this distance from the token that they are responding to. Consider this comparable to the distance within which they can hear the other token. This currently performs distance from center of token to center of token but I am looking to improve this.
     * If responding to movement, distance is calculated from start of token position for 'Token Movement Start' and ending token position for 'Token Movement End'. Both are useful - in the former you may want to insult people who are retreating. In the latter you may want to let a person sneaking by know that you can see them.
 * **Suppress Chat Bubble:** check this to prevent a chat bubble from generating for this saying.
 * **Suppress Chat Message:** check this to prevent a chat message from generating for this saying.
