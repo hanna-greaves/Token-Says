@@ -33,7 +33,7 @@ The Token Says feature uses a set of Token Says sayings that you create for your
 
 ## Token Says Sayings
 
-![image](https://user-images.githubusercontent.com/22696153/132096482-8fb1b093-d27a-49b3-ae5c-3312413dd5cd.png)
+<img width="800" alt="image" src="https://github.com/napolitanod/Token-Says/assets/22696153/6e692a71-d826-4cfc-973b-198633de5d60">
 
 Token Says sayings can be configured within the "Open Sayings" area of the Token Says game module settings. Here you can:
 * Add: add a new saying by select + Add in the subheader of that tab
@@ -44,6 +44,7 @@ Token Says sayings can be configured within the "Open Sayings" area of the Token
 
 ## Configure a Saying
 ![tsmove](https://user-images.githubusercontent.com/22696153/149647075-77013fc2-9321-46e7-ae79-30ff242320a8.gif)
+
 
 > A Haregon speaks on arrival and his friend responds to their arrival - these are two sayings, one is an action type of Token Movement End and the other is an action type of Reponds To with the responding to action type of Token Movement End.
 
