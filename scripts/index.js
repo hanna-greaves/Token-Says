@@ -290,6 +290,15 @@ Hooks.once('init', async function() {
             AudioHelper.preloadSound(inSays.load);
             return
         }
+        if(inSays.chatMessage){
+            if(game.userId === inSays.sendFrom) {
+                const mssg = inSays.chatMessage
+                mssg['whisper'] = game.users.filter(u => inSays.chatUsers.includes(u.id))
+                tokenSays.log(false,'Socket Call... ', {sent: inSays.chatMessage, to: inSays.chatUsers, mssg: mssg });
+                ChatMessage.create(mssg,{chatBubble : false})
+            }
+            return
+        }
         if(inSays.tokenUpdate){
             tokenSays.log(false,'Socket Call... ', {tokenUpdate: inSays.tokenUpdate});
             await game.scenes.get(inSays.tokenUpdate.scene).tokens.get(inSays.tokenUpdate.tokenId).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${inSays.tokenUpdate.flag}.${inSays.tokenUpdate.sayId}`, inSays.tokenUpdate.amt)

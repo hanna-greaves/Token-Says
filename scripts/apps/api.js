@@ -132,6 +132,7 @@ export class api {
         if(options.suppress?.pan) sy.suppressPan = true;
         if(options.suppress?.message) sy.suppressChatMessage = true;
         if(options.suppress?.quotes) sy.suppressQuotes = true;
+        if(options.whisper) sy.whisper = options.whisper;
         sy['paired'] = {
             compendiumName: (options.audio?.compendium ? options.audio.compendium : (options.type === 'audio' ? options.compendium : '')),
             fileName: (options.audio?.source ? options.audio.source : (options.type === 'audio' ? options.source : '')),

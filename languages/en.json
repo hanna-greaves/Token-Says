@@ -146,7 +146,17 @@
         "suppressQuotes.label": "Quotes",
         "trigger.label": "Trigger",
         "volume.label": "Volume",
-        "warning.dupNames.label":"The responding token and the token being responded to share the same name. Though no token will respond to itself, this may result in a snowballing of responses, depending on how many tokens with this name are on the scene."
+        "warning.dupNames.label":"The responding token and the token being responded to share the same name. Though no token will respond to itself, this may result in a snowballing of responses, depending on how many tokens with this name are on the scene.",
+        "whisper.label": "Whisper to",
+        "whisper.options": {
+          "none": "",
+          "gm": "GM",
+          "owner": "Token Owner",
+          "gm-and-owner": "GM and Token Owner",
+          "gm-and-non-owner": "GM and Non-Token Owner Players",
+          "players": "non-GM Players",
+          "all": "Everybody"
+        }
       },
       "search.placeholder": "Search sayings...",
       "search.clear": "clear search",

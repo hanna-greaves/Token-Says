@@ -67,13 +67,13 @@ export const WORKFLOWSTATES = {
     }
 
     get scene() {
-        return game.scenes.get(this.speaker.scene)
+        return game.scenes.get(this.speaker.scene) ?? canvas.scene
     }
 
     get token() {
-        const token = canvas?.scene?.tokens?.get(this.speaker.token)
-        if (token) {return token}
-        return this.scene?.tokens?.get(this.speaker.token);
+        if(this.speaker.token) return this.scene?.tokens?.get(this.speaker.token)
+        const tokens = this.scene.tokens.filter(t => t.actorId === this.speaker.actor)
+        if(tokens.length) return tokens[Math.floor(Math.random()*tokens.length)] 
     }
 
     get _tokenSayData(){
@@ -89,11 +89,11 @@ export const WORKFLOWSTATES = {
     }
 
     static escape(user, options){
-        return (tokenSays.escape || game.userId !== user || (!options.speaker?.actor || !options.speaker?.alias || !options.speaker?.token)) ? true : false
+        return (tokenSays.escape || game.userId !== user || (!options.speaker?.actor && !options.speaker?.alias && !options.speaker?.token)) ? true : false
     }
 
     static async go(user, options){
-        if(workflow.escape(user, options)) return  tokenSays.log(false,'workflow escape hit')
+        if(workflow.escape(user, options)) return  tokenSays.log(false,'workflow escape hit', {user, options})
         const wf = new workflow(user, options);
         if(wf.conditionEscape(wf.token)) return wf.log('condition escape hit')
         const result = await wf.next();
