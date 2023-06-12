@@ -234,3 +234,12 @@ export const PLAYTYPEROLLTABLE = {
     "L": "TOKENSAYS.play-type.sequential-loop"
 }
   
+export const WHISPEROPTIONS = {
+    "": "TOKENSAYS.setting.say.whisper.options.none",
+    "G": "TOKENSAYS.setting.say.whisper.options.gm",
+    "B": "TOKENSAYS.setting.say.whisper.options.gm-and-owner",
+    "U": "TOKENSAYS.setting.say.whisper.options.owner",
+    "P": "TOKENSAYS.setting.say.whisper.options.gm-and-non-owner",
+    "E": "TOKENSAYS.setting.say.whisper.options.players",
+    "A":  "TOKENSAYS.setting.say.whisper.options.all"
+  }

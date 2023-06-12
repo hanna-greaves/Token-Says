@@ -65,6 +65,7 @@ export class say {
         this.suppressPan = false,
         this.suppressQuotes = false,
         this.volume = 0.50,
+        this.whisper = '',
         this.limit = 0
     }
 
@@ -239,6 +240,10 @@ export class tokenSay {
         return this._say.isActive
     }
 
+    get actorOwners(){
+        return this.actor.id ? game.users.filter(u => !u.isGM && game.actors.get(this.actor.id).testUserPermission(u, CONST.DOCUMENT_OWNERSHIP_LEVELS['OWNER'])) : []
+    }
+
     get _adjDelay(){
         return (this.documentType === 'arrive' || this.reacts.documentType === 'arrive' ) ? true : false
     }
@@ -305,6 +310,10 @@ export class tokenSay {
         return this._say.hasChat
     }
 
+    get hideMessageFromUser(){
+        return (this.whisper.find(u => u.id === this.user) ? false : true)
+    }
+
     get lang(){
         return this._say.lang
     }
@@ -366,6 +375,18 @@ export class tokenSay {
 
     get valid(){
         return (!this.active || (this.lang && !this.speaksLang(this.token)) || this.atLimit() || !this.conditionActivation(this.token)) ? false : true
+    }
+    
+    get whisper(){
+        if(!this._say.whisper) return ''
+        let arr = []
+        if(['G','A','B', 'P'].includes(this._say.whisper)) arr = arr.concat(ChatMessage.getWhisperRecipients("GM"))
+        if(['P','A', 'E'].includes(this._say.whisper)) {
+            let players = ChatMessage.getWhisperRecipients("players")
+            arr = (this._say.whisper !== 'P' ? arr.concat(players) : arr.concat(players.filter(p => !this.actorOwners.find(o => o.id === p.id))))
+        }
+        if(['U','B'].includes(this._say.whisper)) arr = arr.concat(this.actorOwners)
+        return arr
     }
 
     atLimit(){
@@ -565,6 +586,7 @@ export class tokenSay {
      async sayChatMessage() {
         const img = this._imageFormat()
         const messageData = {
+            blind: this.hideMessageFromUser,
             speaker: this.speaker,
             type: CONST.CHAT_MESSAGE_TYPES.IC,
             flags: {TOKENSAYS: {cancel: true, img: img}} 
@@ -572,7 +594,16 @@ export class tokenSay {
 
         if(this.language) messageData['lang'] = this.language
         messageData['content'] = tokenSaysHasPolyglot ?  `${this.quotes}${this.message}${this.quotes}` : `<div class="token-says chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
-        ChatMessage.create(messageData,{chatBubble : false})
+        
+        if(!this.hideMessageFromUser) {
+            if(this.whisper) messageData['whisper'] = this.whisper
+            ChatMessage.create(messageData,{chatBubble : false})
+        } else {
+            const chatUsers = this.whisper.map(u => u.id)
+            const sendTo = game.users.find(u => u.active && chatUsers.includes(u.id))
+            if(sendTo) await game.socket.emit('module.token-says', {chatMessage: messageData, chatUsers: this.whisper.map(u => u.id), sendFrom: sendTo.id});
+        }
+        
     }
 
     speaksLang(){
