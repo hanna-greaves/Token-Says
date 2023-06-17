@@ -92,6 +92,13 @@ Each saying is configured on a specific token or actor, based on name, for a giv
 * **Token Says:** Use this to bypass randomization. Type in here what the token will say. For audio files, this is the name of the file to play for the given playlist or, if no playlist is included, this is the actual path to the audio file.
 * **Playlist Name/Rollable Table Name:** The name of the rollable table or playlist. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
 * **Compendium:** choose the compendium from which the roll table or playlist will be found. Note that this overrides your default compendium set in your Token Says settings. If you have selected in your settings to search your world's playlists or rollable tables first, those will be searched before going to this compendium. This can be left blank for rollable table sayings if you have entered something in the 'Token Says' field.
+* **Whisper to:** for chat messages (does not affect chat bubble or audio at this time), set the message to whisper to certain users:
+  * GM: whisper to the GM only.
+  * Token Owner: whispers only to the owner(s) of the token that is saying the message (requires one of the owners to be logged in). Does not whisper to the GM (even if GM is the only owner).
+  * GM and Token Owner: whispers to the GM and the token owner(s).
+  * GM and Non-Token Owner Players: whispers to the GM and all players that do not own the token that is saying the message.
+  * non-GM Players: whispers to everybody that is not the GM. Requires at least one non-GM player to be logged in.
+  * Everybody: whispers to everybody. 
 * **Play:** when playlist or rollable table are involved, define whether entries are played in sequential order (one entry per trigger), randomly or randomly honoring rolltable draw with replacement settings. If sequentially, set whether list/table loops after the final entry has played or if sayings no longer generate.
 * **Delay:** add a time, in milliseconds, to wait between the generating action and the saying. Note that delays due to accessing compendium content and rolling on compendiums may add to this delay.
 * **Volume:** Set the volume for this saying.
@@ -99,7 +106,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
    * **Only While Moving:** This toggle is available for the Action Type of Token Movement Start for audio sayings. The sound will play from the time when the token begins movement up to the time when the token stops movement. Useful for things like audible footsteps.
    * **Minimum Movement Time:** Set a time in microseconds that, if the estimated animation time for the token to move from point start to destination is less than this, then the audio track is not played.
    * **Alternate Audio Track:** Add a track to play instead of the primary track in the event that the Minimum Movement Time is not met.
-* **Activation Conditions:** A list of active effect labels, separated using your settings separator, that token must have one of in order for saying to trigger. Also supports condition labels for systems that utilize the effects data structure for conditions.
+* **Activation Conditions:** A list of active effect labels, separated using your settings separator, that token must have one of in order for saying to trigger. Also supports condition labels for systems that utilize the effects data structure for conditions. Also supports wildcards (when adjacent box is checked).
 * **Likelihood:** Set on a scale of 1 to 100 what percent of the time the token will say something for this given saying. For example, a 33 for a likelihood that triggers on initiave rolls will cause the token to say something 33% of the time when they roll initiative.
 * **Limit:** Specify a number above 0. Token Says will count each time a token says this saying. Once that count meets this specified limit, that token will no longer say this saying. Counts towards limits live on each token on a scene and can be reset from within that token's token configuration form.
 * **Macro:** select a macro within the world to run when the saying triggers
