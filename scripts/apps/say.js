@@ -310,8 +310,12 @@ export class tokenSay {
         return this._say.hasChat
     }
 
+    get hasWhisper(){
+        return this._say.whisper ? true : false
+    }
+
     get hideMessageFromUser(){
-        return (this.whisper.find(u => u.id === this.user) ? false : true)
+        return (!this.hasWhisper || this.whisper.find(u => u.id === this.user)) ? false : true
     }
 
     get lang(){
@@ -378,8 +382,8 @@ export class tokenSay {
     }
     
     get whisper(){
-        if(!this._say.whisper) return ''
         let arr = []
+        if(!this._say.whisper) return arr
         if(['G','A','B', 'P'].includes(this._say.whisper)) arr = arr.concat(ChatMessage.getWhisperRecipients("GM"))
         if(['P','A', 'E'].includes(this._say.whisper)) {
             let players = ChatMessage.getWhisperRecipients("players")
@@ -596,7 +600,7 @@ export class tokenSay {
         messageData['content'] = tokenSaysHasPolyglot ?  `${this.quotes}${this.message}${this.quotes}` : `<div class="token-says chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
         
         if(!this.hideMessageFromUser) {
-            if(this.whisper) messageData['whisper'] = this.whisper
+            if(this.hasWhisper) messageData['whisper'] = this.whisper
             ChatMessage.create(messageData,{chatBubble : false})
         } else {
             const chatUsers = this.whisper.map(u => u.id)
