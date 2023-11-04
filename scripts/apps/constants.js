@@ -134,7 +134,7 @@ export function getDnd5eDocumentNameOps(documentType){
 }
 
 export function getPolyglotLanguages() {
-    return  tokenSaysHasPolyglot ? game.polyglot?.languages : false
+    return  tokenSaysHasPolyglot ? Object.fromEntries(Object.entries(game.polyglot?.languages).map(k=> [k[0],k[1].label])) : false
 }
 
 export function getPF1DocumentNameOps(documentType){
