@@ -40,6 +40,7 @@
       "effectDelete.label": "Condition/Effect Removed",
       "flavor.label": "Item Name",
       "fumble.label": "Critical Miss/Fumble",
+      "incoming-damage.label": "Takes Damage",
       "initiative.label": "Initiative Roll",
       "macro.label": "Macro (API)",
       "move.label": "Token Movement Start",
