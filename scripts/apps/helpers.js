@@ -159,6 +159,57 @@ export function promptToWorkflowData(token, type){
     }
 }
 
+
+export function damageToWorkflowData(d, change, diff){
+    if(change.system?.attributes?.hp?.value === undefined) {
+        return
+    }
+    let dmgSystem = '';
+    if(diff.dnd5e) {
+        dmgSystem = 'dnd5e'
+ 
+    } else if(diff.damageTaken) {
+        dmgSystem = 'pf2e'
+    } else {
+        // TODO: Pf1e
+        // More systems can be handled later
+        return
+    }
+
+   const hpDiff = {
+        start: 0,
+        end: 0,
+        max: 0
+    }
+
+    if(dmgSystem === 'dnd5e') {
+        hpDiff.start = diff.dnd5e.hp.value
+        hpDiff.end = change.system.attributes.hp.value
+    } else {
+        hpDiff.start = change.system.attributes.hp.value + diff.damageTaken
+        hpDiff.end = change.system.attributes.hp.value
+    }
+
+    // This is healing, not damage. I'll handle this scenario at a later date
+    if(hpDiff.end >= hpDiff.start) {
+        return
+    }
+
+    hpDiff.max = d.system.attributes.hp.max
+    return {
+        documentName: d.name,
+        documentType: 'incoming-damage',
+        speaker: {
+            scene: canvas.scene.id, 
+            actor: d.id,
+            token: canvas.scene.tokens.find(t => t.actor && t.actor?.id === d.id)?.id, 
+            alias: d.parent.name
+        },
+        diff: hpDiff
+    }
+}
+
+
 function _ray(start, end){
     const orig = new PIXI.Point(...canvas.grid.getCenter(start.x, start.y));
     const dest = new PIXI.Point(...canvas.grid.getCenter(end.x, end.y));
