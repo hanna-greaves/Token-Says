@@ -202,7 +202,7 @@ export const DOCUMENTNAMELABELS = {
     "attack":  "TOKENSAYS.document-type-label.item",
     "continues":  "TOKENSAYS.document-type-label.saying",
     "damage":  "TOKENSAYS.document-type-label.item",
-    "incoming-damage":  "TOKENSAYS.document-type-label.item",
+    "incoming-damage":  "TOKENSAYS.document-type-label.action",
     "initiative": "TOKENSAYS.document-type-label.action",
     "save": "TOKENSAYS.document-type-label.ability",
     "skill":  "TOKENSAYS.document-type-label.skill",
