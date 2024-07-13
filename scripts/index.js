@@ -4,7 +4,7 @@ import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
 import {TOKENFORMICONDISPLAYOPTIONS, PANOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIONS, getCompendiumOps, _determineWorldOptions} from './apps/constants.js';
 import {api} from "./apps/api.js";
-import {activeEffectToWorkflowData, chatMessageToWorkflowData, checkToWorkflowData, combatTurnToWorkflowData, midiToWorkflowData, movementToWorkflowData, pf2eItemToWorkflowData} from "./apps/helpers.js";
+import {activeEffectToWorkflowData, chatMessageToWorkflowData, combatTurnToWorkflowData, damageToWorkflowData, midiToWorkflowData, movementToWorkflowData, pf2eItemToWorkflowData} from "./apps/helpers.js";
 import { says } from "./apps/says.js";
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
@@ -203,6 +203,11 @@ Hooks.once('init', async function() {
                 workflow.go(id, data);
             }
         }
+    });
+    
+    Hooks.on("updateActor", async (document, change, options, id) => {
+        const data = damageToWorkflowData(document, change, options)
+        if(data) workflow.go(id, data)
     });
 
     //hook to ensure that, on token says settings render, the current tab is not lost
