@@ -2,6 +2,7 @@ import { tokenSays } from '../token-says.js';
 import {say, reacts} from './say.js';
 import {BYPASSNAMETYPES} from './constants.js';
 import {regTestTermList} from './helpers.js';
+import { foundryInterface } from '../foundry-interface.js'
 
  export class says {
    static get _says() {
@@ -51,7 +52,7 @@ import {regTestTermList} from './helpers.js';
     static _toClass(flag){
         if(!flag?.fileType){return {}}
         let sy = flag.documentType==='reacts' ? new reacts(flag.fileType) : new say(flag.fileType);
-        return mergeObject(sy, flag, {insertKeys: false, enforceTypes: true})
+        return foundry.utils.mergeObject(sy, flag, {insertKeys: false, enforceTypes: true})
     }
 
     static getSay(id){
@@ -127,7 +128,7 @@ import {regTestTermList} from './helpers.js';
         tokenSays.log(false, 'Caching audio ', {says: this.sceneAudioFileSays})
         for(const sy of this.sceneAudioFileSays){
             const sound = await sy.sound()
-            if(sound) AudioHelper.preloadSound(sound)
+            if(sound) foundryInterface.audioHelper.preloadSound(sound)
         }
     }
 
@@ -137,7 +138,7 @@ import {regTestTermList} from './helpers.js';
         tokenSays.log(false, 'Caching audio ', {says: sys})
         for(const sy of sys){
             const sound = await sy.sound()
-            AudioHelper.preloadSound(sound)
+            foundryInterface.audioHelper.preloadSound(sound)
             game.socket.emit('module.token-says', {load: sound});
         }
     }
@@ -167,8 +168,8 @@ import {regTestTermList} from './helpers.js';
 
     static async updateSay(id, data, insertKeys = false) {
         const sys = this._says;
-        const sy = mergeObject(data.documentType==='reacts' ? new reacts(data.fileType) : new say(data.fileType), sys[id], {insertKeys: false, enforceTypes: true});
-        mergeObject(sy, data, {insertKeys: insertKeys, enforceTypes: true});
+        const sy = foundry.utils.mergeObject(data.documentType==='reacts' ? new reacts(data.fileType) : new say(data.fileType), sys[id], {insertKeys: false, enforceTypes: true});
+        foundry.utils.mergeObject(sy, data, {insertKeys: insertKeys, enforceTypes: true});
         sys[id] = sy;
         tokenSays.log(false, 'Update saying ', {says: sys, saying: sy, data: data})
         return await this.updateSays(sys);
@@ -206,7 +207,7 @@ import {regTestTermList} from './helpers.js';
                     alreadyExists.push(record);
                 } else {
                     let sy = record.documentType==='reacts' ? new reacts(record.fileType) : new say(record.fileType);
-                    mergeObject(sy, record, {insertKeys: false, enforceTypes: true});
+                    foundry.utils.mergeObject(sy, record, {insertKeys: false, enforceTypes: true});
                     if(sy){
                         sys[sy.id]=sy;
                         added.push(sy);

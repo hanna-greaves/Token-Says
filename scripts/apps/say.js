@@ -1,6 +1,7 @@
 import {tokenSays} from '../token-says.js';
 import {tokenSaysHasPolyglot} from '../index.js';
 import {parseSeparator,getDistance,regTestTermList,wildcardName} from './helpers.js';
+import { foundryInterface } from '../foundry-interface.js'
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -409,6 +410,11 @@ export class tokenSay {
                     || (game.world.system === 'pf1' && e.flags?.core?.statusId && (this._say.conditionActivationList.includes(game.pf1.config.conditions[e.flags.core.statusId]) || (this._say.cwc && regTestTermList(this._say.conditionActivationList, game.pf1.config.conditions[e.flags.core.statusId])) ))
                     )
                 )) return true
+        for(const condition of this._say.conditionActivationList) {
+            if(token.actor?.conditions && token.actor?.conditions[condition]) {
+                return true
+            }
+        }
         return false
     }
 
@@ -565,7 +571,7 @@ export class tokenSay {
     */
      async sayAudio(){
         if(!this._audioFile) {return tokenSays.log(false, 'No Audio File Path ', this._audioFile);} else {this.audioFile = this._audioFile}
-        this.sound = await AudioHelper.play({src: this.audioFile, volume: this._say.volume, loop: false, autoplay: true}, true);
+        this.sound = await foundryInterface.audioHelper.play({src: this.audioFile, volume: this._say.volume, loop: false, autoplay: true}, true);
         await wait(this.maxDuration)
         game.socket.emit('module.token-says', {sound: this.sound.id})
         await this.sound.fade(0, {duration: 250})
@@ -592,7 +598,7 @@ export class tokenSay {
         const messageData = {
             blind: this.hideMessageFromUser,
             speaker: this.speaker,
-            type: CONST.CHAT_MESSAGE_TYPES.IC,
+            type: foundryInterface.chatMessageTypes.IC,
             flags: {TOKENSAYS: {cancel: true, img: img}} 
         };
 

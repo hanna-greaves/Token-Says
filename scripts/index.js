@@ -6,12 +6,13 @@ import {TOKENFORMICONDISPLAYOPTIONS, PANOPTIONS, SUPPRESSOPTIONS, SEPARATOROPTIO
 import {api} from "./apps/api.js";
 import {activeEffectToWorkflowData, chatMessageToWorkflowData, combatTurnToWorkflowData, damageToWorkflowData, midiToWorkflowData, movementToWorkflowData, pf2eItemToWorkflowData} from "./apps/helpers.js";
 import { says } from "./apps/says.js";
+import { buildInterface, foundryInterface } from './foundry-interface.js'
 
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
 Hooks.once('init', async function() { 
     const module = 'token-says';
-    
+    buildInterface()
     game.settings.registerMenu(module, "tokenSaysRules", {
         name: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
         label: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.label"),
@@ -292,7 +293,7 @@ Hooks.once('init', async function() {
             return
         }
         if(inSays.load){
-            AudioHelper.preloadSound(inSays.load);
+            foundryInterface.audioHelper.preloadSound(inSays.load);
             return
         }
         if(inSays.chatMessage){
