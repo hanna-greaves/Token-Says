@@ -1,46 +1,55 @@
 {
-    "author": "napolitanod",
-    "authors": [
-        {
-            "name": "napolitanod"
-        },
-        {
-            "name": "DianeOfTheMoon"
-         }
-    ],
-    "description": "Tokens invoke chat bubbles, chat messages and audio based on in game actions.",
-    "esmodules": [
-        "scripts/index.js",
-        "scripts/token-says.js"
-    ],
-    "languages": [
-        {
-            "lang": "en",
-            "name": "English",
-            "path": "languages/en.json"
-        }
-    ],
-    "compatibility": {
-        "minimum": "11",
-        "verified": "11",
-        "maximum": "11"
+  "authors": [
+    {
+      "name": "napolitanod",
+      "flags": {}
     },
-    "id": "token-says",
-    "packs": [
-      {
-        "name": "token-says",
-        "label": "Token Says",
-        "path": "packs/macros.db",
-        "type": "Macro"
+    {
+      "name": "DianeOfTheMoon",
+      "flags": {}
+    },
+    {
+      "name": "Hanna",
+      "flags": {}
+    }
+  ],
+  "description": "Tokens invoke chat bubbles, chat messages and audio based on in game actions.",
+  "esmodules": [
+    "scripts/index.js",
+    "scripts/token-says.js"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json",
+      "flags": {}
+    }
+  ],
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11"
+  },
+  "id": "token-says",
+  "packs": [
+    {
+      "name": "token-says",
+      "label": "Token Says",
+      "path": "packs/macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
       }
-    ],
-    "socket": true,
-    "styles": [
-        "styles/token-says.css"
-    ],
-    "title": "Token Says",
-    "version": "1.12.3",
-    "url": "https://github.com/napolitanod/Token-Says",
-    "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-    "download": "https://github.com/napolitanod/Token-Says/releases/download/1.12.3/module.zip"
+    }
+  ],
+  "socket": true,
+  "styles": [
+    "styles/token-says.css"
+  ],
+  "title": "Token Says",
+  "version": "1.12.3",
+  "url": "https://github.com/napolitanod/Token-Says",
+  "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
+  "download": "https://github.com/napolitanod/Token-Says/releases/download/1.12.3/module.zip"
 }

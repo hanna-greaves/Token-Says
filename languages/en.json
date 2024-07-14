@@ -27,7 +27,8 @@
       "effect": "Effect/Condition",
       "macro": "Macro Name",
       "saying": "Saying Title",
-      "scene": "Scene Name"
+      "scene": "Scene Name",
+      "damageamount": "Damage Amount"
     },
     "document-type-options": {
       "ability.label": "Ability Check",

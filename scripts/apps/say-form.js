@@ -114,7 +114,7 @@ export class TokenSaysSayForm extends FormApplication {
     documentName = documentName ? documentName : '';
     const optionListOptions  = getWorldDocumentNameOptions(documentType);
     if(optionListOptions) {
-      const sortedList = Object.entries(optionListOptions).sort(([,a],[,b]) => a.localeCompare(b))
+      const sortedList = optionListOptions.dontSort ? optionListOptions : Object.entries(optionListOptions).sort(([,a],[,b]) => a.localeCompare(b))
       let optionList = '<option value=""></option>';
       for(let i = 0; i < sortedList.length; i++) {
         let selected = '';

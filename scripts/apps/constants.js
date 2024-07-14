@@ -1,4 +1,5 @@
 import {says} from './says.js';
+import { foundryInterface } from '../foundry-interface.js';
 import {tokenSaysHasPolyglot, tokenSaysHasMQ} from '../index.js';
 
 export const FILETYPEENTITYTYPE = {
@@ -81,7 +82,7 @@ export function _determineWorldOptions(){
         break;
         case "pf2e":
            Object.assign(temp, PF2EDOCUMENTTYPEOPS)
-           Object.assign(PF2ESKILLOPS, Object.assign(Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(k=> [`system.skills.${k[0]}`,game.i18n.localize(k[1])])), {'system.skills.per': game.i18n.localize('PF2E.PerceptionLabel')}));
+           Object.assign(PF2ESKILLOPS, Object.assign(Object.fromEntries(Object.entries(foundryInterface.pathfinderSkills).map(k=> [`system.skills.${k[0]}`,game.i18n.localize(k[1])])), {'system.skills.per': game.i18n.localize('PF2E.PerceptionLabel')}));
            Object.assign(PF2ESAVEOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(k=> [k[0],game.i18n.localize(k[1])])));
            Object.assign(PF2EABILITYOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(k=> [k[0],game.i18n.localize(k[1])])));
            break;
@@ -107,6 +108,12 @@ export function getUniversalDocumentNameOps(documentType) {
         case "say":
         case "continues":
             return says.saysList
+        case "incoming-damage":
+            return {
+                'minor': 'Minor',
+                'avg': 'Average',
+                'major': 'Major',
+            }
         default:
             return false
     }
@@ -124,9 +131,8 @@ export function getWorldDocumentNameOptions(documentType) {
 export function getDnd5eDocumentNameOps(documentType){
     switch (documentType) {
         case "ability": 
-            return game.dnd5e?.config.abilities
         case "save":
-            return game.dnd5e?.config.abilities
+            return Object.fromEntries(Object.entries(game.dnd5e?.config.abilities).map(k=> [k[0],k[1].label || k[1]]))
         case "skill":
             return Object.fromEntries(Object.entries(game.dnd5e?.config.skills).map(k=> [k[0],k[1].label]))
         default:
@@ -202,7 +208,7 @@ export const DOCUMENTNAMELABELS = {
     "attack":  "TOKENSAYS.document-type-label.item",
     "continues":  "TOKENSAYS.document-type-label.saying",
     "damage":  "TOKENSAYS.document-type-label.item",
-    "incoming-damage":  "TOKENSAYS.document-type-label.action",
+    "incoming-damage":  "TOKENSAYS.document-type-label.damageamount",
     "initiative": "TOKENSAYS.document-type-label.action",
     "save": "TOKENSAYS.document-type-label.ability",
     "skill":  "TOKENSAYS.document-type-label.skill",

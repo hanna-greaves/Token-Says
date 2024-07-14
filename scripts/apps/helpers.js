@@ -84,9 +84,11 @@ export function chatMessageToWorkflowData(message){
     } else if(f = message.flags['pf2e']) {
         if(['skill-check', 'perception-check'].includes(f.context?.type)) {
             let pf2esksel = f.context?.type === 'perception-check' ? 'system.skills.per' : f.context?.notes?.find(n => n.selector && PF2ESKILLOPS[n.selector])?.selector;
-            return parsed({documentType: 'skill', documentName: pf2esksel ? PF2ESKILLOPS[pf2esksel] : f.modifierName.substring(f.modifierName.lastIndexOf(':')+2), isFumble: f.context?.outcome === "criticalFailure" ? true : false, isCritical: f.context?.outcome === "criticalSuccess" ? true : false});
+            let skillName =  f.modifierName.substring(f.modifierName.indexOf(':') >= 0 ? f.modifierName.lastIndexOf(':')+2 : 0)
+            skillName = skillName[0]?.toUpperCase() + skillName?.substring(1)
+            return parsed({documentType: 'skill', documentName: pf2esksel ? PF2ESKILLOPS[pf2esksel] : skillName, isFumble: f.context?.outcome === "criticalFailure" ? true : false, isCritical: f.context?.outcome === "criticalSuccess" ? true : false});
         }
-        if(f.context?.type === 'saving-throw') return parsed({documentType: 'save', documentName: Object.values(PF2ESAVEOPS).find(s => f.modifierName?.includes(s))});
+        if(f.context?.type === 'saving-throw') return parsed({documentType: 'save', documentName: Object.values(PF2ESAVEOPS).find(s => f.modifierName?.toLowerCase().includes(s.toLowerCase()))});
         if(['attack-roll','spell-attack-roll'].includes(f.context?.type)) return parsed({documentType: 'attack', itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : '', isFumble: f.context?.outcome === "criticalFailure" ? true : false});
         if(['damage-roll','spell-damage-roll'].includes(f.context?.type)) return  parsed({documentType: 'damage',  itemId: f.origin?.uuid ? f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1) : '', isCritical: f.context?.outcome === "criticalSuccess" ? true : false})
         if(f.origin?.uuid) return  parsed({documentType: 'flavor', itemId: f.origin.uuid.substring(f.origin.uuid.lastIndexOf('.')+1)});
@@ -179,7 +181,7 @@ export function damageToWorkflowData(d, change, diff){
    const hpDiff = {
         start: 0,
         end: 0,
-        max: 0
+        max: 0,
     }
 
     if(dmgSystem === 'dnd5e') {
@@ -196,8 +198,16 @@ export function damageToWorkflowData(d, change, diff){
     }
 
     hpDiff.max = d.system.attributes.hp.max
+
+    const taken = hpDiff.start - hpDiff.end
+    let dmgLevel = 'avg'
+    if(taken >= hpDiff.max * .5) {        
+        dmgLevel = 'major'
+    } else if (taken < hpDiff.max * .20) {
+        dmgLevel = 'minor'
+    }
     return {
-        documentName: d.name,
+        documentName: dmgLevel,
         documentType: 'incoming-damage',
         speaker: {
             scene: canvas.scene.id, 
@@ -205,7 +215,7 @@ export function damageToWorkflowData(d, change, diff){
             token: canvas.scene.tokens.find(t => t.actor && t.actor?.id === d.id)?.id, 
             alias: d.parent.name
         },
-        diff: hpDiff
+        diff: hpDiff,
     }
 }
 
