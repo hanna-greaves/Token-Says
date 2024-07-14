@@ -69,6 +69,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Responds to: triggered by another token's action. Introduces a new form section where you specify an action that this saying is responding to. 
   * Saving Throw: triggered by a saving throw roll by the token.
   * Skill: triggered by a skill roll by the token.
+  * Takes Damage: triggered when the token takes damage
   * Token Movement Start: triggered at the start of a token's move. The chat bubble will display at the token's start position. Audio will play at movement start.
   * Token Movement End: triggered at the end of a token's move. The chat bubble will display at the token's arrival position. Audio will play at movement end.
   * Turn in Combat: triggered at start of the token's turn in combat.
@@ -86,6 +87,7 @@ Each saying is configured on a specific token or actor, based on name, for a giv
   * Responds to: leave blank (see the response section that is made visible and complete the Action Type and Action Name there).
   * Saving Throw (dnd5e): select ability.
   * Skill (dnd5e, pf2e): select or enter skill.
+  * Takes Damage: the amount of damage a token takes. Minor for less than 20% of the token's max HP, average for between 20% and 49% and major for 50% or over.
   * Token Movement Start: list the scenes where this saying can play (using the Scene Name). Leave blank to play on all scenes.
   * Token Movement End: list the scenes where this saying can play (using the Scene Name). Leave blank to play on all scenes.
   * Turn in Combat: leave blank
