@@ -28,7 +28,7 @@
   ],
   "compatibility": {
     "minimum": "11",
-    "verified": "11"
+    "verified": "12.328"
   },
   "id": "token-says",
   "packs": [
@@ -48,8 +48,8 @@
     "styles/token-says.css"
   ],
   "title": "Token Says",
-  "version": "1.12.3",
-  "url": "https://github.com/napolitanod/Token-Says",
-  "manifest": "https://raw.githubusercontent.com/napolitanod/Token-Says/master/module.json",
-  "download": "https://github.com/napolitanod/Token-Says/releases/download/1.12.3/module.zip"
+  "version": "1.13.0",
+  "url": "https://github.com/hanna-greaves/Token-Says",
+  "manifest": "https://raw.githubusercontent.com/hanna-greaves/Token-Says/master/module.json",
+  "download": "https://github.com/hanna-greaves/Token-Says/releases/download/1.13.0/module.zip"
 }
