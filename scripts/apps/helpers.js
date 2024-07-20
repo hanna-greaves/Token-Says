@@ -213,7 +213,7 @@ export function damageToWorkflowData(d, change, diff){
             scene: canvas.scene.id, 
             actor: d.id,
             token: canvas.scene.tokens.find(t => t.actor && t.actor?.id === d.id)?.id, 
-            alias: d.parent.name
+            alias: d.parent ? d.parent.name : d.name
         },
         diff: hpDiff,
     }
