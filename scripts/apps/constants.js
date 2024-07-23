@@ -82,7 +82,7 @@ export function _determineWorldOptions(){
         break;
         case "pf2e":
            Object.assign(temp, PF2EDOCUMENTTYPEOPS)
-           Object.assign(PF2ESKILLOPS, Object.assign(Object.fromEntries(Object.entries(foundryInterface.pathfinderSkills).map(k=> [`system.skills.${k[0]}`,game.i18n.localize(k[1])])), {'system.skills.per': game.i18n.localize('PF2E.PerceptionLabel')}));
+           Object.assign(PF2ESKILLOPS, Object.assign(Object.fromEntries(Object.entries(foundryInterface.pathfinderSkills).map(k=> [`system.skills.${k[0]}`,game.i18n.localize(k[1]?.label || k[1])])), {'system.skills.per': game.i18n.localize('PF2E.PerceptionLabel')}));
            Object.assign(PF2ESAVEOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(k=> [k[0],game.i18n.localize(k[1])])));
            Object.assign(PF2EABILITYOPS, Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(k=> [k[0],game.i18n.localize(k[1])])));
            break;
