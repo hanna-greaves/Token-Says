@@ -48,8 +48,8 @@
     "styles/token-says.css"
   ],
   "title": "Token Says",
-  "version": "1.13.1",
+  "version": "1.13.2",
   "url": "https://github.com/hanna-greaves/Token-Says",
   "manifest": "https://raw.githubusercontent.com/hanna-greaves/Token-Says/master/module.json",
-  "download": "https://github.com/hanna-greaves/Token-Says/releases/download/1.13.1/module.zip"
+  "download": "https://github.com/hanna-greaves/Token-Says/releases/download/1.13.2/module.zip"
 }
