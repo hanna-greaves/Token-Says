@@ -1,6 +1,6 @@
 import {says} from './says.js';
 import {tokenSay} from './say.js';
-import {tokenSays} from '../token-says.js';
+import {tokenSays} from '../token-quips.js';
 import {inDistance, inView} from './helpers.js';
 
 export const WORKFLOWSTATES = {
@@ -167,9 +167,9 @@ export const WORKFLOWSTATES = {
         if(!conditions.length) return false
 
         if(game.system.id !== "pf2e"){
-            if (token.actor?.effects?.find(
+            if (token?.actor?.effects?.find(
                 e => !e.disabled && (
-                    conditions.includes(e.label) 
+                    conditions.includes(e.label)
                     || (game.world.system === 'pf1' && e.flags?.core?.statusId && conditions.includes(game.pf1.config.conditions[e.flags.core.statusId]))
                     )
                 )
@@ -177,11 +177,11 @@ export const WORKFLOWSTATES = {
         }
 
         if(game.system.id === "pf2e"){
-            if (token.actor?.items?.find(
+            if (token?.actor?.items?.find(
                 i => ["condition", "effect"].includes(i.type)
-                    && conditions.includes(i.name) 
+                    && conditions.includes(i.name)
                 )
-                || (conditions.includes("Dead") && token.actor?.isDead)
+                || (conditions.includes("Dead") && token?.actor?.isDead)
             ) return true
         }
         

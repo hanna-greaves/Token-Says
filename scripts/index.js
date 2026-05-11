@@ -1,4 +1,4 @@
-import {tokenSays} from "./token-says.js";
+import {tokenSays} from "./token-quips.js";
 import {workflow} from "./apps/workflow.js";
 import {TokenSaysTokenForm} from "./apps/token-form.js";
 import {TokenSaysSettingsConfig} from './apps/say-list-form.js';
@@ -11,7 +11,7 @@ import { buildInterface, foundryInterface } from './foundry-interface.js'
 export var tokenSaysHasPolyglot = false, tokenSaysHasMQ = false;
 
 Hooks.once('init', async function() { 
-    const module = 'token-says';
+    const module = 'token-quips';
     buildInterface()
     game.settings.registerMenu(module, "tokenSaysRules", {
         name: game.i18n.localize("TOKENSAYS.setting.tokenSaysRules.name"),
@@ -19,6 +19,15 @@ Hooks.once('init', async function() {
         icon: "fas fa-user-cog",
         type: TokenSaysSettingsConfig,
         restricted: true
+    });
+
+    // Non-restricted entry so players can access their own sayings
+    game.settings.registerMenu(module, "tokenSaysPlayerRules", {
+        name: game.i18n.localize("TOKENSAYS.setting.tokenSaysPlayerRules.name"),
+        label: game.i18n.localize("TOKENSAYS.setting.tokenSaysPlayerRules.label"),
+        icon: "fas fa-comment-dots",
+        type: TokenSaysSettingsConfig,
+        restricted: false
     });
     
     game.settings.register(module, 'isActive', {
@@ -152,7 +161,7 @@ Hooks.once('init', async function() {
     const {SHIFT, CONTROL, ALT} = KeyboardManager.MODIFIER_KEYS;
     game.keybindings.register(module, 'prompt', {
         name: "Prompt Token Saying",
-        hint: "Prompts a token to speak using a Token Says 'Prompt' or 'Alternate Prompt' saying.",
+        hint: "Prompts a token to speak using a Token Quips 'Prompt' or 'Alternate Prompt' saying.",
         editable: [{key: "KeyP"}],
         onDown: tokenSays._prompt,
         reservedModifiers: [SHIFT]
@@ -164,21 +173,21 @@ Hooks.once('init', async function() {
     });
 
     Hooks.on("createActiveEffect", (document, options, userId) => {
-        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent.actor?.id)){
             const data = activeEffectToWorkflowData(document)
             if(data) workflow.go(userId, data);
         }
     });
 
     Hooks.on("deleteActiveEffect", (document, options, userId) => {
-        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id)){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent.actor?.id)){
             const data = activeEffectToWorkflowData(document, true)
             if(data) workflow.go(userId, data);
         }
     });
-    
+
     Hooks.on("updateActiveEffect", (document, change, options, userId) => {
-        if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ("disabled" in change || ("label" in change && !document.disabled))){
+        if(document.parent && (document.parent.token?.parent?.id || document.parent.actor?.id) && ("disabled" in change || ("label" in change && !document.disabled))){
             const data = activeEffectToWorkflowData(document, change.disabled)
             if(data) workflow.go(userId, data);
         }
@@ -211,19 +220,23 @@ Hooks.once('init', async function() {
         if(data) workflow.go(id, data)
     });
 
-    //hook to ensure that, on token says settings render, the current tab is not lost
+    // Re-apply search filter and form state on re-render (works for both FormApplication and ApplicationV2)
     Hooks.on("renderApplication", (app, html, options) => {
-        if(app.id ==="token-says-rules"){
-            app._filter();
-        } else if (app.id ==="token-says-rules-rule"){
-            app._duplicateNameWarning()
-            app._notExistsWarning()
+        if(app.id ==="token-quips-rules"){
+            app._filter?.();
+        } else if (app.id ==="token-quips-rules-rule"){
+            app._duplicateNameWarning?.();
+            app._notExistsWarning?.();
         }
     });
 
-    Hooks.on("renderTokenConfig", (app, html, data) => {
-        TokenSaysTokenForm._init(app, html, data);
-    });
+    // renderTokenConfig is V12 API; V13+ uses header-controls.js
+    const _majorVersion = parseInt((game.version ?? game.release?.version ?? "0").split(".")[0], 10);
+    if (_majorVersion < 13) {
+        Hooks.on("renderTokenConfig", (app, html, data) => {
+            TokenSaysTokenForm._init(app, html, data);
+        });
+    }
 
 
     Hooks.on(`${tokenSays.ID}.sayingComplete`, (saying) => {
@@ -279,7 +292,7 @@ Hooks.once('init', async function() {
         choices: getCompendiumOps('rollTable')
     });  
 
-    game.socket.on("module.token-says", async (inSays) => {
+    game.socket.on("module.token-quips", async (inSays) => {
         if(inSays.sound){
             tokenSays.log(false,'Socket Call... ', {sound: inSays.sound});
             const sounds = game.audio.playing.values();
@@ -354,11 +367,33 @@ Hooks.once('init', async function() {
                 if(data) workflow.go(userId, data);
             }
         });
-    
+
         Hooks.on("deleteItem", (document, options, userId) => {
             if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && ["condition", "effect"].includes(document.type)){
                 const data = pf2eItemToWorkflowData(document, true)
                 if(data) workflow.go(userId, data);
+            }
+        });
+    }
+
+    if(game.system.id === "crookedfalls"){
+        Hooks.on("createItem", (document, options, userId) => {
+            if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && document.type === "tag"){
+                const data = pf2eItemToWorkflowData(document)
+                if(data) {
+                    if(document.system?.kind === "item") data.documentType = "cf-item-add";
+                    workflow.go(userId, data);
+                }
+            }
+        });
+
+        Hooks.on("deleteItem", (document, options, userId) => {
+            if(document.parent && (document.parent.token?.parent?.id || document.parent?.id) && document.type === "tag"){
+                const data = pf2eItemToWorkflowData(document, true)
+                if(data) {
+                    if(document.system?.kind === "item") data.documentType = "cf-item-remove";
+                    workflow.go(userId, data);
+                }
             }
         });
     }

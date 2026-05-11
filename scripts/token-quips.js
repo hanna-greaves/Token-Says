@@ -6,11 +6,11 @@ import {promptToWorkflowData} from './apps/helpers.js';
  * A class which holds some constants for tokenSays
  */
 export class tokenSays {
-    static ID = 'token-says';
+    static ID = 'token-quips';
     static NAME = 'tokenSays';
-    
+
     static FLAGS = {
-      TOKENSAYS: 'token-says',
+      TOKENSAYS: 'token-quips',
       LIMITCOUNT: 'count',
       SAYING: 'saying',
       AUDIOPLAYCOUNT: 'audio-play',
@@ -47,12 +47,25 @@ export class tokenSays {
       }
 
     static initialize() {
-        this.TokenSaysSettingsConfig = new TokenSaysSettingsConfig();
+        this.TokenSaysSettingsConfig = null; // Set by TokenSaysSettingsConfig when it opens
+    }
+
+    /**
+     * Open (or bring to front) the Token Quips settings list, optionally pre-seeding the search.
+     * Creates a new instance if the list is not currently open.
+     * @param {string|null} searchTerm  Token/actor name to pre-fill the search box with
+     */
+    static openSettingsConfig(searchTerm) {
+        const form = this.TokenSaysSettingsConfig ?? new TokenSaysSettingsConfig();
+        if (searchTerm && typeof form.setLastSearch === 'function') {
+            form.setLastSearch(String(searchTerm).trim());
+        }
+        form.render(true);
     }
 
     /**
      * method that interrupts the renderedChatMessage (when called by that hook) to update the
-     * Polyglot chat message and conform it to Token Says format
+     * Polyglot chat message and conform it to Token Quips format
      * Need to do it this way as opposed to including HTML to start else Polyglot translates the html
      * @param {object} chatMessage 
      * @param {object} html 
@@ -69,7 +82,7 @@ export class tokenSays {
                 common = 1;
                 contentText = '<span>' + chatMessage.content + '</span>';
             }
-            let newContent='<div class="token-says chat-window" style="margin-bottom:6px;">'+ img + '<div class="what-is-said">' + contentText + '</div></div>';
+            let newContent='<div class="token-quips chat-window" style="margin-bottom:6px;">'+ img + '<div class="what-is-said">' + contentText + '</div></div>';
             if(common) {
                 $(content).empty().append(newContent);
             } else {

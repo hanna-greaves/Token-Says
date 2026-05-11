@@ -1,7 +1,7 @@
 import {say} from './say.js';
 import {says} from './says.js';
 import {workflow} from './workflow.js';
-import {tokenSays} from '../token-says.js';
+import {tokenSays} from '../token-quips.js';
 import {outOfRangNum} from './helpers.js'
 
 export class api {

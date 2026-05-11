@@ -28,17 +28,17 @@
                 <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input id="token-says-name-value" type="text" name="name" value="{{say.name}}"/>
+                <input id="token-quips-name-value" type="text" name="name" value="{{say.name}}"/>
             </div>
-            <p id="token-says-name-actor-warning-container" class="notes alert hidden">
+            <p id="token-quips-name-actor-warning-container" class="notes alert hidden">
                 <i class="fas fa-exclamation-triangle"></i>
                     {{localize 'TOKENSAYS.warning.actor-not-found'}}
-                <span id="token-says-name-actor-warning"></span>
+                <span id="token-quips-name-actor-warning"></span>
             </p>
-            <p id="token-says-name-token-warning-container" class="notes alert hidden">
+            <p id="token-quips-name-token-warning-container" class="notes alert hidden">
                 <i class="fas fa-exclamation-triangle"></i>
                     {{localize 'TOKENSAYS.warning.token-not-found'}}
-                <span id="token-says-name-token-warning"></span>
+                <span id="token-quips-name-token-warning"></span>
             </p>
         </div>
         <div class="form-group">
@@ -46,7 +46,7 @@
                 {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
             </label>
             <div class="form-fields">
-                <input id="token-says-name-is-wildcard" type="checkbox" name="isWildcard" {{checked say.isWildcard}} />
+                <input id="token-quips-name-is-wildcard" type="checkbox" name="isWildcard" {{checked say.isWildcard}} />
             </div>
         </div>
         <div class="form-group">
@@ -55,7 +55,7 @@
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.isActorName.description'}} {{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input id="token-says-name-is-actor" type="checkbox" name="isActorName" {{checked say.isActorName}} />
+                <input id="token-quips-name-is-actor" type="checkbox" name="isActorName" {{checked say.isActorName}} />
             </div>
         </div>
         <div class="form-group">
@@ -83,7 +83,7 @@
                 {{localize 'TOKENSAYS.setting.say.language.label'}}
             </label>
             <div class="form-fields">
-                <select id="token-says-language-value" name="lang" value="say.lang">  
+                <select id="token-quips-language-value" name="lang" value="say.lang">  
                     <option value=""></option>
                     {{selectOptions languageOptions selected=say.lang localize=false}}
                 </select>
@@ -98,7 +98,7 @@
                 <span>{{localize 'TOKENSAYS.setting.say.documentType.label'}}</span>
             </label>
             <div class="rule-value form-fields">
-                <select id="token-says-documenttype-value" name="documentType" value="say.documentType" required>  
+                <select id="token-quips-documenttype-value" name="documentType" value="say.documentType" required>  
                     <option value=""></option>
                     {{selectOptions documentTypeOptions selected=say.documentType localize=true}}
                 </select>
@@ -106,24 +106,24 @@
         </div>
         <div class="form-group">
             <label>
-                <span id="token-says-documentname-label">{{documentNameLabel}}</span>
+                <span id="token-quips-documentname-label">{{documentNameLabel}}</span>
                 <span class="toolt" title="{{localize 'TOKENSAYS.separator'}} {{localize 'TOKENSAYS.setting.say.documentName.description'}}"><i class="fas fa-info-circle"></i></span>
             </label>
-            <div id="token-says-documentname" class="form-fields">
+            <div id="token-quips-documentname" class="form-fields">
                 {{{documentNameOptions}}}
             </div>
         </div>
-        <div  id="token-says-documentname-is-wildcard-formgroup" class="form-group {{#if documentNameWildCardSuppress}}hidden{{/if}}">
+        <div  id="token-quips-documentname-is-wildcard-formgroup" class="form-group {{#if documentNameWildCardSuppress}}hidden{{/if}}">
             <label>
                 {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
             </label>
             <div class="form-fields">
-                <input id="token-says-documentname-is-wildcard" type="checkbox" name="dnwc" {{checked say.dnwc}} />
+                <input id="token-quips-documentname-is-wildcard" type="checkbox" name="dnwc" {{checked say.dnwc}} />
             </div>
         </div>        
     </div>
     <div class="tab" data-tab="chat">
-        <div id="token-says-compendium-chat-label" class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
+        <div id="token-quips-compendium-chat-label" class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.compendiumName.label'}}</span>
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.compendiumName.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
@@ -135,7 +135,7 @@
                 </select>
             </div>
         </div>
-        <div id="token-says-fileName-chat-label" class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
+        <div id="token-quips-fileName-chat-label" class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.fileName.label.rolltable'}}</span>
             </label>
@@ -149,10 +149,10 @@
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.fileTitle.description.rolltable'}}{{localize 'TOKENSAYS.parameters'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input id="token-says-fileTitle-chat-value" type="text" name="{{#if isAudio}}paired.{{/if}}fileTitle" value="{{#unless isAudio}}{{say.fileTitle}}{{/unless}}{{#if isAudio}}{{say.paired.fileTitle}}{{/if}}"/>
+                <input id="token-quips-fileTitle-chat-value" type="text" name="{{#if isAudio}}paired.{{/if}}fileTitle" value="{{#unless isAudio}}{{say.fileTitle}}{{/unless}}{{#if isAudio}}{{say.paired.fileTitle}}{{/if}}"/>
             </div>
         </div>
-        <div id="token-says-play-type-chat-label"  class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
+        <div id="token-quips-play-type-chat-label"  class="form-group {{#if hasChatFileTitle}} hidden{{/if}}">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.play-type.label'}}</span>
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.play-type.description.rolltable'}}"><i class="fas fa-info-circle"></i></span>
@@ -234,10 +234,10 @@
             <div class="form-fields">
                 {{#if isAudio}}{{filePicker target="fileTitle" type="audio"}}{{/if}}
                 {{#unless isAudio}}{{filePicker target="paired.fileTitle" type="audio"}}{{/unless}}
-                <input id="token-says-fileTitle-audio-value" type="text" name="{{#unless isAudio}}paired.{{/unless}}fileTitle" value="{{#unless isAudio}}{{say.paired.fileTitle}}{{/unless}}{{#if isAudio}}{{say.fileTitle}}{{/if}}"/>
+                <input id="token-quips-fileTitle-audio-value" type="text" name="{{#unless isAudio}}paired.{{/unless}}fileTitle" value="{{#unless isAudio}}{{say.paired.fileTitle}}{{/unless}}{{#if isAudio}}{{say.fileTitle}}{{/if}}"/>
             </div>
         </div>
-        <div id="token-says-play-type-audio-label" class="form-group {{#if hasAudioFileTitle}} hidden{{/if}}">
+        <div id="token-quips-play-type-audio-label" class="form-group {{#if hasAudioFileTitle}} hidden{{/if}}">
             <label>
                 <span>{{localize 'TOKENSAYS.setting.say.play-type.label'}}</span>
                 <span class="toolt" title="{{localize 'TOKENSAYS.setting.say.play-type.description.audio'}}"><i class="fas fa-info-circle"></i></span>
@@ -258,7 +258,7 @@
                 <span class="range-value">{{#unless say.volume}}0.50{{/unless}}{{#if say.volume}}{{say.volume}}{{/if}}</span>
             </div>
         </div>
-        <div id="token-says-cap" class="{{#unless isMove}} hidden{{/unless}}">
+        <div id="token-quips-cap" class="{{#unless isMove}} hidden{{/unless}}">
             <hr>
             <div class="form-group">
                 <label>
@@ -290,7 +290,7 @@
             </div>
         </div>
     </div>
-    <div id="token-says-reacts" data-tab="reacts" class="tab reacts {{#unless isReact}} hidden{{/unless}}">
+    <div id="token-quips-reacts" data-tab="reacts" class="tab reacts {{#unless isReact}} hidden{{/unless}}">
         <h4>
             <i class="fas fa-reply"></i>&nbsp;
             {{localize 'TOKENSAYS.setting.say.reacts.label'}}
@@ -301,7 +301,7 @@
                 {{localize 'TOKENSAYS.setting.say.documentType.label'}}
             </label>
             <div class="form-fields">
-                <select id="token-says-documenttype-reacts-value" name="to.documentType" value="say.to.documentType">  
+                <select id="token-quips-documenttype-reacts-value" name="to.documentType" value="say.to.documentType">  
                     <option value=""></option>
                     {{selectOptions documentTypeReactsOptions selected=say.to.documentType localize=true}}
                 </select>
@@ -309,40 +309,40 @@
         </div>
         <div class="form-group">
             <label>
-                <span id="token-says-documentname-reacts-label">{{responseDocumentNameLabel}}</span>
+                <span id="token-quips-documentname-reacts-label">{{responseDocumentNameLabel}}</span>
                 <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
             </label>
-            <div id="token-says-documentname-reacts" class="form-fields">
+            <div id="token-quips-documentname-reacts" class="form-fields">
                 {{{documentNameReactsOptions}}}
             </div>
-            <p id="token-says-rule-dup-name-warning" class="notes alert hidden">{{localize 'TOKENSAYS.setting.say.warning.dupNames.label'}}</p>
+            <p id="token-quips-rule-dup-name-warning" class="notes alert hidden">{{localize 'TOKENSAYS.setting.say.warning.dupNames.label'}}</p>
         </div>
-        <div id="token-says-documentname-reacts-is-wildcard-formgroup" class="form-group {{#if documentNameReactsWildCardSuppress}}hidden{{/if}}">
+        <div id="token-quips-documentname-reacts-is-wildcard-formgroup" class="form-group {{#if documentNameReactsWildCardSuppress}}hidden{{/if}}">
             <label>
                 {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
             </label>
             <div class="form-fields">
-                <input id="token-says-documentname-reacts-is-wildcard" type="checkbox" name="to.dnwc" {{checked say.to.dnwc}} />
+                <input id="token-quips-documentname-reacts-is-wildcard" type="checkbox" name="to.dnwc" {{checked say.to.dnwc}} />
             </div>
         </div>  
         <hr>
-        <div id="token-says-to-name" class="form-group">
+        <div id="token-quips-to-name" class="form-group">
             <label>
                 {{localize 'TOKENSAYS.setting.say.name.label'}}
                 <span class="toolt" title="{{localize 'TOKENSAYS.separator'}}"><i class="fas fa-info-circle"></i></span>
             </label>
             <div class="form-fields">
-                <input id="token-says-to-name-value" type="text" name="to.name" value="{{say.to.name}}" />
+                <input id="token-quips-to-name-value" type="text" name="to.name" value="{{say.to.name}}" />
             </div>
-            <p id="token-says-to-name-actor-warning-container" class="notes alert hidden">
+            <p id="token-quips-to-name-actor-warning-container" class="notes alert hidden">
                 <i class="fas fa-exclamation-triangle"></i>
                     {{localize 'TOKENSAYS.warning.actor-not-found'}}
-                <span id="token-says-to-name-actor-warning"></span>
+                <span id="token-quips-to-name-actor-warning"></span>
             </p>
-            <p id="token-says-to-name-token-warning-container" class="notes alert hidden">
+            <p id="token-quips-to-name-token-warning-container" class="notes alert hidden">
                 <i class="fas fa-exclamation-triangle"></i>
                     {{localize 'TOKENSAYS.warning.token-not-found'}}
-                <span id="token-says-to-name-token-warning"></span>
+                <span id="token-quips-to-name-token-warning"></span>
             </p>
         </div>
         <div class="form-group">
@@ -350,7 +350,7 @@
                 {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
             </label>
             <div class="form-fields">
-                <input id="token-says-to-name-is-wildcard" type="checkbox" name="to.isWildcard" {{checked say.to.isWildcard}} />
+                <input id="token-quips-to-name-is-wildcard" type="checkbox" name="to.isWildcard" {{checked say.to.isWildcard}} />
             </div>
         </div>
         <div class="form-group">
@@ -358,7 +358,7 @@
                 {{localize 'TOKENSAYS.setting.say.isActorName.label'}}
             </label>
             <div class="form-fields">
-                <input id="token-says-to-name-is-actor" type="checkbox" name="to.isActorName" {{checked say.to.isActorName}} /> 
+                <input id="token-quips-to-name-is-actor" type="checkbox" name="to.isActorName" {{checked say.to.isActorName}} /> 
             </div>
         </div>
         <div class="form-group">
@@ -412,7 +412,7 @@
                 {{localize 'TOKENSAYS.setting.say.isWildcard.label'}}
             </label>
             <div class="form-fields">
-                <input id="token-says-condition-is-wildcard" type="checkbox" name="cwc" {{checked say.cwc}} />
+                <input id="token-quips-condition-is-wildcard" type="checkbox" name="cwc" {{checked say.cwc}} />
             </div>
         </div>    
         <hr>  

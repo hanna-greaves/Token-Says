@@ -11,12 +11,19 @@
     {
       "name": "Hanna",
       "flags": {}
+    },
+    {
+      "name": "Mr. Beasley",
+      "email": "jordanbeasleymma@gmail.com",
+      "discord": "gamemasterbeas",
+      "flags": {}
     }
   ],
   "description": "Tokens invoke chat bubbles, chat messages and audio based on in game actions.",
   "esmodules": [
     "scripts/index.js",
-    "scripts/token-says.js"
+    "scripts/token-quips.js",
+    "scripts/header-controls.js"
   ],
   "languages": [
     {
@@ -27,14 +34,14 @@
     }
   ],
   "compatibility": {
-    "minimum": "11",
-    "verified": "12.328"
+    "minimum": "12",
+    "verified": "14"
   },
-  "id": "token-says",
+  "id": "token-quips",
   "packs": [
     {
-      "name": "token-says",
-      "label": "Token Says",
+      "name": "token-quips",
+      "label": "Token Quips",
       "path": "packs/macros",
       "type": "Macro",
       "ownership": {
@@ -45,11 +52,11 @@
   ],
   "socket": true,
   "styles": [
-    "styles/token-says.css"
+    "styles/token-quips.css"
   ],
-  "title": "Token Says",
-  "version": "1.13.2",
-  "url": "https://github.com/hanna-greaves/Token-Says",
-  "manifest": "https://raw.githubusercontent.com/hanna-greaves/Token-Says/master/module.json",
-  "download": "https://github.com/hanna-greaves/Token-Says/releases/download/1.13.2/module.zip"
+  "title": "Token Quips",
+  "version": "2.0.0",
+  "url": "https://github.com/themrbeasley/Token-Quips",
+  "manifest": "https://github.com/themrbeasley/Token-Quips/releases/latest/download/module.json",
+  "download": "https://github.com/themrbeasley/Token-Quips/releases/download/v2.0.0/module.zip"
 }

@@ -1,4 +1,4 @@
-import {tokenSays} from '../token-says.js';
+import {tokenSays} from '../token-quips.js';
 import {tokenSaysHasPolyglot} from '../index.js';
 import {parseSeparator,getDistance,regTestTermList,wildcardName} from './helpers.js';
 import { foundryInterface } from '../foundry-interface.js'
@@ -67,7 +67,8 @@ export class say {
         this.suppressQuotes = false,
         this.volume = 0.50,
         this.whisper = '',
-        this.limit = 0
+        this.limit = 0,
+        this.ownerId = ''
     }
 
     get audioCompendiumName(){
@@ -477,7 +478,7 @@ export class tokenSay {
         if(game.user.isGM) {
             await this.scene.tokens.get(this.token.id).setFlag(tokenSays.ID, `${tokenSays.FLAGS.SAYING}.${flag}.${this._say.id}`, amt)
         } else {
-            await game.socket.emit('module.token-says', {tokenUpdate: {scene: this.scene.id, tokenId: this.token.id, sayId: this._say.id, flag: flag, amt:amt}});
+            await game.socket.emit('module.token-quips', {tokenUpdate: {scene: this.scene.id, tokenId: this.token.id, sayId: this._say.id, flag: flag, amt:amt}});
         }
     }
 
@@ -573,7 +574,7 @@ export class tokenSay {
         if(!this._audioFile) {return tokenSays.log(false, 'No Audio File Path ', this._audioFile);} else {this.audioFile = this._audioFile}
         this.sound = await foundryInterface.audioHelper.play({src: this.audioFile, volume: this._say.volume, loop: false, autoplay: true}, true);
         await wait(this.maxDuration)
-        game.socket.emit('module.token-says', {sound: this.sound.id})
+        game.socket.emit('module.token-quips', {sound: this.sound.id})
         await this.sound.fade(0, {duration: 250})
         this.sound.stop();
     }
@@ -603,7 +604,7 @@ export class tokenSay {
         };
 
         if(this.language) messageData['lang'] = this.language
-        messageData['content'] = tokenSaysHasPolyglot ?  `${this.quotes}${this.message}${this.quotes}` : `<div class="token-says chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
+        messageData['content'] = tokenSaysHasPolyglot ?  `${this.quotes}${this.message}${this.quotes}` : `<div class="token-quips chat-window">${img}<div class="what-is-said">${this.quotes}${this.message}${this.quotes}</div></div>`;
         
         if(!this.hideMessageFromUser) {
             if(this.hasWhisper) messageData['whisper'] = this.whisper
@@ -611,7 +612,7 @@ export class tokenSay {
         } else {
             const chatUsers = this.whisper.map(u => u.id)
             const sendTo = game.users.find(u => u.active && chatUsers.includes(u.id))
-            if(sendTo) await game.socket.emit('module.token-says', {chatMessage: messageData, chatUsers: this.whisper.map(u => u.id), sendFrom: sendTo.id});
+            if(sendTo) await game.socket.emit('module.token-quips', {chatMessage: messageData, chatUsers: this.whisper.map(u => u.id), sendFrom: sendTo.id});
         }
         
     }

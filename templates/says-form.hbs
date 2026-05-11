@@ -1,16 +1,18 @@
-<form class="token-says" autocomplete="off">
-    <div id="token-says-primary-controls">
-        <div class="token-says-search">
-            <div id="token-says-search-icon"><i class="fas fa-search"></i></div>
-            <input id="token-says-search-input" type="text" name="search" value="{{search}}" placeholder="{{localize 'TOKENSAYS.setting.search.placeholder'}}" spellcheck="false" autocomplete="off" />
-            <button id="token-says-search-clear" class="hidden" title="{{localize 'TOKENSAYS.setting.search.clear'}}"><i class="fas fa-times"></i></button>
+<form class="token-quips" autocomplete="off">
+    <div id="token-quips-primary-controls">
+        <div class="token-quips-search">
+            <div id="token-quips-search-icon"><i class="fas fa-search"></i></div>
+            <input id="token-quips-search-input" type="text" name="search" value="{{search}}" placeholder="{{localize 'TOKENSAYS.setting.search.placeholder'}}" spellcheck="false" autocomplete="off" />
+            <button id="token-quips-search-clear" class="hidden" title="{{localize 'TOKENSAYS.setting.search.clear'}}"><i class="fas fa-times"></i></button>
         </div>
-        <div class="token-says-json-export">
-            <button id="token-says-export-config" title="{{localize "TOKENSAYS.setting.export.title"}}"><i class="fas fa-file-export fa-fw"></i></button>  
+        {{#if isGM}}
+        <div class="token-quips-json-export">
+            <button id="token-quips-export-config" title="{{localize "TOKENSAYS.setting.export.title"}}"><i class="fas fa-file-export fa-fw"></i></button>
         </div>
-        <div class="token-says-json-import">
-            <button id="token-says-import-config" title="{{localize "TOKENSAYS.setting.import.title"}}"><i class="fas fa-file-import fa-fw"></i></button>  
+        <div class="token-quips-json-import">
+            <button id="token-quips-import-config" title="{{localize "TOKENSAYS.setting.import.title"}}"><i class="fas fa-file-import fa-fw"></i></button>
         </div>
+        {{/if}}
     </div>
     <div class="rules-header flexrow">
         <div class="rule-name">
@@ -27,9 +29,9 @@
     </div>
     <ol class="rules-list">
         {{#each says}}
-        <li class="rule flexrow" data-id="{{id}}" data-container="rules" draggable="true">
+        <li class="rule flexrow" data-id="{{id}}" data-owner="{{ownerId}}" data-container="rules" draggable="true">
             <div class="rule-name">
-                <div class="label ts-search-name">{{label}}</div>
+                <div class="label ts-search-name">{{label}}{{#if ownerName}} <span class="ts-owner-badge" title="{{localize 'TOKENSAYS.setting.subheader.playerSaying'}}">{{ownerName}}</span>{{/if}}</div>
                 <div class="name ts-search-name">{{#if this.reverse}}not: {{/if}}{{name}}</div>
             </div>
             <div>

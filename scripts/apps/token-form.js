@@ -1,4 +1,4 @@
-import {tokenSays} from '../token-says.js';
+import {tokenSays} from '../token-quips.js';
 
 export class TokenSaysTokenForm extends TokenConfig {
   static get defaultOptions(){
@@ -7,14 +7,14 @@ export class TokenSaysTokenForm extends TokenConfig {
 
   static _init(app, html, data){ 
     if (game.user.isGM) {
-      let opt = game.settings.get('token-says', 'tokenHeader');   
+      let opt = game.settings.get('token-quips', 'tokenHeader');   
       if(opt !== 'N'){
         let icn = '<i class="fas fa-comment"></i>';
         if(opt === 'B'){
             icn+='Says'
           }  
 
-        let openButton = $(`<a class="open-tokensays" title="Token Says Config">` + icn + `</a>`);
+        let openButton = $(`<a class="open-tokensays" title="Token Quips Config">` + icn + `</a>`);
 
         openButton.click(event => {
           const form = tokenSays.TokenSaysSettingsConfig;
@@ -30,7 +30,7 @@ export class TokenSaysTokenForm extends TokenConfig {
       }
 
       if(app.token?.id && app.token?.parent?.id){
-        let countButton = $('<button>').attr('id', 'token-says-token-settings').text(game.i18n.localize("TOKENSAYS.token-form.counts-reset"));
+        let countButton = $('<button>').attr('id', 'token-quips-token-settings').text(game.i18n.localize("TOKENSAYS.token-form.counts-reset"));
         countButton.click(event => {
           event.preventDefault();
           tokenSays.resetTokenSayingCount(app.token.id, app.token.parent.id);

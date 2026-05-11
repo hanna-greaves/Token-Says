@@ -60,6 +60,20 @@ const PF2EDOCUMENTTYPEOPS  = {
     "skill-fumble":  "TOKENSAYS.document-type-options.skill-fumble.label"
 }
 
+const CROOKEDFALLSDOCUMENTTYPEOPS = {
+    "cf-intellect":        "TOKENSAYS.document-type-options.cf-intellect.label",
+    "cf-agility":          "TOKENSAYS.document-type-options.cf-agility.label",
+    "cf-willpower":        "TOKENSAYS.document-type-options.cf-willpower.label",
+    "cf-fog-defense":      "TOKENSAYS.document-type-options.cf-fog-defense.label",
+    "cf-defense":          "TOKENSAYS.document-type-options.cf-defense.label",
+    "cf-defense-failed":   "TOKENSAYS.document-type-options.cf-defense-failed.label",
+    "cf-power-activated":  "TOKENSAYS.document-type-options.cf-power-activated.label",
+    "cf-power-ended":      "TOKENSAYS.document-type-options.cf-power-ended.label",
+    "cf-interference-use": "TOKENSAYS.document-type-options.cf-interference-use.label",
+    "cf-item-add":         "TOKENSAYS.document-type-options.cf-item-add.label",
+    "cf-item-remove":      "TOKENSAYS.document-type-options.cf-item-remove.label"
+}
+
 export const PF2ESKILLOPS = {};
 export const PF2ESAVEOPS = {};
 export const PF2EABILITYOPS = {};
@@ -88,6 +102,9 @@ export function _determineWorldOptions(){
            break;
         case "pf1":
             Object.assign(temp, PF1DOCUMENTTYPEOPS)
+            break;
+        case "crookedfalls":
+            Object.assign(temp, CROOKEDFALLSDOCUMENTTYPEOPS);
             break;
     }
     Object.assign(GAMETYPEOPS, 
@@ -226,7 +243,18 @@ export const DOCUMENTNAMELABELS = {
     "say": "TOKENSAYS.document-type-label.saying",
     "turn": "TOKENSAYS.document-type-label.action",
     "critical":  "TOKENSAYS.document-type-label.item",
-    "fumble":  "TOKENSAYS.document-type-label.item"
+    "fumble":  "TOKENSAYS.document-type-label.item",
+    "cf-intellect":        "TOKENSAYS.document-type-label.action",
+    "cf-agility":          "TOKENSAYS.document-type-label.action",
+    "cf-willpower":        "TOKENSAYS.document-type-label.action",
+    "cf-fog-defense":      "TOKENSAYS.document-type-label.action",
+    "cf-defense":          "TOKENSAYS.document-type-label.action",
+    "cf-defense-failed":   "TOKENSAYS.document-type-label.action",
+    "cf-power-activated":  "TOKENSAYS.document-type-label.item",
+    "cf-power-ended":      "TOKENSAYS.document-type-label.item",
+    "cf-interference-use": "TOKENSAYS.document-type-label.item",
+    "cf-item-add":         "TOKENSAYS.document-type-label.item",
+    "cf-item-remove":      "TOKENSAYS.document-type-label.item"
 }
 
 export const PLAYTYPE = {

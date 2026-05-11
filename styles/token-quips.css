@@ -1,8 +1,8 @@
-form.token-says .content {
+form.token-quips .content {
     height: 460px;
 }
 
-.token-says .rules-list {
+.token-quips .rules-list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -10,11 +10,11 @@ form.token-says .content {
     scrollbar-width: thin;
 }
 
-.token-says .rules-list li:nth-child(even) {
+.token-quips .rules-list li:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-.token-says .rules-header {
+.token-quips .rules-header {
     flex: 1;
     height: 30px;
     margin-bottom: 2px;
@@ -30,7 +30,7 @@ form.token-says .content {
     font-family: "Modesto Condensed", "Palatino Linotype", serif;
 }
 
-.token-says .rules-list li.rule {
+.token-quips .rules-list li.rule {
     flex: 1;
     padding: 5px;
     text-overflow: ellipsis;
@@ -43,40 +43,40 @@ form.token-says .content {
     font-family: "Signika", sans-serif;
 }
 
-.token-says .rules-header > div, .token-says li.rule > div {
+.token-quips .rules-header > div, .token-quips li.rule > div {
     align-items: center;
 }
 
-.token-says .rules-list:last-child {
+.token-quips .rules-list:last-child {
     border-bottom: none;
 }
 
-.token-says .rule-controls {
+.token-quips .rule-controls {
     flex: 1 1 6%;
     text-align: center;
     color: #7a7971;
 }
 
-.token-says .rule-active {
+.token-quips .rule-active {
     flex: 1 1 2%;
     text-align: center;
     color: #7a7971;
 }
 
-.token-says .rule-active input[type="checkbox"]{
+.token-quips .rule-active input[type="checkbox"]{
     flex: 0 0 15px;
     width: 15px;
     height: 15px;
     margin: 3px 5px;
 }
 
-.token-says .rule-name {
+.token-quips .rule-name {
     flex: 1 1 75%;
     align-items: center;
     overflow: hidden;
 }
 
-.token-says .label, .token-says .name  {
+.token-quips .label, .token-quips .name  {
     padding: 3px 8px 0px 0px;
     display: inline-block;
     white-space: nowrap;
@@ -85,26 +85,26 @@ form.token-says .content {
     flex-wrap: nowrap;
 }
 
-.token-says .label {
+.token-quips .label {
     width: 65%;
 }
 
-.token-says .name {
+.token-quips .name {
     width: 35%;
 }
 
-.token-says .tabs .item {
+.token-quips .tabs .item {
     font-size: 16px;
     margin-bottom: 12px;
 }
 
-.token-says-rule .suppress {
+.token-quips-rule .suppress {
     flex: 1 1 100%;
     display: flex;
     align-items: flex-start;
 }
 
-.token-says-rule .suppress > div {
+.token-quips-rule .suppress > div {
     flex: 0 0 25%;
     white-space: nowrap;
     margin-bottom: 5px;
@@ -112,34 +112,34 @@ form.token-says .content {
     display: flex;
 }
 
-.token-says-rule .hidden, #token-says-search-clear.hidden {
+.token-quips-rule .hidden, #token-quips-search-clear.hidden {
     display: none;
 }
 
-.token-says-rule .alert {
+.token-quips-rule .alert {
     padding: 5px 8px;
     background-color: rgba(245, 209, 7, 0.411);
     border-radius: 5px;
 }
 
-.token-says-rule .warning {
+.token-quips-rule .warning {
     color: #FF0000;
 }
 
-.token-says-rule .toolt {
+.token-quips-rule .toolt {
     color: #9e9e9e;
     font-size: 10px;
 }
 
-.token-says-rule > div {
+.token-quips-rule > div {
     padding: 1px 6px;
 }
 
-.token-says-rule select {
+.token-quips-rule select {
     max-width: 231px;
 }
 
-.token-says-rule .reacts {
+.token-quips-rule .reacts {
     background: rgba(0, 0, 0, 0.1);
     padding: 5px;
     margin-bottom: 6px;
@@ -149,7 +149,7 @@ form.token-says .content {
     display: block;
 }
 
-.token-says-rule h4 {
+.token-quips-rule h4 {
     padding: 3px 6px;
     margin-bottom: 4px;
     margin-top: 6px;
@@ -157,32 +157,32 @@ form.token-says .content {
 }
 
 /*chat window styling*/
-.token-says.chat-window img {
+.token-quips.chat-window img {
     border-width: 0px; 
     width: 50px; 
     height: 50px; 
     vertical-align: text-bottom;
 }
 
-.token-says.chat-window {
+.token-quips.chat-window {
     width:100%; 
     min-height: 50px; 
     display: flex;
     align-items: top;
 }
 
-.token-says.chat-window .what-is-said {
+.token-quips.chat-window .what-is-said {
     display:inline-block;
     margin-left: 8px;
 }
 
-#token-says-primary-controls {
+#token-quips-primary-controls {
     width: 100%;
     margin: 10px 0px 24px 0px;
     height: 36px;
 }
 
-.token-says-search {
+.token-quips-search {
     display: inline-block;
     justify-content: center;
     align-items: center;
@@ -193,25 +193,25 @@ form.token-says .content {
     width: 84%;
   }
 
-  .token-says-json-export, .token-says-json-import {
+  .token-quips-json-export, .token-quips-json-import {
     display: inline-block;
     width:7%;
     position: relative;
     height: 36px;
   }
   
-  #token-says-search-input  {
+  #token-quips-search-input  {
     outline: none;
     padding: 0 38px 0 38px;
     height: 100%;
     border: none;
   }
 
-  #token-says-search-input.outline {
+  #token-quips-search-input.outline {
     box-shadow: 0 0 5px red;
   }
   
-  #token-says-search-clear {
+  #token-quips-search-clear {
     position: absolute;
     right: 8px;
     top: 50%;
@@ -227,11 +227,11 @@ form.token-says .content {
   }
   
   
-  #token-says-search-clear i {
+  #token-quips-search-clear i {
     margin: 0;
   }
 
-  #token-says-search-icon {
+  #token-quips-search-icon {
     position: absolute;
     left: 8px;
     top: 45%;
@@ -247,6 +247,6 @@ form.token-says .content {
   }
   
   
-  #token-says-search-icon i {
+  #token-quips-search-icon i {
     margin: 0;
   }
